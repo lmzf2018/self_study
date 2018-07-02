@@ -1,0 +1,326 @@
+在线考试￼交卷答题剩余时间0小时00分00秒
+1.
+(单选题)Shell脚本中可以进行小数运算的命令工具是（a ）？
+￼ A.bc
+￼ B.gc
+￼ C.tc
+￼ D.tc
+2.
+(单选题)安装DNS服务的软件包名是(d )
+￼ A.DNS
+￼ B.name
+￼ C.named
+￼ D.bind bind-chroot
+3.
+(单选题)Shell脚本中，使用什么语句可以直接退出脚本（ d）？
+￼ A.kill
+￼ B.q
+￼ C.quit
+￼ D.exit
+4.
+(单选题)Apache的网页文件默认根目录是在（c ）
+￼ A./etc/http/httpd/
+￼ B./etc/http/
+￼ C./var/www/html/
+￼ D./etc/httpd
+5.
+(单选题)在Shell脚本中，若要屏蔽终端的输出默认显示功能，可以执行（ d）命令？
+￼ A.set tty -echo
+￼ B.-echo
+￼ C.stty echo
+￼ D.stty -echo
+6.
+(单选题)当需要安装Linux系统的服务器数量比较多时，选择（ c）安装方式最好
+￼ A.光盘安装
+￼ B.硬盘安装
+￼ C.PXE + Kickstart无人值守安装
+￼ D.U盘安装
+7.
+(单选题)在Linux系统中从源代码安装软件时，编译成功后执行安装的命令通常是
+（ d）
+￼ A../configure
+￼ B.make
+￼ C.make all
+￼ D.make install
+8.
+(单选题)某公司有www.google.com和www.goojie.com两个站点，使用相同
+的公网IP地址，若要在一台Linux主机中提供两个站点的Web服务，可
+采用的最佳方案为（ c）
+￼ A.安装两个httpd软件包，每个软件包对应一个Web站点
+￼ B.安装一个httpd软件包，使用httpd1.conf、httpd2.conf两个独立配置文件
+￼ C.安装一个httpd软件包，为两个Web站点配置基于域名的虚拟主机
+￼ D.安装一个httpd软件包，为两个Web站点指定基于IP地址的虚拟主机
+9.
+(单选题)DHCP服务可以为客户机分配多种网络参数，其中不包括（d ）
+￼ A.默认网关地址
+￼ B.动态IP地址
+￼ C.DNS服务器地址
+￼ D.防火墙策略
+10.
+(单选题)使用rsync同步操作时，执行（ b）可以将/boot下的内容同步复制到
+/todir目录下。
+￼ A.rsync –a /boot /todir
+￼ B.rsync –a /boot/ /todir/
+￼ C.rsync –a /todir /boot
+￼ D.rsync –a /todir/ /boot/
+11.
+(单选题)使用vim编辑文件时，若要将第7到10行的内容一次性删除，可以在
+命令模式下先将光标移动到第7行，再使用（ b）按键命令
+￼ A.dd
+￼ B.4dd
+￼ C.de
+￼ D.4de
+12.
+(单选题)在Linux系统中，以下（ d）不属于YUM软件仓库提供的方式
+￼ A.file://
+￼ B.ftp://
+￼ C.http://
+￼ D.mail://
+13.
+(单选题)在常见的RAID级别中，（c ）的设备冗余度最好，也称为镜像模式
+￼ A.RAID0
+￼ B.RAID1
+￼ C.RAID5
+￼ D.RAID6
+14.
+(单选题)在Linux系统中从源代码安装软件时，编译的过程由（b ）操作完成
+￼ A../configure
+￼ B.make
+￼ C.make all
+￼ D.make install
+15.
+(单选题)当用户访问www.a.com与www.b.com的时候能够看到不同的网站，
+但是通过DNS解析发现它们的IP地址一样，这个是基于（c ）实现的虚
+拟主机。
+￼ A.MAC地址
+￼ B.IP
+￼ C.域名
+￼ D.端口
+16.
+(单选题)在Linux系统中，使用（ a）命令可以查询最近登录失败的用户访问信息
+￼ A.lastb
+￼ B.last
+￼ C.w
+￼ D.who
+17.
+(单选题)在Linux系统中配置httpd服务器时，设置项（b ）用来指定默认的网页
+存放位置
+￼ A.ServerName
+￼ B.DocumentRoot
+￼ C.ServerAdmin
+￼ D.ServerRoot
+18.
+(单选题)在Linux系统中，要查看系统默认运行模式，可以使用（ a）命令
+￼ A.systemctl get-default
+￼ B.systemctl status
+￼ C.systemctl set-default
+￼ D.systemctl isolate
+19.
+(单选题)格式化swap分区时使用什么命令(d )
+￼ A.mkfs.ext4 分区设备路径
+￼ B.mkfs.xfs 分区设备路径
+￼ C.swapon 分区路径
+￼ D.mkswap分区路径
+20.
+(单选题)使用命令unzip解压缩 文档时，选项（ b）可以指定解压缩的位置
+￼ A.-r
+￼ B.-d
+￼ C.-f
+￼ D.-C
+21.
+(单选题)在搭建PXE服务器时，用来提供给客户机的网卡引导文件是（ a）
+￼ A.pxelinux.0
+￼ B.ifcfg-eth0
+￼ C.vesamenu.c32
+￼ D.vmlinuz
+22.
+(单选题)配置bind域名服务时，管理员执行了cp -p /var/named/named.localhost /var/named/tedu.cn.zone操作，
+其中选项-p的作用是（ b）
+￼ A.拷贝连接
+￼ B.保持原文件属性不变
+￼ C.拷贝目录
+￼ D.递归拷贝
+23.
+(单选题)在Linux系统中配置httpd服务器时，设置项（ a）用来指定该Web服务
+器的站点名
+￼ A.ServerName
+￼ B.DocumentRoot
+￼ C.ServerAdmin
+￼ D.ServerRoot
+24.
+(单选题)使用test命令进行判断测试时，如下哪个选项可以判断一个文件或目录
+是否存在( d)？
+￼ A.-f
+￼ B.-d
+￼ C.-r
+￼ D.-e
+25.
+(单选题)Linux命令行中，对多个命令进行逻辑分隔时，仅前一个命令不成功才
+执行下一个命令，应该使用什么分隔符（db ）？
+￼ A.&
+￼ B.%%
+￼ C.&&
+￼ D.||
+26.
+(单选题)在vim编辑器的（ ）模式中可以实现录入、退格等编辑操作
+￼ A.退出模式
+￼ B.输入模式
+￼ C.命令模式
+￼ D.末行模式
+27.
+(单选题)以下哪种RAID级别必须使用四块及以上磁盘才能实现（ d）
+￼ A.RAID 0
+￼ B.RAID 1
+￼ C.RAID 5
+￼ D.RAID 10
+28.
+(单选题)在Linux系统中，管理员发现PID为2048的进程没有响应，可以执行（ c）
+命令强行中止该进程
+￼ A.pkill -9 2048
+￼ B.killall +9 2048
+￼ C.kill -9 2048
+￼ D.kill +9 2048
+29.
+(单选题)在Linux系统中，执行（ c）命令可以把/dev/sdb6格式化成交换分区
+￼ A.fdisk /dev/sdb6
+￼ B.mkfs -t ext3 /dev/sdb6
+￼ C.mkswap /dev/sdb6
+￼ D.format /dev/sdb6
+30.
+(单选题)在Linux上使用kickarstart生成ks文件yum仓库源ID应设置为（ b）
+￼ A.rhel7
+￼ B.development
+￼ C.默认名称
+￼ D.ksckarstart
+31.
+(单选题)在Linux系统中，执行命令 ls -l test.sh 后，返回结果如下： 
+-rw-rw-r-- 1 zhang root 55 2014-02-21 test.sh，若希望
+文件所有者能够运行此脚本程序，可执行（ d）命令
+￼ A.chown root test.sh
+￼ B.chmod g+x test.sh
+￼ C.chmod ug+w test.sh
+￼ D.chmod u+x test.sh
+32.
+(单选题)自定义yum源时可以利用（c ）命令生成仓库数据文件
+￼ A.yumrepo
+￼ B.addrepo
+￼ C.createrepo
+￼ D.yum-repo
+33.
+(单选题)kickarstart 应答文件的包名是（a ）
+￼ A.system-config-kickstart
+￼ B.kickstart
+￼ C.system-config
+￼ D.system-kickstart
+34.
+(单选题)在Linux 系统中，执行 tail –n 5 /var/log/messages 后得到的其中一行信息如下： 
+Oct 29 13:19:48 web5 dhclient: DHCPACK from 192.168.8.254 (xid=0x7c.. ..)，其中的dhclient指的是（ b）
+￼ A.消息内容
+￼ B.程序名
+￼ C.主机名
+￼ D.时间标签
+35.
+(单选题)在配置DNS服务的时候，正向解析记录的资源类型是（ b）
+￼ A.PTR
+￼ B.A
+￼ C.CNAME
+￼ D.SOA
+36.
+(单选题)配置Postfix邮件服务时，以下（c ）参数表示外发邮件时的发件域地址
+￼ A.inet_interfaces
+￼ B.mydomain
+￼ C.myorigin
+￼ D.mydestination
+37.
+(单选题)Linux命令行中，对多个命令进行逻辑分隔时，仅前一个命令成功才执行
+下一个命令，应该使用什么分隔符（c ）？
+￼ A.&
+￼ B.%
+￼ C.&&
+￼ D.|
+38.
+(单选题)光盘的系统类型为(b )
+￼ A.xfs
+￼ B.iso9660
+￼ C.iso9600
+￼ D.defaults
+39.
+(单选题)在互联网应用中，当客户机浏览器解析一个网站域名的IP地址时，DNS
+服务器响应此查询请求的端口应该是（a ）
+￼ A.TCP 53
+￼ B.UDP 53
+￼ C.TCP 67
+￼ D.UDP 67
+40.
+(单选题)在pxe一键装机中客户端由网卡pxe启动完毕后，级接近查询目标，最后在有目标域名的DNS服务器上找到相主机引导权交给（b ）
+￼ A.syslinux
+￼ B.pxelinux.0
+￼ C.tftp
+￼ D.http
+41.
+(多选题)Shell脚本中使用如下哪些语句可以实现循环功能（bc ）？
+￼ A.if
+￼ B.while
+￼ C.for
+￼ D.case
+42.
+(多选题)杀死一个进程的方式有(abc)
+￼ A.kill -9 PID
+￼ B.killall -9 进程名
+￼ C.Ctrl+z
+￼ D.pkill -9 -u 用户名
+43.
+(多选题)Apache虚拟主机的类型包括（bcd ）级接近查询目标，最后在有目标域名的DNS服务器上找到相
+￼ A.基于路由的虚拟主机
+￼ B.基于域名的虚拟主机
+￼ C.基于ip的虚拟主机
+￼ D.基于端口的虚拟主机
+44.
+(多选题)Bash具有记录命令历史的功能，哪些方式可以定义最大历史记录的
+数量(ac )?
+￼ A.命令行直接执行：HISTSIZE=500
+￼ B.命令行直接执行：history=500
+￼ C.修改/etc/profile文件，设置HISTSIZE=500
+￼ D.修改/etc/profile文件，设置history=500
+45.
+(多选题)vim编辑器中调到首行的快捷键是( bc)
+￼ A.GG
+￼ B.gg
+￼ C.1G
+￼ D.1g
+46.
+(多选题)快速构建WSGI动态网站是需要安装那些包（ ad）
+￼ A.httpd
+￼ B.MYSQL
+￼ C.PHP
+￼ D.mod_wsgi
+47.
+(多选题)安装源码包时需要安装编译工具有（ cd）
+￼ A.C++
+￼ B.g++
+￼ C.gcc
+￼ D.make
+48.
+(多选题)关于Linux系统的常见目录，以下描述正确的是（ ac）
+￼ A./boot目录用来存放启动相关文件
+￼ B./root目录是所有用户的家目录
+￼ C./tmp是临时目录
+￼ D./dev目录用来存放配置文件
+49.
+(多选题)在Linux系统中，用户root依次执行下列操作： 
+chmod 777 /dir；chmod o+t /dir；touch /dir/root.file ， 
+则可知（ab ）
+￼ A.普通账户可以在/dir目录下创建文件
+￼ B.普通账户可以删除在/dir目录下自己创建的文件
+￼ C.普通账户可以删除文件root.file
+￼ D.普通账户可删除/dir目录下的所有文件
+50.
+(多选题)如下哪条命令（ab ），可以对变量i进行自加2的操作。
+￼ A.let i+=2
+￼ B.let i=i+2
+￼ C.let i++
+￼ D.let ++i
+￼交卷
+关于我们 | 服务支持 | 咨询与反馈 | 最新动态 | 代理合作 | 名师堂
+达内时代科技集团有限公司 2013-2014
+中关村中心企业合作：62117598 UID中心企业合作：82168421、82168831
