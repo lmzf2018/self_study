@@ -1,0 +1,554 @@
+
+1.
+(单选题)Shell脚本中可以进行小数运算的命令工具是（ ）？
+￼ A.bc
+￼ B.gc
+￼ C.tc
+￼ D.tc
+
+正确答案：A
+bc命令支持小数运算
+2.
+(单选题)使用test进行条件判断，测试两个数字的关系时，大于或等于用（ ）表示。
+￼ A.-le
+￼ B.-gt
+￼ C.-ge
+￼ D.-eq
+
+正确答案：C
+-le是小于等于，-gt是大于，-ge是大于等于，-eq是等于
+3.
+(单选题)使用bind配置域名系统时，主配置文件位于（ ）
+￼ A./var/named/named.local
+￼ B./var/named/named.root
+￼ C./etc/named.conf
+￼ D./etc/named/name.conf
+
+正确答案：C
+A选项为地址库文件，B选项为地址库文件，D选项路径错误
+4.
+(单选题)启动DNS服务的命令是( )
+￼ A.systemctl start DNS
+￼ B.systemctl start named
+￼ C.systemctl start bind
+￼ D.systemctl start bind-chroot
+
+正确答案：B
+A选项服务名错误，C选项服务名错误，D，选项服务名错误
+5.
+(单选题)当需要安装Linux系统的服务器数量比较多时，选择（ ）安装方式最好
+￼ A.光盘安装
+￼ B.硬盘安装
+￼ C.PXE + Kickstart无人值守安装
+￼ D.U盘安装
+
+正确答案：C
+网络装机优势在于，可以自动化批量部署服务器操作系统
+6.
+(单选题)在安装并配置了DHCP服务之后，以下（ ）操作可以使配置生效
+￼ A.systemctl restart dhcpd
+￼ B.systemctl stop dhcpd
+￼ C.systemctl enable dhcpd
+￼ D.systemctl status dhcpd
+
+正确答案：A
+B选项关闭dhcpd服务，C选项设置开机自启动，D选项查看当前
+
+dhcpd服务状态
+7.
+(单选题)在常见的Linux日志文件中，以下哪个文件（ ）的作用是记录与系统启动
+相关的消息
+￼ A./var/log/dmesg
+￼ B./var/log/messages
+￼ C./var/log/secure
+￼ D./var/log/maillog
+
+正确答案：A
+B选项记录各种服务公共消息，C选项记录用户登录安全相关，
+
+D选项邮件收发相关信息
+8.
+(单选题)关于Bash Shell的环境变量，以下描述不正确的是（ ）？
+￼ A.脚本文件里定义的临时变量，只在脚本执行过程中有效
+￼ B.使用export可设置全局变量
+￼ C.使用export可设置全局变量
+￼ D.变量名不区分字母大小写
+
+正确答案：D
+变量名可以是字母、数字、下划线（不能数字开始），变量名区
+
+分大小写
+9.
+(单选题)在Linux系统中，要查看系统默认运行模式，可以使用（ ）命令
+￼ A.systemctl get-default
+￼ B.systemctl status
+￼ C.systemctl set-default
+￼ D.systemctl isolate
+
+正确答案：A
+B选项查看服务当前运行状态，C选项修改默认运行模式，D选项
+
+当前直接切换运行模式
+10.
+(单选题)在Linux系统中，执行命令 ls -l test.sh 后，返回结果如下： 
+-rw-rw-r-- 1 zhang root 55 2014-02-21 test.sh，若希望
+文件所有者能够运行此脚本程序，可执行（ ）命令
+￼ A.chown root test.sh
+￼ B.chmod g+x test.sh
+￼ C.chmod ug+w test.sh
+￼ D.chmod u+x test.sh
+
+正确答案：D
+通过题意，test.sh脚本zhang为所有者，所有者本身没有执行
+
+权限，A选项修改所有者身份修改成功后仍然没有执行权限，B选项为所
+
+属组赋予执行权限，C选项赋予写权限与本题无关
+11.
+(单选题)格式化swap分区时使用什么命令( )
+￼ A.mkfs.ext4 分区设备路径
+￼ B.mkfs.xfs 分区设备路径
+￼ C.swapon 分区路径
+￼ D.mkswap分区路径
+
+正确答案：D
+mkfs.ext4格式化ext4文件系统，mkfs.xfs格式化xfs文件系
+
+统，swapon为启用swap交换分区
+12.
+(单选题)在Linux系统中从源代码安装软件时，编译成功后执行安装的命令通常是
+（ ）
+￼ A../configure
+￼ B.make
+￼ C.make all
+￼ D.make install
+
+正确答案：D
+A选项为配置源码包功能或指定安装路径，B选项为编译命令，
+
+C选项没有此操作
+13.
+(单选题)使用命令unzip解压缩 文档时，选项（ ）可以指定解压缩的位置
+￼ A.-r
+￼ B.-d
+￼ C.-f
+￼ D.-C
+
+正确答案：B
+试题解析	A选项unzip无此选项，C选项-f为更新现有的文件，
+
+D选项-C选项区分大小写
+14.
+(单选题)Linux命令行中，对多个命令进行逻辑分隔时，仅前一个命令不成功才
+执行下一个命令，应该使用什么分隔符（ ）？
+￼ A.&
+￼ B.%%
+￼ C.&&
+￼ D.||
+
+正确答案：D
+&&仅前一个命令成功才执行后一个命令
+
+||仅前一个命令失败才执行后一个命令
+
+15.
+(单选题)在vim编辑器的（ ）模式中可以实现录入、退格等编辑操作
+￼ A.退出模式
+￼ B.输入模式
+￼ C.命令模式
+￼ D.末行模式
+
+正确答案：B
+A选项无此模式，C选项此模式一般查看文本文件内容，可以做
+
+一些简单的操作，D选项此模式默认情况下用于保存退出，开启一些功
+
+能等操作
+16.
+(单选题)使用rsync同步操作时，执行（ ）可以将/boot下的内容同步复制到
+/todir目录下。
+￼ A.rsync –a /boot /todir
+￼ B.rsync –a /boot/ /todir/
+￼ C.rsync –a /todir /boot
+￼ D.rsync –a /todir/ /boot/
+
+正确答案：B
+在rsync同步时源目录以 “/”作为结尾，代表同步目录内容，
+
+如果没有以“/”作为结尾，表示同步目录本身，以本身作为源
+17.
+(单选题)在Linux系统中，使用（ ）命令可以查询最近登录失败的用户访问信息
+￼ A.lastb
+￼ B.last
+￼ C.w
+￼ D.who
+
+正确答案：A
+B选项last为登录成功信息，C选项是查看正在登录用户的信息，
+
+D选项查看正在登录用户的粗略信息
+18.
+(单选题)使用vim编辑文件时，若要将第7到10行的内容一次性删除，可以在
+命令模式下先将光标移动到第7行，再使用（ ）按键命令
+￼ A.dd
+￼ B.4dd
+￼ C.de
+￼ D.4de
+
+正确答案：B
+A选项删除一行，C选项删除光标后一部分一般以冒号或空格
+
+界定，D选项也无法删除行
+19.
+(单选题)某公司有www.google.com和www.goojie.com两个站点，使用相同
+的公网IP地址，若要在一台Linux主机中提供两个站点的Web服务，可
+采用的最佳方案为（ ）
+￼ A.安装两个httpd软件包，每个软件包对应一个Web站点
+￼ B.安装一个httpd软件包，使用httpd1.conf、httpd2.conf两个独立配置文件
+￼ C.安装一个httpd软件包，为两个Web站点配置基于域名的虚拟主机
+￼ D.安装一个httpd软件包，为两个Web站点指定基于IP地址的虚拟主机
+
+正确答案：C
+本题考查虚拟Web主机功能，在一台Linux服务器上实现多个
+
+网站，且域名不同。利用基于域名的虚拟Web主机即可实现
+20.
+(单选题)在Linux系统中，以下（ ）不属于YUM软件仓库提供的方式
+￼ A.file://
+￼ B.ftp://
+￼ C.http://
+￼ D.mail://
+
+正确答案：D
+A选项为本地Yum仓库，D选项没有mail提供方式</p>
+21.
+(单选题)在Linux系统中配置httpd服务器时，设置项（ ）用来指定默认的网页
+存放位置
+￼ A.ServerName
+￼ B.DocumentRoot
+￼ C.ServerAdmin
+￼ D.ServerRoot
+
+正确答案：B
+A选项指定的网站域名，C选项指定管理员的邮箱，D选项指
+
+定httpd配置文件根路径
+22.
+(单选题)使用test命令进行判断测试时，如下哪个选项可以判断一个文件或目录
+是否存在( )？
+￼ A.-f
+￼ B.-d
+￼ C.-r
+￼ D.-e
+
+正确答案：D
+-f判断文件是否存在，-d判断目录是否存在，-r判断是否可读，-e判断是否存在（不区分文件或目录）
+23.
+(单选题)在Linux系统中配置httpd服务器时，设置项（ ）用来指定该Web服务
+器的站点名
+￼ A.ServerName
+￼ B.DocumentRoot
+￼ C.ServerAdmin
+￼ D.ServerRoot
+
+正确答案：A
+B选项指定网页文件根目录，C选项指定管理员的邮箱，D选项
+
+指定httpd配置文件根路径
+24.
+(单选题)以下哪种RAID级别必须使用四块及以上磁盘才能实现（ ）
+￼ A.RAID 0
+￼ B.RAID 1
+￼ C.RAID 5
+￼ D.RAID 10
+
+正确答案：D
+A选项至少需要2块磁盘，B选至少需要2块磁盘，C选项至少
+
+需要3块磁盘
+25.
+(单选题)DHCP服务可以为客户机分配多种网络参数，其中不包括（ ）
+￼ A.默认网关地址
+￼ B.动态IP地址
+￼ C.DNS服务器地址
+￼ D.防火墙策略
+
+正确答案：D
+DHCP能够分发网络参数，包括IP地址、网关地址、子网掩码、
+
+广播地址、DNS服务器
+26.
+(单选题)配置bind域名服务时，管理员执行了cp -p /var/named/named.localhost /var/named/tedu.cn.zone操作，
+其中选项-p的作用是（ ）
+￼ A.拷贝连接
+￼ B.保持原文件属性不变
+￼ C.拷贝目录
+￼ D.递归拷贝
+
+正确答案：B
+-p选项是在拷贝是保持源文件属性不变
+27.
+(单选题)在搭建PXE服务器时，用来提供给客户机的网卡引导文件是（ ）
+￼ A.pxelinux.0
+￼ B.ifcfg-eth0
+￼ C.vesamenu.c32
+￼ D.vmlinuz
+
+正确答案：A
+B选项为网卡配置文件与PXE引导无关，C选项为图形引导模块，
+
+D选项启动加载的内核程序
+28.
+(单选题)在Linux系统中从源代码安装软件时，编译的过程由（ ）操作完成
+￼ A../configure
+￼ B.make
+￼ C.make all
+￼ D.make install
+
+正确答案：B
+A选项为配置源码包功能或指定安装路径，C选项没有此操作，
+
+D选项为安装源码包
+29.
+(单选题)在Linux上使用kickarstart生成ks文件yum仓库源ID应设置为（ ）
+￼ A.rhel7
+￼ B.development
+￼ C.默认名称
+￼ D.ksckarstart
+
+正确答案：B
+通过图形工具system-config-kickstart生成ks文件时，软件包
+
+可以选择需要将yum仓库源ID设置为[development]
+30.
+(单选题)在常见的RAID级别中，（ ）的设备冗余度最好，也称为镜像模式
+￼ A.RAID0
+￼ B.RAID1
+￼ C.RAID5
+￼ D.RAID6
+
+正确答案：B
+A选项为条带模式无冗余，C选项是RAID5采用校验算法进行
+
+可靠性的提升，D选项RAID6为RAID5的提升
+31.
+(单选题)在Linux系统中，执行（ ）命令可以把/dev/sdb6格式化成交换分区
+￼ A.fdisk /dev/sdb6
+￼ B.mkfs -t ext3 /dev/sdb6
+￼ C.mkswap /dev/sdb6
+￼ D.format /dev/sdb6
+
+正确答案：C
+A选项fdisk为分区命令，无法完成格式化，B选项为格式化ext3
+
+文件系统，D选项无format命令
+32.
+(单选题)当用户访问www.a.com与www.b.com的时候能够看到不同的网站，
+但是通过DNS解析发现它们的IP地址一样，这个是基于（ ）实现的虚
+拟主机。
+￼ A.MAC地址
+￼ B.IP
+￼ C.域名
+￼ D.端口
+
+正确答案：C
+IP地址一致说明为同一服务器提供多个网站，根据用户访问是
+
+域名不同，所以是基于域名的虚拟Web主机
+33.
+(单选题)kickarstart 应答文件的包名是（ ）
+￼ A.system-config-kickstart
+￼ B.kickstart
+￼ C.system-config
+￼ D.system-kickstart
+
+正确答案：A
+生成自动应答文件为system-config-kickstart，其它均无此包
+34.
+(单选题)自定义yum源时可以利用（ ）命令生成仓库数据文件
+￼ A.yumrepo
+￼ B.addrepo
+￼ C.createrepo
+￼ D.yum-repo
+
+正确答案：C
+ABC无此命令
+35.
+(单选题)在Linux系统中，管理员发现PID为2048的进程没有响应，可以执行（ ）
+命令强行中止该进程
+￼ A.pkill -9 2048
+￼ B.killall +9 2048
+￼ C.kill -9 2048
+￼ D.kill +9 2048
+
+正确答案：C
+A选项pkill命令参数为进程名，B选项killall命令参数为进程名，
+
+D选项 加号错误
+36.
+(单选题)在Linux系统中，若执行 scp dumb bilbo@www.foobar.com: 命令，
+可以实现（ ）功能
+￼ A.将本地计算机“dumb”目录下所有的文件拷贝到远程服务器 www.fobar.com的根目录下，并且登录远程服务器上的密码为“bilbo”
+￼ B.将本地计算机当前目录下的一个名为“dumb”的文件发送到邮件 bilbo@www.foobar.com
+￼ C.将远程服务器www.foobar.com 上用户“bilbo”主目录下的一个名为 “dumb”的文件拷贝到本地计算机当前目录下，并且登录远程服务器上的账号名为 “bilbo”
+￼ D.将本地计算机当前目录下的一个名为“dumb”的文档拷贝到远程主机www.fobar.com中用户 “bilbo”的主目录下
+
+正确答案：D
+题意中scp命令没有-r选项，无法传递目录，所以A选项错误，
+
+B选项错误scp并不是发邮件指令，C选项格式理解错误，不是下载，
+
+而是将本地数据上传
+37.
+(单选题)配置Postfix邮件服务时，以下（ ）参数表示外发邮件时的发件域地址
+￼ A.inet_interfaces
+￼ B.mydomain
+￼ C.myorigin
+￼ D.mydestination
+
+正确答案：C
+A选项指定网络接口，B选项指定本机域名，D指定收件人域名
+
+为本域邮件
+38.
+(单选题)关于硬RAID实现的方式，以下说法正确的是（ ）
+￼ A.主板—>阵列卡—>磁盘—>操作系统—>数据
+￼ B.主板—>磁盘—>阵列卡—>操作系统—>数据
+￼ C.主板—>磁盘—>操作系统—>阵列卡—>数据
+￼ D.主板—>操作系统—>磁盘—>阵列卡—>数据
+
+正确答案：A
+服务器是同过阵列卡来识别磁盘，识别硬盘后才可以安装操作
+
+系统或读取操作系统数据，所以正确的顺序为A选项
+39.
+(单选题)semanage port -a -t http_port_t -p tcp 8909 命令的含义
+是什么( )
+￼ A.在semanage中删除http端口
+￼ B.在semanage中添加http端口
+￼ C.调整SELinux策略，允许Web服务使用8909端口
+￼ D.调整SELinux策略，拒绝Web服务使用8909端口
+
+正确答案：C
+本题考查SELinux策略设置，-a选项代表添加并非删除，作用
+
+是允许Web服务使用8909端口
+40.
+(单选题)在一台Linux服务器上，使用Apache作为Web服务程序，服务器
+名称是www.tarena.com，管理员把所有对外提供的文档放
+在/usr/local/source目录下面，希望远程用户在浏览器中使用
+http://www.tarena.com地址即能访问这些文档，他需要对
+Apache进行（ ）设置。
+￼ A.安装Apache服务器在/usr/local/目录下即可
+￼ B.修改Apache配置文件httpd.conf中的ServerRoot项值为“/usr/local/source”
+￼ C.修改Apache配置文件httpd.conf中的DocumentRoot项值为“/usr/local/source”
+￼ D.修改Apache配置文件httpd.conf中的Listen的值为8000
+
+正确答案：C
+A选项安装目录与网页文件根路径无关，B选项指定httpd服务
+
+配置文件根路径与网页文件根路径无关，D选项指定端口与网页文件根
+
+路径无关
+41.
+(多选题)把命令cp /ISO/1.txt /mnt放入后台的命令是( )
+￼ A.快捷键Ctrl+z
+￼ B.cp /ISO/1.txt /mnt&
+￼ C.cp /ISO/1.txt /mnt $
+￼ D.Ctrl+C
+
+正确答案：AB
+C选项$符号与本题无关，D选项结束当前正在运行的程序
+42.
+(多选题)关于Linux系统的常见目录，以下描述正确的是（ ）
+￼ A./boot目录用来存放启动相关文件
+￼ B./root目录是所有用户的家目录
+￼ C./tmp是临时目录
+￼ D./dev目录用来存放配置文件
+
+正确答案：AC
+B选项为管理员root的家目录，D选项为存放设备文件
+43.
+(多选题)Bash具有记录命令历史的功能，哪些方式可以定义最大历史记录的
+数量( )?
+￼ A.命令行直接执行：HISTSIZE=500
+￼ B.命令行直接执行：history=500
+￼ C.修改/etc/profile文件，设置HISTSIZE=500
+￼ D.修改/etc/profile文件，设置history=500
+
+正确答案：AC
+HISTSIZE=500可以临时修改，/etc/profile可以永久修改
+44.
+(多选题)vim编辑器中调到首行的快捷键是( )
+￼ A.GG
+￼ B.gg
+￼ C.1G
+￼ D.1g
+
+正确答案：BC
+A选项跳转到末行，D选项1g无作用
+45.
+(多选题)如下哪条命令（ ），可以对变量i进行自加2的操作。
+￼ A.let i+=2
+￼ B.let i=i+2
+￼ C.let i++
+￼ D.let ++i
+
+正确答案：AB
+let i+=2是let i=i+2的简写，两者都支持自加2
+46.
+(多选题)快速构建WSGI动态网站是需要安装那些包（ ）
+￼ A.httpd
+￼ B.MYSQL
+￼ C.PHP
+￼ D.mod_wsgi
+
+正确答案：AD
+httpd软件为Web服务器，mod_wsgi为提供Python代码的
+
+识别转义
+47.
+(多选题)杀死一个进程的方式有( )
+￼ A.kill -9 PID
+￼ B.killall -9 进程名
+￼ C.Ctrl+z日
+￼ D.pkill -9 -u 用户名
+
+正确答案：AB
+C选项将进程或程序暂停放入后台，D选项杀死一个用户开启的
+
+所有的进程
+48.
+(多选题)在Linux系统中，用户root依次执行下列操作： 
+chmod 777 /dir；chmod o+t /dir；touch /dir/root.file ， 
+则可知（ ）
+￼ A.普通账户可以在/dir目录下创建文件
+￼ B.普通账户可以删除在/dir目录下自己创建的文件
+￼ C.普通账户可以删除文件root.file
+￼ D.普通账户可删除/dir目录下的所有文件
+
+正确答案：AB
+权限为777说明其他人具备rwx，所以可以新建文档，但由于
+
+有t权限，该权限限制删除非本人的文档，所以CD选项均错误
+49.
+(多选题)安装源码包时需要安装编译工具有（ ）
+￼ A.C++
+￼ B.g++
+￼ C.gcc
+￼ D.make
+
+正确答案：CD
+A选项无此软件包，B选项无此软件包
+50.
+(多选题)Apache虚拟主机的类型包括（ ）
+￼ A.基于路由的虚拟主机
+￼ B.基于域名的虚拟主机
+￼ C.基于ip的虚拟主机
+￼ D.基于端口的虚拟主机
+
+正确答案：BCD
+虚拟Web主机没有基于路由的类型
+关于我们 | 服务支持 | 咨询与反馈 | 最新动态 | 代理合作 | 名师堂
+达内时代科技集团有限公司 2013-2014
+中关村中心企业合作：62117598 UID中心企业合作：82168421、82168831

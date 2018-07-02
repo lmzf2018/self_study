@@ -1,0 +1,488 @@
+
+1.
+(单选题)在Shell脚本中，若要屏蔽终端的输出默认显示功能，可以执行（ ）命令？
+ A.set tty -echo
+ B.-echo
+ C.stty echo
+ D.stty -echo
+
+正确答案：D
+read -p默认读取的密码为明文，通过stty -echo可以防止密码输出
+2.
+(单选题)关于Bash Shell的环境变量，以下描述不正确的是（ ）？
+ A.脚本文件里定义的临时变量，只在脚本执行过程中有效
+ B.使用export可设置全局变量
+ C.使用export可设置全局变量
+ D.变量名不区分字母大小写
+
+正确答案：D
+变量名可以是字母、数字、下划线（不能数字开始），变量名区
+
+分大小写
+3.
+(单选题)Shell脚本中，使用什么语句可以直接退出脚本（ ）？
+ A.kill
+ B.q
+ C.quit
+ D.exit
+
+正确答案：D
+break中断整个循环，continue中断当前一次循环，exit中断整个脚本
+4.
+(单选题)awk命令使用（ ）变量，存储当前正内容的行号。
+ A.NR
+ B.NU
+ C.NF
+ D.NP
+
+正确答案：A
+awk中NR代表当前行，NF代表当前行有几列
+5.
+(单选题)在使用passwd命令时，下列哪个选项（ ）可以查看账户的密码状态。
+ A.-S
+ B.-L
+ C.-M
+ D.-U
+
+正确答案：A
+passwd -s 用户名 ,可以查看账户状态
+6.
+(单选题)在命令行中执行如下命令： 
+#sed '2d' a.txt 
+关于最后的执行结果，以下描述正确的是（ ）
+ A.从文件的第2行开始删除行
+ B.共删除1行
+ C.删除文件中的第1~2行
+ D.命令语法格式错误
+
+正确答案：B
+2d代表删除第2行
+7.
+(单选题)用户使用哪个命令生成登录sshd服务的秘钥对，下面说法正确的选项
+是（ ）。
+ A.md5sum
+ B.gpg
+ C.openssl
+ D.ssh-keygen
+
+正确答案：D
+ssh-keygen可以自动生成密钥对
+8.
+(单选题)下列哪个选项（ ）是sudo提权的主配置文件
+ A./etc/sysconf/sudoers
+ B./etc/sudo.conf
+ C./etc/sudoers
+ D./etc/sudo
+
+正确答案：C
+/etc/sudoers是sudo命令的主配置文件
+9.
+(单选题)在使用chage命令时，下列哪个选项（ ）可以实现用户首次登陆系统
+强制修改密码的功能？
+ A.-E
+ B.-W
+ C.-l
+ D.-d
+
+正确答案：D
+chage -d 0 用户名 ，可以强制用户修改密码
+10.
+(单选题)下列哪个选项（ ）对应的命令，可以查看当前系统SELinux的状态信息。
+ A.getenforce
+ B.setenforce
+ C.setsebool
+ D.sestatus --list
+
+正确答案：A
+getenforce可以查看状态
+
+setenforce可以设置selinux
+
+11.
+(单选题)Zabbix监控获得的数据信息存放在哪里了（ ）？
+ A.mysql
+ B.excel
+ C.zabbix.log
+ D.zabbix.conf
+
+正确答案：A
+Zabbix默认将数据存储在mysql数据库中
+12.
+(单选题)使用下列哪个选项（ ）可以修改文件的安全上下文。
+ A.chcon
+ B.restore
+ C.setsebool
+ D.setcontext
+
+正确答案：A
+chcon命令可以修改SELinux安全标签
+13.
+(单选题)Linux命令行中，对多个命令进行逻辑分隔时，仅前一个命令不成功才
+执行下一个命令，应该使用什么分隔符（ ）？
+ A.&
+ B.%%
+ C.&&
+ D.||
+
+正确答案：D
+&&仅前一个命令成功才执行后一个命令
+
+||仅前一个命令失败才执行后一个命令
+
+14.
+(单选题)HTTP协议返回码中，404代码的含义是什么（ ）
+ A.权限不足
+ B.服务器错误
+ C.文件不存在
+ D.访问被拒绝
+
+正确答案：C
+http返回404代码，表示客户请求的页面不存在
+15.
+(单选题)Nginx配置文件中（ ）指令可以定义客户端浏览器缓存数据的时间。
+ A.cached
+ B.expires
+ C.ttl
+ D.time
+
+正确答案：B
+expires 30d可以设置缓存30天
+16.
+(单选题)使用test命令进行判断测试时，如下哪个选项可以判断一个文件或目录
+是否存在( )？
+ A.-f
+ B.-d
+ C.-r
+ D.-e
+
+正确答案：D
+-f判断文件是否存在，-d判断目录是否存在，-r判断是否可读，-e判断是否存在（不区分文件或目录）
+17.
+(单选题)以下哪个选项（ ）可以删除文件中所有包含数字的行？
+ A.sed -i '0-9d' a.txt
+ B.sed -i '/0-9/d' a.txt
+ C.sed -i '[0-9]d' a.txt
+ D.sed -i '/[0-9]/d' a.txt
+
+正确答案：D
+正则[0-9]代表任意数字
+18.
+(单选题)awk命令使用（ ）变量可以读取当前行的整行内容。
+ A.$1
+ B.$3
+ C.$0
+ D.$2
+
+正确答案：C
+awk中$1代表第1列,$2代表第2列,$0代表整行
+19.
+(单选题)memcached服务默认监听的端口是（　 ）
+ A.11221
+ B.11211
+ C.22112
+ D.22121
+
+正确答案：B
+memcached默认端口为11211
+20.
+(单选题)以下哪个选项（ ）可以删除文件test.txt中每一行里的所有数字。
+ A.sed -i 's/[0-9]//' test.txt
+ B.sed -ri 's/[0-9]+//g' test.txt
+ C.sed -i 's/[0-9]+//g' test.txt
+ D.sed -ri 's/[0-9]+//' test.txt
+
+正确答案：B
+不使用g默认仅替换第1个数字，不使用-r选项默认不支持扩展正则，+符号输入扩展正则，代表前面的内容至少出现了一次
+21.
+(单选题)用户可以使用（ ）命令查看自己可以使用的sudo命令
+ A.sudo -l
+ B.sudo status
+ C.getsudo
+ D.sudo --print
+
+正确答案：A
+sudo -l可以查看自己可以使用的sudo命令
+22.
+(单选题)默认PHP无法连接memcached服务器进行数据库的读写操作，需要为
+其安装（　 ）扩展才可以实现该功能
+ A.extention
+ B.so
+ C.dll
+ D.php-pecl-memcache
+
+正确答案：D
+php需要安装php-pecl-memcache模块后才可以连接memcached数据库
+23.
+(单选题)awk命令如何输出当前读入行的最后一列内容（ ）？
+ A.print $NR
+ B.print $NF
+ C.print $NP
+ D.print $NN
+
+正确答案：B
+awk中NF代表当前行有几列,$NF就是最后1列
+24.
+(单选题)下列哪个选项（ ）对应的配置文件，是添加新账户的默认配置文件。
+ A./etc/sysconf.conf
+ B./etc/user.conf
+ C./etc/login.defs
+ D./etc/passwd
+
+正确答案：C
+/etc/login.defs定义了默认密码有效期，密码有效长度等参
+
+数
+25.
+(单选题)Linux操作系统对能够打开的最大文件数量进行了限制，默认为1024，
+通过哪个命令可以调整这个限制（ ）？
+ A.limit
+ B.ulimit
+ C.glimit
+ D.climit
+
+正确答案：B
+ulimit -Hn可以修改最大文件数量
+26.
+(单选题)在（ ）文件中可以启用SElinux
+ A./selinux
+ B./etc/selinux/config
+ C./etc/selinux
+ D./etc/selinux.conf
+
+正确答案：B
+/etc/selinux/config是主配置文件
+27.
+(单选题)将本地修改后的副本提交至subversion版本仓库的指令是（ ）
+ A.upload
+ B.commit
+ C.update
+ D.import
+
+正确答案：B
+svn ci或svn commit可以提交代码到服务器
+28.
+(单选题)下列选项中（ ）是Zabbix_server服务的主配置文件。
+ A.zabbix_agentd.conf
+ B.zabbix_agent.conf
+ C.zabbix_server.conf
+ D.zabbix.conf
+
+正确答案：C
+zabbix_server.conf是默认的配置文件
+29.
+(单选题)关于命令 hostname=www.tarena.com; echo ${hostname%%.*} 的执行结果，以下描述正确的是（ ）。
+ A.tarena.com
+ B.www
+ C.com
+ D.www.tarena
+
+正确答案：B
+echo ${变量#}可以掐头；echo ${变量%}可以去尾
+30.
+(单选题)命令行中执行如下命令： 
+#sed '3d;6a hello' a.txt 
+关于最后执行的执行结果，以下描述正确的是（ ）?
+ A.把文件的第3行删除，在第6行前面插入hello
+ B.把文件的第3行删除，在第6行后面追加hello
+ C.把文件的第6行删除，在第3行后面插入hello
+ D.把文件的第6行删除，在第3行后面插入hello
+
+正确答案：B
+d指令是删除，a指令是追加
+31.
+(单选题)给文件加（ ）属性后，仅可以使用追加的方式向文件内添加新内容。
+ A.i
+ B.a
+ C.s
+ D.e
+
+正确答案：B
++i锁定文件，+a仅可追加
+32.
+(单选题)若执行如下命令 
+#head -5 /etc/passwd | awk -F: 'END{print NR,NF}' 
+则最后输出的结果是（ ）。
+ A.1 7
+ B.4 7
+ C.3 7
+ D.5 7
+
+正确答案：D
+awk的END{}指令仅在读取完文件后才执行，所以NR当前行的
+
+行号为5，NF为列共7列
+33.
+(单选题)启动memcached服务时，使用什么（　 ）选项可以指定其所占用的
+内存容量大小。
+ A.-m
+ B.-u
+ C.-l
+ D.-v
+
+正确答案：A
+-m 容量大小（memory内存）
+34.
+(单选题)Shell脚本中使用哪个命令可以对数据进行排序（ ）？
+ A.uniq
+ B.more
+ C.sed
+ D.sort
+
+正确答案：D
+Linux中sort命令可以将数据排序
+35.
+(单选题)Shell脚本中使用，什么命令可以取消一个已经定义的变量( )？
+ A.unset 变量名
+ B.set 变量名
+ C.delete 变量名
+ D.clear 变量名
+
+正确答案：A
+取消变量可以使用unset命令
+36.
+(单选题)在启动memcached时，什么选项（ ）用来限制memcached服务的
+最大连接数？
+ A.-m
+ B.-c
+ C.-n
+ D.-d
+
+正确答案：B
+-c 数量（simultaneous connections并发连接数）
+37.
+(单选题)使用svn命令查看版本库中代码的修改历史，需要的具体指令是什么
+（ ）？
+ A.log
+ B.history
+ C.info
+ D.his
+
+正确答案：A
+svn log可以查看版本控制的修改历史
+38.
+(单选题)下列选项中（ ）是Zabbix_server服务默认监听的端口号。
+ A.10050
+ B.10500
+ C.10051
+ D.10055
+
+正确答案：C
+zabbix_agent默认是10050，zabbix_server默认是10051
+39.
+(单选题)使用什么（ 　）指令可以清空memcached数据库中的所有数据。
+ A.flush
+ B.flush_all
+ C.delete
+ D.delete_all
+
+正确答案：B
+执行flush_all命令可以清空所有memcached数据
+40.
+(单选题)若执行如下命令 
+x=10;unset x;y=${x:-30};echo $y 
+则最后的输出结果是（ ）。
+ A.10
+ B.30
+ C.0
+ D.无值
+
+正确答案：B
+${x:-30}这个是看x有没有值，有值就返回x的值，没有就返回30
+41.
+(多选题)Shell脚本中使用如下哪些语句可以实现循环功能（ ）？
+ A.if
+ B.while
+ C.for
+ D.case
+
+正确答案：BC
+在shell脚本中可以使用for或while执行循环
+42.
+(多选题)下列关于Shell脚本中的if判断语句，说法正确的是（ ）？
+ A.仅支持单分支条件判断
+ B.支持单分支条件判断
+ C.不支持多分支条件判断
+ D.支持多分支条件判断
+
+正确答案：BD
+shell的if判断支持单分支、双分支、多分支判断
+43.
+(多选题)下列哪些软件（ ）能够提供监控服务
+ A.Cacti
+ B.Nagios
+ C.Zabbix
+ D.nmap
+
+正确答案：ABC
+常用监控软件有：cacti、nagios、zabbix
+44.
+(多选题)Bash具有记录命令历史的功能，哪些方式可以定义最大历史记录的
+数量( )?
+ A.命令行直接执行：HISTSIZE=500
+ B.命令行直接执行：history=500
+ C.修改/etc/profile文件，设置HISTSIZE=500
+ D.修改/etc/profile文件，设置history=500
+
+正确答案：AC
+HISTSIZE=500可以临时修改，/etc/profile可以永久修改
+45.
+(多选题)awk命令中条件判断的”逻辑与”和”逻辑或”分别使用（ ）表示。
+ A.&
+ B.&&
+ C.||
+ D.|
+
+正确答案：BC
+&&代表逻辑与，||代表逻辑或
+46.
+(多选题)如下哪条命令（ ），可以对变量i进行自加2的操作。
+ A.let i+=2
+ B.let i=i+2
+ C.let i++
+ D.let ++i
+
+正确答案：AB
+let i+=2是let i=i+2的简写，两者都支持自加2
+47.
+(多选题)zabbix监控服务，发送监控报警消息的方式有哪些（ ）
+ A.只能使用邮件发送报警消息
+ B.打电话
+ C.短信
+ D.邮件
+
+正确答案：CD
+Zabbix支持短信和邮件发送报警信息
+48.
+(多选题)常见的版本控制软件有哪些（ ）？
+ A.soft
+ B.version
+ C.Subversion
+ D.git
+
+正确答案：CD
+svn与git都是目前主流的版本控制软件
+49.
+(多选题)Varnish支持将缓存数据存储在哪些设备（ ）？
+ A.内存
+ B.硬盘
+ C.CPU一级缓存
+ D.显存
+
+正确答案：AB
+Varnish既可以将数据存硬盘也可以将缓存存内存中
+50.
+(多选题)下列选项中是对称加密算法有（ ）
+ A.DES
+ B.AES
+ C.RSA
+ D.DSA
+
+正确答案：AB
+AES和DES是对称算法，RSA和DSA是非对称算法
+关于我们 | 服务支持 | 咨询与反馈 | 最新动态 | 代理合作 | 名师堂
+达内时代科技集团有限公司 2013-2014
+中关村中心企业合作：62117598 UID中心企业合作：82168421、82168831
+
+
+
+
