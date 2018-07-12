@@ -427,17 +427,1058 @@ mysql> select * from t11;
 +----------+--------+------+
 1 row in set (0.00 sec)
 
+auto_increment:
 
-好好学习 天天向上
-
-
-
-
+mysql> create table t( id  int(2)  primary key auto_increment,  name char(15) not null ,  age tinyint(2)  unsigned  default 19, pay  float(7,2) default 26800);
+Query OK, 0 rows affected (1.37 sec)
 
 
+mysql> desc t;
++-------+---------------------+------+-----+----------+----------------+
+| Field | Type                | Null | Key | Default  | Extra          |
++-------+---------------------+------+-----+----------+----------------+
+| id    | int(2)              | NO   | PRI | NULL     | auto_increment |
+| name  | char(15)            | NO   |     | NULL     |                |
+| age   | tinyint(2) unsigned | YES  |     | 19       |                |
+| pay   | float(7,2)          | YES  |     | 26800.00 |                |
++-------+---------------------+------+-----+----------+----------------+
+4 rows in set (0.01 sec)
+
+mysql> insert into t(name,age,pay)  values("tom",21,18888);
+Query OK, 1 row affected (0.05 sec)
+
+
+mysql> select *  from  t;
++----+------+------+----------+
+| id | name | age  | pay      |
++----+------+------+----------+
+|  1 | tom  |   21 | 18888.00 |
++----+------+------+----------+
+1 row in set (0.00 sec)
+
+mysql> insert into t(name,age,pay)  values("harry",26,18888);
+Query OK, 1 row affected (0.07 sec)
+
+mysql> select *  from  t;
++----+-------+------+----------+
+| id | name  | age  | pay      |
++----+-------+------+----------+
+|  1 | tom   |   21 | 18888.00 |
+|  2 | harry |   26 | 18888.00 |
++----+-------+------+----------+
+2 rows in set (0.00 sec)
+
+
+mysql> insert into t values(7,"harry",26,18888);
+Query OK, 1 row affected (0.05 sec)
++-------+---------------------+------+-----+----------+----------------+
+| Field | Type                | Null | Key | Default  | Extra          |
++-------+---------------------+------+-----+----------+----------------+
+| id    | int(2)              | NO   | PRI | NULL     | auto_increment |
+| name  | char(15)            | NO   |     | NULL     |                |
+| age   | tinyint(2) unsigned | YES  |     | 19       |                |
+| pay   | float(7,2)          | YES  |     | 26800.00 |                |
++-------+---------------------+------+-----+----------+----------------+
+4 rows in set (0.01 sec)
+
+mysql> insert into t(name,age,pay)  values("tom",21,18888);
+Query OK, 1 row affected (0.05 sec)
+
+mysql> desc t;
++-------+---------------------+------+-----+----------+----------------+
+| Field | Type                | Null | Key | Default  | Extra          |
++-------+---------------------+------+-----+----------+----------------+
+| id    | int(2)              | NO   | PRI | NULL     | auto_increment |
+| name  | char(15)            | NO   |     | NULL     |                |
+| age   | tinyint(2) unsigned | YES  |     | 19       |                |
+| pay   | float(7,2)          | YES  |     | 26800.00 |                |
++-------+---------------------+------+-----+----------+----------------+
+4 rows in set (0.00 sec)
+
+mysql> select *  from  t;
++----+-------+------+----------+
+| id | name  | age  | pay      |
++----+-------+------+----------+
+|  1 | tom   |   21 | 18888.00 |
+|  2 | harry |   26 | 18888.00 |
+|  7 | harry |   26 | 18888.00 |
++----+-------+------+----------+
+3 rows in set (0.01 sec)
+
+mysql> insert into t(name,age,pay)  values("ok",16,18888);
+Query OK, 1 row affected (0.05 sec)
+
+mysql> select *  from  t;
++----+-------+------+----------+
+| id | name  | age  | pay      |
++----+-------+------+----------+
+|  1 | tom   |   21 | 18888.00 |
+|  2 | harry |   26 | 18888.00 |
+|  7 | harry |   26 | 18888.00 |
+|  8 | ok    |   16 | 18888.00 |
++----+-------+------+----------+
+4 rows in set (0.00 sec)
+
+mysql> insert into t values(null,"harry",26,18888);
+Query OK, 1 row affected (0.05 sec)
+
+mysql> select *  from  t;
++----+-------+------+----------+
+| id | name  | age  | pay      |
++----+-------+------+----------+
+|  1 | tom   |   21 | 18888.00 |
+|  2 | harry |   26 | 18888.00 |
+|  7 | harry |   26 | 18888.00 |
+|  8 | ok    |   16 | 18888.00 |
+|  9 | harry |   26 | 18888.00 |
++----+-------+------+----------+
+5 rows in set (0.01 sec)
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+外键:让当前表字段的值在另一个表中字段值的范围内选择
+
+使用外键的条件:
+-表的存储引擎必须是innodb
+-字段类型要一致
+-被参照字段必须要是索引类型的一种 (primary key)
+
+
+mysql> create table  yginfo (yg_id int(2) primary key auto_increment, name char(15))engine=innodb;
+Query OK, 0 rows affected (0.61 sec)
+
+mysql> desc yginfo;
++-------+----------+------+-----+---------+----------------+
+| Field | Type     | Null | Key | Default | Extra          |
++-------+----------+------+-----+---------+----------------+
+| yg_id | int(2)   | NO   | PRI | NULL    | auto_increment |
+| name  | char(15) | YES  |     | NULL    |                |
++-------+----------+------+-----+---------+----------------+
+2 rows in set (0.00 sec)
+
+
+mysql> insert into yginfo(name) values("bob");
+Query OK, 1 row affected (0.33 sec)
+
+mysql> select *  from yginfo;
++-------+------+
+| yg_id | name |
++-------+------+
+|     1 | bob  |
++-------+------+
+1 row in set (0.00 sec)
+
+mysql> insert into yginfo(name) values("bob");
+Query OK, 1 row affected (0.07 sec)
+
+mysql> select *  from yginfo;
++-------+------+
+| yg_id | name |
++-------+------+
+|     1 | bob  |
+|     2 | bob  |
++-------+------+
+2 rows in set (0.00 sec)
+
+mysql> insert into yginfo(name) values("lucy");
+Query OK, 1 row affected (0.08 sec)
+
+mysql> select *  from yginfo;
++-------+------+
+| yg_id | name |
++-------+------+
+|     1 | bob  |
+|     2 | bob  |
+|     3 | lucy |
++-------+------+
+3 rows in set (0.00 sec)
+
+mysql> create table gztab(gz_id int(2),pay float(7,2),foreign  key(gz_id)  references yginfo(yg_id) on delete cascade  on  update cascade)engine=innodb;
+Query OK, 0 rows affected (0.30 sec)
 
 
 
+mysql> desc gztab;
++-------+------------+------+-----+---------+-------+
+| Field | Type       | Null | Key | Default | Extra |
++-------+------------+------+-----+---------+-------+
+| gz_id | int(2)     | YES  | MUL | NULL    |       |
+| pay   | float(7,2) | YES  |     | NULL    |       |
++-------+------------+------+-----+---------+-------+
+2 rows in set (0.00 sec)
+
+mysql> show  create  table gztab;
++-------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Table | Create Table                                                                                                                                                                                                                                                               |
++-------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| gztab | CREATE TABLE `gztab` (
+  `gz_id` int(2) DEFAULT NULL,
+  `pay` float(7,2) DEFAULT NULL,
+  KEY `gz_id` (`gz_id`),
+  CONSTRAINT `gztab_ibfk_1` FOREIGN KEY (`gz_id`) REFERENCES `yginfo` (`yg_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 |
++-------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+1 row in set (0.00 sec)
+
+
+mysql> select *  from gztab;
+Empty set (0.00 sec)
+
+
+mysql> insert into gztab values (1,20000);
+Query OK, 1 row affected (0.05 sec)
+
+mysql> select * from gztab;
++-------+----------+
+| gz_id | pay      |
++-------+----------+
+|     1 | 20000.00 |
++-------+----------+
+1 row in set (0.00 sec)
+
+mysql> insert into gztab values (2,27000);
+Query OK, 1 row affected (0.04 sec)
+
+mysql> insert into gztab values (3,29900);
+Query OK, 1 row affected (0.05 sec)
+
+mysql> select * from gztab;
++-------+----------+
+| gz_id | pay      |
++-------+----------+
+|     1 | 20000.00 |
+|     2 | 27000.00 |
+|     3 | 29900.00 |
++-------+----------+
+3 rows in set (0.00 sec)
+
+mysql> insert into gztab values (4,89900);
+ERROR 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`db3`.`gztab`, CONSTRAINT `gztab_ibfk_1` FOREIGN KEY (`gz_id`) REFERENCES `yginfo` (`yg_id`) ON DELETE CASCADE ON UPDATE CASCADE)
+
+
+mysql> update yginfo set yg_id=7  where yg_id=2;
+Query OK, 1 row affected (0.12 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select *  from  yginfo;
++-------+------+
+| yg_id | name |
++-------+------+
+|     1 | bob  |
+|     3 | lucy |
+|     7 | bob  |
++-------+------+
+3 rows in set (0.00 sec)
+
+
+mysql> select *  from  gztab;
++-------+----------+
+| gz_id | pay      |
++-------+----------+
+|     1 | 20000.00 |
+|     7 | 27000.00 |
+|     3 | 29900.00 |
++-------+----------+
+3 rows in set (0.00 sec)
+
+mysql> delete from yginfo where yg_id=3;     //Delete  from   表名;                    //删除表记录
+Query OK, 1 row affected (0.06 sec)
+
+mysql> select *  from  yginfo;
++-------+------+
+| yg_id | name |
++-------+------+
+|     1 | bob  |
+|     7 | bob  |
++-------+------+
+2 rows in set (0.00 sec)
+
+mysql> select *  from  gztab;
++-------+----------+
+| gz_id | pay      |
++-------+----------+
+|     1 | 20000.00 |
+|     7 | 27000.00 |
++-------+----------+
+2 rows in set (0.00 sec)
+
+######################################################
+
+
+数据导入:把系统文件的内容存储到数据库服务器的表里. 有格式规律
+
+
+数据导出:把数据库服务器的表里的记录存储到习题文件里
+
+
+导入,导出数据文件存储路径  默认是 /var/lib/mysql-files
+
+
+mysql>show variables like  "secure_file_priv";
+ ----------------------->>/var/lib/mysql-files
+
+mysql> show variables  like "secure_file_priv";
++------------------+-----------------------+
+| Variable_name    | Value                 |
++------------------+-----------------------+
+| secure_file_priv | /var/lib/mysql-files/ |
++------------------+-----------------------+
+1 row in set (0.00 sec)
+
+
+
+修改默认文件存储路径
+[root@host50 ~]# mkdir  /mydata
+[root@host50 ~]# chown  mysql  /mydata
+[root@host50 ~]# vim /etc/my.cnf
+[mysqld]
+secure_file_priv="/mydata"
+:x
+systemctl  restart  mysqld
+
+mysql> show variables  like "secure_file_priv";
++------------------+----------+
+| Variable_name    | Value    |
++------------------+----------+
+| secure_file_priv | /mydata/ |
++------------------+----------+
+1 row in set (0.01 sec)
+
+数据导入:
+把系统文件拷贝指定的目录下
+创建存储文件内容的表
+导入数据(;命令格式)
+
+
+数据库里执行命令加 system:
+mysql> system  cp  /etc/passwd  /mydata
+mysql> system ls  /mydata
+passwd
+
+create table db3.user(
+name char(50),
+password char(1),
+uid int(2),
+gid int(2),
+comment varchar(150),
+homedir  char(150),
+shell char(150),
+index(name)
+);
+
+
+mysql> load  data infile "/mydata/passwd" into table db3.user fields terminated by ":"  lines terminated by "\n";
+
+
+mysql>  load  data infile "/mydata/passwd" into table db3.user fields terminated by ":"  lines terminated by "\n";
+Query OK, 42 rows affected (0.07 sec)
+Records: 42  Deleted: 0  Skipped: 0  Warnings: 0
+
+mysql> select  *  from  user;
++---------------------+----------+-------+-------+-----------------------------------------------------------------+---------------------------+----------------+
+| name                | password | uid   | gid   | comment                                                         | homedir                   | shell          |
++---------------------+----------+-------+-------+-----------------------------------------------------------------+---------------------------+----------------+
+| root                | x        |     0 |     0 | root                                                            | /root                     | /bin/bash      |
+| bin                 | x        |     1 |     1 | bin                                                             | /bin                      | /sbin/nologin  |
+| daemon              | x        |     2 |     2 | daemon                                                          | /sbin                     | /sbin/nologin  |
+| adm                 | x        |     3 |     4 | adm                                                             | /var/adm                  | /sbin/nologin  |
+| lp                  | x        |     4 |     7 | lp                                                              | /var/spool/lpd            | /sbin/nologin  |
+| sync                | x        |     5 |     0 | sync                                                            | /sbin                     | /bin/sync      |
+| shutdown            | x        |     6 |     0 | shutdown                                                        | /sbin                     | /sbin/shutdown |
+| halt                | x        |     7 |     0 | halt                                                            | /sbin                     | /sbin/halt     |
+| mail                | x        |     8 |    12 | mail                                                            | /var/spool/mail           | /sbin/nologin  |
+| operator            | x        |    11 |     0 | operator                                                        | /root                     | /sbin/nologin  |
+| games               | x        |    12 |   100 | games                                                           | /usr/games                | /sbin/nologin  |
+| ftp                 | x        |    14 |    50 | FTP User                                                        | /var/ftp                  | /sbin/nologin  |
+| nobody              | x        |    99 |    99 | Nobody                                                          | /                         | /sbin/nologin  |
+| systemd-network     | x        |   192 |   192 | systemd Network Management                                      | /                         | /sbin/nologin  |
+| dbus                | x        |    81 |    81 | System message bus                                              | /                         | /sbin/nologin  |
+| polkitd             | x        |   999 |   998 | User for polkitd                                                | /                         | /sbin/nologin  |
+| libstoragemgmt      | x        |   998 |   996 | daemon account for libstoragemgmt                               | /var/run/lsm              | /sbin/nologin  |
+| rpc                 | x        |    32 |    32 | Rpcbind Daemon                                                  | /var/lib/rpcbind          | /sbin/nologin  |
+| colord              | x        |   997 |   995 | User for colord                                                 | /var/lib/colord           | /sbin/nologin  |
+| saslauth            | x        |   996 |    76 | Saslauthd user                                                  | /run/saslauthd            | /sbin/nologin  |
+| abrt                | x        |   173 |   173 |                                                                 | /etc/abrt                 | /sbin/nologin  |
+| rtkit               | x        |   172 |   172 | RealtimeKit                                                     | /proc                     | /sbin/nologin  |
+| radvd               | x        |    75 |    75 | radvd user                                                      | /                         | /sbin/nologin  |
+| chrony              | x        |   995 |   993 |                                                                 | /var/lib/chrony           | /sbin/nologin  |
+| tss                 | x        |    59 |    59 | Account used by the trousers package to sandbox the tcsd daemon | /dev/null                 | /sbin/nologin  |
+| usbmuxd             | x        |   113 |   113 | usbmuxd user                                                    | /                         | /sbin/nologin  |
+| geoclue             | x        |   994 |   991 | User for geoclue                                                | /var/lib/geoclue          | /sbin/nologin  |
+| qemu                | x        |   107 |   107 | qemu user                                                       | /                         | /sbin/nologin  |
+| rpcuser             | x        |    29 |    29 | RPC Service User                                                | /var/lib/nfs              | /sbin/nologin  |
+| nfsnobody           | x        | 65534 | 65534 | Anonymous NFS User                                              | /var/lib/nfs              | /sbin/nologin  |
+| setroubleshoot      | x        |   993 |   990 |                                                                 | /var/lib/setroubleshoot   | /sbin/nologin  |
+| pulse               | x        |   171 |   171 | PulseAudio System Daemon                                        | /var/run/pulse            | /sbin/nologin  |
+| gdm                 | x        |    42 |    42 |                                                                 | /var/lib/gdm              | /sbin/nologin  |
+| gnome-initial-setup | x        |   992 |   987 |                                                                 | /run/gnome-initial-setup/ | /sbin/nologin  |
+| sshd                | x        |    74 |    74 | Privilege-separated SSH                                         | /var/empty/sshd           | /sbin/nologin  |
+| avahi               | x        |    70 |    70 | Avahi mDNS/DNS-SD Stack                                         | /var/run/avahi-daemon     | /sbin/nologin  |
+| postfix             | x        |    89 |    89 |                                                                 | /var/spool/postfix        | /sbin/nologin  |
+| ntp                 | x        |    38 |    38 |                                                                 | /etc/ntp                  | /sbin/nologin  |
+| tcpdump             | x        |    72 |    72 |                                                                 | /                         | /sbin/nologin  |
+| lisi                | x        |  1000 |  1000 | lisi                                                            | /home/lisi                | /bin/bash      |
+| mysql               | x        |    27 |    27 | MySQL Server                                                    | /var/lib/mysql            | /bin/false     |
+| apache              | x        |    48 |    48 | Apache                                                          | /usr/share/httpd          | /sbin/nologin  |
++---------------------+----------+-------+-------+-----------------------------------------------------------------+---------------------------+----------------+
+42 rows in set (0.01 sec)
+
+ 
+mysql> alter  table  user  add id int(5) primary key auto_increment first;
+Query OK, 0 rows affected (0.68 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> select  *  from  user;
++----+---------------------+----------+-------+-------+-----------------------------------------------------------------+---------------------------+----------------+
+| id | name                | password | uid   | gid   | comment                                                         | homedir                   | shell          |
++----+---------------------+----------+-------+-------+-----------------------------------------------------------------+---------------------------+----------------+
+|  1 | root                | x        |     0 |     0 | root                                                            | /root                     | /bin/bash      |
+|  2 | bin                 | x        |     1 |     1 | bin                                                             | /bin                      | /sbin/nologin  |
+|  3 | daemon              | x        |     2 |     2 | daemon                                                          | /sbin                     | /sbin/nologin  |
+|  4 | adm                 | x        |     3 |     4 | adm                                                             | /var/adm                  | /sbin/nologin  |
+|  5 | lp                  | x        |     4 |     7 | lp                                                              | /var/spool/lpd            | /sbin/nologin  |
+|  6 | sync                | x        |     5 |     0 | sync                                                            | /sbin                     | /bin/sync      |
+|  7 | shutdown            | x        |     6 |     0 | shutdown                                                        | /sbin                     | /sbin/shutdown |
+|  8 | halt                | x        |     7 |     0 | halt                                                            | /sbin                     | /sbin/halt     |
+|  9 | mail                | x        |     8 |    12 | mail                                                            | /var/spool/mail           | /sbin/nologin  |
+| 10 | operator            | x        |    11 |     0 | operator                                                        | /root                     | /sbin/nologin  |
+| 11 | games               | x        |    12 |   100 | games                                                           | /usr/games                | /sbin/nologin  |
+| 12 | ftp                 | x        |    14 |    50 | FTP User                                                        | /var/ftp                  | /sbin/nologin  |
+| 13 | nobody              | x        |    99 |    99 | Nobody                                                          | /                         | /sbin/nologin  |
+| 14 | systemd-network     | x        |   192 |   192 | systemd Network Management                                      | /                         | /sbin/nologin  |
+| 15 | dbus                | x        |    81 |    81 | System message bus                                              | /                         | /sbin/nologin  |
+| 16 | polkitd             | x        |   999 |   998 | User for polkitd                                                | /                         | /sbin/nologin  |
+| 17 | libstoragemgmt      | x        |   998 |   996 | daemon account for libstoragemgmt                               | /var/run/lsm              | /sbin/nologin  |
+| 18 | rpc                 | x        |    32 |    32 | Rpcbind Daemon                                                  | /var/lib/rpcbind          | /sbin/nologin  |
+| 19 | colord              | x        |   997 |   995 | User for colord                                                 | /var/lib/colord           | /sbin/nologin  |
+| 20 | saslauth            | x        |   996 |    76 | Saslauthd user                                                  | /run/saslauthd            | /sbin/nologin  |
+| 21 | abrt                | x        |   173 |   173 |                                                                 | /etc/abrt                 | /sbin/nologin  |
+| 22 | rtkit               | x        |   172 |   172 | RealtimeKit                                                     | /proc                     | /sbin/nologin  |
+| 23 | radvd               | x        |    75 |    75 | radvd user                                                      | /                         | /sbin/nologin  |
+| 24 | chrony              | x        |   995 |   993 |                                                                 | /var/lib/chrony           | /sbin/nologin  |
+| 25 | tss                 | x        |    59 |    59 | Account used by the trousers package to sandbox the tcsd daemon | /dev/null                 | /sbin/nologin  |
+| 26 | usbmuxd             | x        |   113 |   113 | usbmuxd user                                                    | /                         | /sbin/nologin  |
+| 27 | geoclue             | x        |   994 |   991 | User for geoclue                                                | /var/lib/geoclue          | /sbin/nologin  |
+| 28 | qemu                | x        |   107 |   107 | qemu user                                                       | /                         | /sbin/nologin  |
+| 29 | rpcuser             | x        |    29 |    29 | RPC Service User                                                | /var/lib/nfs              | /sbin/nologin  |
+| 30 | nfsnobody           | x        | 65534 | 65534 | Anonymous NFS User                                              | /var/lib/nfs              | /sbin/nologin  |
+| 31 | setroubleshoot      | x        |   993 |   990 |                                                                 | /var/lib/setroubleshoot   | /sbin/nologin  |
+| 32 | pulse               | x        |   171 |   171 | PulseAudio System Daemon                                        | /var/run/pulse            | /sbin/nologin  |
+| 33 | gdm                 | x        |    42 |    42 |                                                                 | /var/lib/gdm              | /sbin/nologin  |
+| 34 | gnome-initial-setup | x        |   992 |   987 |                                                                 | /run/gnome-initial-setup/ | /sbin/nologin  |
+| 35 | sshd                | x        |    74 |    74 | Privilege-separated SSH                                         | /var/empty/sshd           | /sbin/nologin  |
+| 36 | avahi               | x        |    70 |    70 | Avahi mDNS/DNS-SD Stack                                         | /var/run/avahi-daemon     | /sbin/nologin  |
+| 37 | postfix             | x        |    89 |    89 |                                                                 | /var/spool/postfix        | /sbin/nologin  |
+| 38 | ntp                 | x        |    38 |    38 |                                                                 | /etc/ntp                  | /sbin/nologin  |
+| 39 | tcpdump             | x        |    72 |    72 |                                                                 | /                         | /sbin/nologin  |
+| 40 | lisi                | x        |  1000 |  1000 | lisi                                                            | /home/lisi                | /bin/bash      |
+| 41 | mysql               | x        |    27 |    27 | MySQL Server                                                    | /var/lib/mysql            | /bin/false     |
+| 42 | apache              | x        |    48 |    48 | Apache                                                          | /usr/share/httpd          | /sbin/nologin  |
++----+---------------------+----------+-------+-------+-----------------------------------------------------------------+---------------------------+----------------+
+42 rows in set (0.01 sec)
+
+数据导出
+mysql>  sql
+
+select *  from user into outfile "/mydata/t1.txt";
+
+select *  from user into outfile "/mydata/t2.txt" fields terminated by "#";
+
+select *  from user into outfile "/mydata/t2.txt" fields terminated by "#" lines terminated by "!!!!!!";
+
+
+mysql> select *  from user into outfile "/mydata/t1.txt";
+Query OK, 42 rows affected (0.00 sec)
+
+mysql> system  cat  /mydata/t1.txt
+1	root	x	0	0	root	/root	/bin/bash
+2	bin	x	1	1	bin	/bin	/sbin/nologin
+3	daemon	x	2	2	daemon	/sbin	/sbin/nologin
+4	adm	x	3	4	adm	/var/adm	/sbin/nologin
+5	lp	x	4	7	lp	/var/spool/lpd	/sbin/nologin
+6	sync	x	5	0	sync	/sbin	/bin/sync
+7	shutdown	x	6	0	shutdown	/sbin	/sbin/shutdown
+8	halt	x	7	0	halt	/sbin	/sbin/halt
+9	mail	x	8	12	mail	/var/spool/mail	/sbin/nologin
+10	operator	x	11	0	operator	/root	/sbin/nologin
+11	games	x	12	100	games	/usr/games	/sbin/nologin
+12	ftp	x	14	50	FTP User	/var/ftp	/sbin/nologin
+13	nobody	x	99	99	Nobody	/	/sbin/nologin
+14	systemd-network	x	192	192	systemd Network Management	/	/sbin/nologin
+15	dbus	x	81	81	System message bus	/	/sbin/nologin
+16	polkitd	x	999	998	User for polkitd	/	/sbin/nologin
+17	libstoragemgmt	x	998	996	daemon account for libstoragemgmt	/var/run/lsm	/sbin/nologin
+18	rpc	x	32	32	Rpcbind Daemon	/var/lib/rpcbind	/sbin/nologin
+19	colord	x	997	995	User for colord	/var/lib/colord	/sbin/nologin
+20	saslauth	x	996	76	Saslauthd user	/run/saslauthd	/sbin/nologin
+21	abrt	x	173	173		/etc/abrt	/sbin/nologin
+22	rtkit	x	172	172	RealtimeKit	/proc	/sbin/nologin
+23	radvd	x	75	75	radvd user	/	/sbin/nologin
+24	chrony	x	995	993		/var/lib/chrony	/sbin/nologin
+25	tss	x	59	59	Account used by the trousers package to sandbox the tcsd daemon	/dev/null	/sbin/nologin
+26	usbmuxd	x	113	113	usbmuxd user	/	/sbin/nologin
+27	geoclue	x	994	991	User for geoclue	/var/lib/geoclue	/sbin/nologin
+28	qemu	x	107	107	qemu user	/	/sbin/nologin
+29	rpcuser	x	29	29	RPC Service User	/var/lib/nfs	/sbin/nologin
+30	nfsnobody	x	65534	65534	Anonymous NFS User	/var/lib/nfs	/sbin/nologin
+31	setroubleshoot	x	993	990		/var/lib/setroubleshoot	/sbin/nologin
+32	pulse	x	171	171	PulseAudio System Daemon	/var/run/pulse	/sbin/nologin
+33	gdm	x	42	42		/var/lib/gdm	/sbin/nologin
+34	gnome-initial-setup	x	992	987		/run/gnome-initial-setup/	/sbin/nologin
+35	sshd	x	74	74	Privilege-separated SSH	/var/empty/sshd	/sbin/nologin
+36	avahi	x	70	70	Avahi mDNS/DNS-SD Stack	/var/run/avahi-daemon	/sbin/nologin
+37	postfix	x	89	89		/var/spool/postfix	/sbin/nologin
+38	ntp	x	38	38		/etc/ntp	/sbin/nologin
+39	tcpdump	x	72	72		/	/sbin/nologin
+40	lisi	x	1000	1000	lisi	/home/lisi	/bin/bash
+41	mysql	x	27	27	MySQL Server	/var/lib/mysql	/bin/false
+42	apache	x	48	48	Apache	/usr/share/httpd	/sbin/nologin
+
+
+mysql> select *  from user into outfile "/mydata/t2.txt" fields terminated by "#";
+Query OK, 42 rows affected (0.00 sec)
+
+mysql> system  cat  /mydata/t2.txt
+1#root#x#0#0#root#/root#/bin/bash
+2#bin#x#1#1#bin#/bin#/sbin/nologin
+3#daemon#x#2#2#daemon#/sbin#/sbin/nologin
+4#adm#x#3#4#adm#/var/adm#/sbin/nologin
+5#lp#x#4#7#lp#/var/spool/lpd#/sbin/nologin
+6#sync#x#5#0#sync#/sbin#/bin/sync
+7#shutdown#x#6#0#shutdown#/sbin#/sbin/shutdown
+8#halt#x#7#0#halt#/sbin#/sbin/halt
+9#mail#x#8#12#mail#/var/spool/mail#/sbin/nologin
+10#operator#x#11#0#operator#/root#/sbin/nologin
+11#games#x#12#100#games#/usr/games#/sbin/nologin
+12#ftp#x#14#50#FTP User#/var/ftp#/sbin/nologin
+13#nobody#x#99#99#Nobody#/#/sbin/nologin
+14#systemd-network#x#192#192#systemd Network Management#/#/sbin/nologin
+15#dbus#x#81#81#System message bus#/#/sbin/nologin
+16#polkitd#x#999#998#User for polkitd#/#/sbin/nologin
+17#libstoragemgmt#x#998#996#daemon account for libstoragemgmt#/var/run/lsm#/sbin/nologin
+18#rpc#x#32#32#Rpcbind Daemon#/var/lib/rpcbind#/sbin/nologin
+19#colord#x#997#995#User for colord#/var/lib/colord#/sbin/nologin
+20#saslauth#x#996#76#Saslauthd user#/run/saslauthd#/sbin/nologin
+21#abrt#x#173#173##/etc/abrt#/sbin/nologin
+22#rtkit#x#172#172#RealtimeKit#/proc#/sbin/nologin
+23#radvd#x#75#75#radvd user#/#/sbin/nologin
+24#chrony#x#995#993##/var/lib/chrony#/sbin/nologin
+25#tss#x#59#59#Account used by the trousers package to sandbox the tcsd daemon#/dev/null#/sbin/nologin
+26#usbmuxd#x#113#113#usbmuxd user#/#/sbin/nologin
+27#geoclue#x#994#991#User for geoclue#/var/lib/geoclue#/sbin/nologin
+28#qemu#x#107#107#qemu user#/#/sbin/nologin
+29#rpcuser#x#29#29#RPC Service User#/var/lib/nfs#/sbin/nologin
+30#nfsnobody#x#65534#65534#Anonymous NFS User#/var/lib/nfs#/sbin/nologin
+31#setroubleshoot#x#993#990##/var/lib/setroubleshoot#/sbin/nologin
+32#pulse#x#171#171#PulseAudio System Daemon#/var/run/pulse#/sbin/nologin
+33#gdm#x#42#42##/var/lib/gdm#/sbin/nologin
+34#gnome-initial-setup#x#992#987##/run/gnome-initial-setup/#/sbin/nologin
+35#sshd#x#74#74#Privilege-separated SSH#/var/empty/sshd#/sbin/nologin
+36#avahi#x#70#70#Avahi mDNS/DNS-SD Stack#/var/run/avahi-daemon#/sbin/nologin
+37#postfix#x#89#89##/var/spool/postfix#/sbin/nologin
+38#ntp#x#38#38##/etc/ntp#/sbin/nologin
+39#tcpdump#x#72#72##/#/sbin/nologin
+40#lisi#x#1000#1000#lisi#/home/lisi#/bin/bash
+41#mysql#x#27#27#MySQL Server#/var/lib/mysql#/bin/false
+42#apache#x#48#48#Apache#/usr/share/httpd#/sbin/nologin
+
+mysql> select *  from user into outfile "/mydata/t3.txt" fields terminated by "#" lines terminated by "!!!!!!";
+Query OK, 42 rows affected (0.00 sec)
+
+mysql> system  cat  /mydata/t3.txt
+1#root#x#0#0#root#/root#/bin/bash!!!!!!2#bin#x#1#1#bin#/bin#/sbin/nologin!!!!!!3#daemon#x#2#2#daemon#/sbin#/sbin/nologin!!!!!!4#adm#x#3#4#adm#/var/adm#/sbin/nologin!!!!!!5#lp#x#4#7#lp#/var/spool/lpd#/sbin/nologin!!!!!!6#sync#x#5#0#sync#/sbin#/bin/sync!!!!!!7#shutdown#x#6#0#shutdown#/sbin#/sbin/shutdown!!!!!!8#halt#x#7#0#halt#/sbin#/sbin/halt!!!!!!9#mail#x#8#12#mail#/var/spool/mail#/sbin/nologin!!!!!!10#operator#x#11#0#operator#/root#/sbin/nologin!!!!!!11#games#x#12#100#games#/usr/games#/sbin/nologin!!!!!!12#ftp#x#14#50#FTP User#/var/ftp#/sbin/nologin!!!!!!13#nobody#x#99#99#Nobody#/#/sbin/nologin!!!!!!14#systemd-network#x#192#192#systemd Network Management#/#/sbin/nologin!!!!!!15#dbus#x#81#81#System message bus#/#/sbin/nologin!!!!!!16#polkitd#x#999#998#User for polkitd#/#/sbin/nologin!!!!!!17#libstoragemgmt#x#998#996#daemon account for libstoragemgmt#/var/run/lsm#/sbin/nologin!!!!!!18#rpc#x#32#32#Rpcbind Daemon#/var/lib/rpcbind#/sbin/nologin!!!!!!19#colord#x#997#995#User for colord#/var/lib/colord#/sbin/nologin!!!!!!20#saslauth#x#996#76#Saslauthd user#/run/saslauthd#/sbin/nologin!!!!!!21#abrt#x#173#173##/etc/abrt#/sbin/nologin!!!!!!22#rtkit#x#172#172#RealtimeKit#/proc#/sbin/nologin!!!!!!23#radvd#x#75#75#radvd user#/#/sbin/nologin!!!!!!24#chrony#x#995#993##/var/lib/chrony#/sbin/nologin!!!!!!25#tss#x#59#59#Account used by the trousers package to sandbox the tcsd daemon#/dev/null#/sbin/nologin!!!!!!26#usbmuxd#x#113#113#usbmuxd user#/#/sbin/nologin!!!!!!27#geoclue#x#994#991#User for geoclue#/var/lib/geoclue#/sbin/nologin!!!!!!28#qemu#x#107#107#qemu user#/#/sbin/nologin!!!!!!29#rpcuser#x#29#29#RPC Service User#/var/lib/nfs#/sbin/nologin!!!!!!30#nfsnobody#x#65534#65534#Anonymous NFS User#/var/lib/nfs#/sbin/nologin!!!!!!31#setroubleshoot#x#993#990##/var/lib/setroubleshoot#/sbin/nologin!!!!!!32#pulse#x#171#171#PulseAudio System Daemon#/var/run/pulse#/sbin/nologin!!!!!!33#gdm#x#42#42##/var/lib/gdm#/sbin/nologin!!!!!!34#gnome-initial-setup#x#992#987##/run/gnome-initial-setup/#/sbin/nologin!!!!!!35#sshd#x#74#74#Privilege-separated SSH#/var/empty/sshd#/sbin/nologin!!!!!!36#avahi#x#70#70#Avahi mDNS/DNS-SD Stack#/var/run/avahi-daemon#/sbin/nologin!!!!!!37#postfix#x#89#89##/var/spool/postfix#/sbin/nologin!!!!!!38#ntp#x#38#38##/etc/ntp#/sbin/nologin!!!!!!39#tcpdump#x#72#72##/#/sbin/nologin!!!!!!40#lisi#x#1000#1000#lisi#/home/lisi#/bin/bash!!!!!!41#mysql#x#27#27#MySQL Server#/var/lib/mysql#/bin/false!!!!!!42#apache#x#48#48#Apache#/usr/share/httpd#/sbin/nologin!!!!!!mysql> 
+
+####################################################################################################################
+
+
+添加一条新记录
+insert into user values
+(43,"ok","x",2000,2000,"student user","/home/ok","/bin/bahs");
+
+mysql> insert into user values
+    -> (43,"ok","x",2000,2000,"student user","/home/ok","/bin/bahs");
+Query OK, 1 row affected (0.32 sec)
+
+mysql> select  *  from user;
++----+---------------------+----------+-------+-------+-----------------------------------------------------------------+---------------------------+----------------+
+| id | name                | password | uid   | gid   | comment                                                         | homedir                   | shell          |
++----+---------------------+----------+-------+-------+-----------------------------------------------------------------+---------------------------+----------------+
+|  1 | root                | x        |     0 |     0 | root                                                            | /root                     | /bin/bash      |
+|  2 | bin                 | x        |     1 |     1 | bin                                                             | /bin                      | /sbin/nologin  |
+|  3 | daemon              | x        |     2 |     2 | daemon                                                          | /sbin                     | /sbin/nologin  |
+|  4 | adm                 | x        |     3 |     4 | adm                                                             | /var/adm                  | /sbin/nologin  |
+|  5 | lp                  | x        |     4 |     7 | lp                                                              | /var/spool/lpd            | /sbin/nologin  |
+|  6 | sync                | x        |     5 |     0 | sync                                                            | /sbin                     | /bin/sync      |
+|  7 | shutdown            | x        |     6 |     0 | shutdown                                                        | /sbin                     | /sbin/shutdown |
+|  8 | halt                | x        |     7 |     0 | halt                                                            | /sbin                     | /sbin/halt     |
+|  9 | mail                | x        |     8 |    12 | mail                                                            | /var/spool/mail           | /sbin/nologin  |
+| 10 | operator            | x        |    11 |     0 | operator                                                        | /root                     | /sbin/nologin  |
+| 11 | games               | x        |    12 |   100 | games                                                           | /usr/games                | /sbin/nologin  |
+| 12 | ftp                 | x        |    14 |    50 | FTP User                                                        | /var/ftp                  | /sbin/nologin  |
+| 13 | nobody              | x        |    99 |    99 | Nobody                                                          | /                         | /sbin/nologin  |
+| 14 | systemd-network     | x        |   192 |   192 | systemd Network Management                                      | /                         | /sbin/nologin  |
+| 15 | dbus                | x        |    81 |    81 | System message bus                                              | /                         | /sbin/nologin  |
+| 16 | polkitd             | x        |   999 |   998 | User for polkitd                                                | /                         | /sbin/nologin  |
+| 17 | libstoragemgmt      | x        |   998 |   996 | daemon account for libstoragemgmt                               | /var/run/lsm              | /sbin/nologin  |
+| 18 | rpc                 | x        |    32 |    32 | Rpcbind Daemon                                                  | /var/lib/rpcbind          | /sbin/nologin  |
+| 19 | colord              | x        |   997 |   995 | User for colord                                                 | /var/lib/colord           | /sbin/nologin  |
+| 20 | saslauth            | x        |   996 |    76 | Saslauthd user                                                  | /run/saslauthd            | /sbin/nologin  |
+| 21 | abrt                | x        |   173 |   173 |                                                                 | /etc/abrt                 | /sbin/nologin  |
+| 22 | rtkit               | x        |   172 |   172 | RealtimeKit                                                     | /proc                     | /sbin/nologin  |
+| 23 | radvd               | x        |    75 |    75 | radvd user                                                      | /                         | /sbin/nologin  |
+| 24 | chrony              | x        |   995 |   993 |                                                                 | /var/lib/chrony           | /sbin/nologin  |
+| 25 | tss                 | x        |    59 |    59 | Account used by the trousers package to sandbox the tcsd daemon | /dev/null                 | /sbin/nologin  |
+| 26 | usbmuxd             | x        |   113 |   113 | usbmuxd user                                                    | /                         | /sbin/nologin  |
+| 27 | geoclue             | x        |   994 |   991 | User for geoclue                                                | /var/lib/geoclue          | /sbin/nologin  |
+| 28 | qemu                | x        |   107 |   107 | qemu user                                                       | /                         | /sbin/nologin  |
+| 29 | rpcuser             | x        |    29 |    29 | RPC Service User                                                | /var/lib/nfs              | /sbin/nologin  |
+| 30 | nfsnobody           | x        | 65534 | 65534 | Anonymous NFS User                                              | /var/lib/nfs              | /sbin/nologin  |
+| 31 | setroubleshoot      | x        |   993 |   990 |                                                                 | /var/lib/setroubleshoot   | /sbin/nologin  |
+| 32 | pulse               | x        |   171 |   171 | PulseAudio System Daemon                                        | /var/run/pulse            | /sbin/nologin  |
+| 33 | gdm                 | x        |    42 |    42 |                                                                 | /var/lib/gdm              | /sbin/nologin  |
+| 34 | gnome-initial-setup | x        |   992 |   987 |                                                                 | /run/gnome-initial-setup/ | /sbin/nologin  |
+| 35 | sshd                | x        |    74 |    74 | Privilege-separated SSH                                         | /var/empty/sshd           | /sbin/nologin  |
+| 36 | avahi               | x        |    70 |    70 | Avahi mDNS/DNS-SD Stack                                         | /var/run/avahi-daemon     | /sbin/nologin  |
+| 37 | postfix             | x        |    89 |    89 |                                                                 | /var/spool/postfix        | /sbin/nologin  |
+| 38 | ntp                 | x        |    38 |    38 |                                                                 | /etc/ntp                  | /sbin/nologin  |
+| 39 | tcpdump             | x        |    72 |    72 |                                                                 | /                         | /sbin/nologin  |
+| 40 | lisi                | x        |  1000 |  1000 | lisi                                                            | /home/lisi                | /bin/bash      |
+| 41 | mysql               | x        |    27 |    27 | MySQL Server                                                    | /var/lib/mysql            | /bin/false     |
+| 42 | apache              | x        |    48 |    48 | Apache                                                          | /usr/share/httpd          | /sbin/nologin  |
+| 43 | ok                  | x        |  2000 |  2000 | student user                                                    | /home/ok                  | /bin/bahs      |
++----+---------------------+----------+-------+-------+-----------------------------------------------------------------+---------------------------+----------------+
+43 rows in set (0.00 sec)
+
+
+添加多条新记录
+insert into user values
+(44,"ok","x",2000,2000,"student user","/home/ok","/bin/bash"),
+(45,"ok","x",2000,2000,"student user","/home/ok","/bin/bash"),
+(46,"ok","x",2000,2000,"student user","/home/ok","/bin/bash");
+
+mysql> insert into user values
+    -> (44,"ok","x",2000,2000,"student user","/home/ok","/bin/bash"),
+    -> (45,"ok","x",2000,2000,"student user","/home/ok","/bin/bash"),
+    -> (46,"ok","x",2000,2000,"student user","/home/ok","/bin/bash");
+Query OK, 3 rows affected (0.05 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> select  *  from user;
++----+---------------------+----------+-------+-------+-----------------------------------------------------------------+---------------------------+----------------+
+| id | name                | password | uid   | gid   | comment                                                         | homedir                   | shell          |
++----+---------------------+----------+-------+-------+-----------------------------------------------------------------+---------------------------+----------------+
+|  1 | root                | x        |     0 |     0 | root                                                            | /root                     | /bin/bash      |
+|  2 | bin                 | x        |     1 |     1 | bin                                                             | /bin                      | /sbin/nologin  |
+|  3 | daemon              | x        |     2 |     2 | daemon                                                          | /sbin                     | /sbin/nologin  |
+|  4 | adm                 | x        |     3 |     4 | adm                                                             | /var/adm                  | /sbin/nologin  |
+|  5 | lp                  | x        |     4 |     7 | lp                                                              | /var/spool/lpd            | /sbin/nologin  |
+|  6 | sync                | x        |     5 |     0 | sync                                                            | /sbin                     | /bin/sync      |
+|  7 | shutdown            | x        |     6 |     0 | shutdown                                                        | /sbin                     | /sbin/shutdown |
+|  8 | halt                | x        |     7 |     0 | halt                                                            | /sbin                     | /sbin/halt     |
+|  9 | mail                | x        |     8 |    12 | mail                                                            | /var/spool/mail           | /sbin/nologin  |
+| 10 | operator            | x        |    11 |     0 | operator                                                        | /root                     | /sbin/nologin  |
+| 11 | games               | x        |    12 |   100 | games                                                           | /usr/games                | /sbin/nologin  |
+| 12 | ftp                 | x        |    14 |    50 | FTP User                                                        | /var/ftp                  | /sbin/nologin  |
+| 13 | nobody              | x        |    99 |    99 | Nobody                                                          | /                         | /sbin/nologin  |
+| 14 | systemd-network     | x        |   192 |   192 | systemd Network Management                                      | /                         | /sbin/nologin  |
+| 15 | dbus                | x        |    81 |    81 | System message bus                                              | /                         | /sbin/nologin  |
+| 16 | polkitd             | x        |   999 |   998 | User for polkitd                                                | /                         | /sbin/nologin  |
+| 17 | libstoragemgmt      | x        |   998 |   996 | daemon account for libstoragemgmt                               | /var/run/lsm              | /sbin/nologin  |
+| 18 | rpc                 | x        |    32 |    32 | Rpcbind Daemon                                                  | /var/lib/rpcbind          | /sbin/nologin  |
+| 19 | colord              | x        |   997 |   995 | User for colord                                                 | /var/lib/colord           | /sbin/nologin  |
+| 20 | saslauth            | x        |   996 |    76 | Saslauthd user                                                  | /run/saslauthd            | /sbin/nologin  |
+| 21 | abrt                | x        |   173 |   173 |                                                                 | /etc/abrt                 | /sbin/nologin  |
+| 22 | rtkit               | x        |   172 |   172 | RealtimeKit                                                     | /proc                     | /sbin/nologin  |
+| 23 | radvd               | x        |    75 |    75 | radvd user                                                      | /                         | /sbin/nologin  |
+| 24 | chrony              | x        |   995 |   993 |                                                                 | /var/lib/chrony           | /sbin/nologin  |
+| 25 | tss                 | x        |    59 |    59 | Account used by the trousers package to sandbox the tcsd daemon | /dev/null                 | /sbin/nologin  |
+| 26 | usbmuxd             | x        |   113 |   113 | usbmuxd user                                                    | /                         | /sbin/nologin  |
+| 27 | geoclue             | x        |   994 |   991 | User for geoclue                                                | /var/lib/geoclue          | /sbin/nologin  |
+| 28 | qemu                | x        |   107 |   107 | qemu user                                                       | /                         | /sbin/nologin  |
+| 29 | rpcuser             | x        |    29 |    29 | RPC Service User                                                | /var/lib/nfs              | /sbin/nologin  |
+| 30 | nfsnobody           | x        | 65534 | 65534 | Anonymous NFS User                                              | /var/lib/nfs              | /sbin/nologin  |
+| 31 | setroubleshoot      | x        |   993 |   990 |                                                                 | /var/lib/setroubleshoot   | /sbin/nologin  |
+| 32 | pulse               | x        |   171 |   171 | PulseAudio System Daemon                                        | /var/run/pulse            | /sbin/nologin  |
+| 33 | gdm                 | x        |    42 |    42 |                                                                 | /var/lib/gdm              | /sbin/nologin  |
+| 34 | gnome-initial-setup | x        |   992 |   987 |                                                                 | /run/gnome-initial-setup/ | /sbin/nologin  |
+| 35 | sshd                | x        |    74 |    74 | Privilege-separated SSH                                         | /var/empty/sshd           | /sbin/nologin  |
+| 36 | avahi               | x        |    70 |    70 | Avahi mDNS/DNS-SD Stack                                         | /var/run/avahi-daemon     | /sbin/nologin  |
+| 37 | postfix             | x        |    89 |    89 |                                                                 | /var/spool/postfix        | /sbin/nologin  |
+| 38 | ntp                 | x        |    38 |    38 |                                                                 | /etc/ntp                  | /sbin/nologin  |
+| 39 | tcpdump             | x        |    72 |    72 |                                                                 | /                         | /sbin/nologin  |
+| 40 | lisi                | x        |  1000 |  1000 | lisi                                                            | /home/lisi                | /bin/bash      |
+| 41 | mysql               | x        |    27 |    27 | MySQL Server                                                    | /var/lib/mysql            | /bin/false     |
+| 42 | apache              | x        |    48 |    48 | Apache                                                          | /usr/share/httpd          | /sbin/nologin  |
+| 43 | ok                  | x        |  2000 |  2000 | student user                                                    | /home/ok                  | /bin/bahs      |
+| 44 | ok                  | x        |  2000 |  2000 | student user                                                    | /home/ok                  | /bin/bash      |
+| 45 | ok                  | x        |  2000 |  2000 | student user                                                    | /home/ok                  | /bin/bash      |
+| 46 | ok                  | x        |  2000 |  2000 | student user                                                    | /home/ok                  | /bin/bash      |
++----+---------------------+----------+-------+-------+-----------------------------------------------------------------+---------------------------+----------------+
+46 rows in set (0.00 sec)
+
+insert  into  user (name,shell,uid)
+values
+("lucy","/bin/bash","1999");
+
+mysql> insert  into  user (name,shell,uid)
+    -> values
+    -> ("lucy","/bin/bash","1999");
+Query OK, 1 row affected (0.03 sec)
+
+mysql> select  *  from user;
++----+---------------------+----------+-------+-------+-----------------------------------------------------------------+---------------------------+----------------+
+| id | name                | password | uid   | gid   | comment                                                         | homedir                   | shell          |
++----+---------------------+----------+-------+-------+-----------------------------------------------------------------+---------------------------+----------------+
+|  1 | root                | x        |     0 |     0 | root                                                            | /root                     | /bin/bash      |
+|  2 | bin                 | x        |     1 |     1 | bin                                                             | /bin                      | /sbin/nologin  |
+|  3 | daemon              | x        |     2 |     2 | daemon                                                          | /sbin                     | /sbin/nologin  |
+|  4 | adm                 | x        |     3 |     4 | adm                                                             | /var/adm                  | /sbin/nologin  |
+|  5 | lp                  | x        |     4 |     7 | lp                                                              | /var/spool/lpd            | /sbin/nologin  |
+|  6 | sync                | x        |     5 |     0 | sync                                                            | /sbin                     | /bin/sync      |
+|  7 | shutdown            | x        |     6 |     0 | shutdown                                                        | /sbin                     | /sbin/shutdown |
+|  8 | halt                | x        |     7 |     0 | halt                                                            | /sbin                     | /sbin/halt     |
+|  9 | mail                | x        |     8 |    12 | mail                                                            | /var/spool/mail           | /sbin/nologin  |
+| 10 | operator            | x        |    11 |     0 | operator                                                        | /root                     | /sbin/nologin  |
+| 11 | games               | x        |    12 |   100 | games                                                           | /usr/games                | /sbin/nologin  |
+| 12 | ftp                 | x        |    14 |    50 | FTP User                                                        | /var/ftp                  | /sbin/nologin  |
+| 13 | nobody              | x        |    99 |    99 | Nobody                                                          | /                         | /sbin/nologin  |
+| 14 | systemd-network     | x        |   192 |   192 | systemd Network Management                                      | /                         | /sbin/nologin  |
+| 15 | dbus                | x        |    81 |    81 | System message bus                                              | /                         | /sbin/nologin  |
+| 16 | polkitd             | x        |   999 |   998 | User for polkitd                                                | /                         | /sbin/nologin  |
+| 17 | libstoragemgmt      | x        |   998 |   996 | daemon account for libstoragemgmt                               | /var/run/lsm              | /sbin/nologin  |
+| 18 | rpc                 | x        |    32 |    32 | Rpcbind Daemon                                                  | /var/lib/rpcbind          | /sbin/nologin  |
+| 19 | colord              | x        |   997 |   995 | User for colord                                                 | /var/lib/colord           | /sbin/nologin  |
+| 20 | saslauth            | x        |   996 |    76 | Saslauthd user                                                  | /run/saslauthd            | /sbin/nologin  |
+| 21 | abrt                | x        |   173 |   173 |                                                                 | /etc/abrt                 | /sbin/nologin  |
+| 22 | rtkit               | x        |   172 |   172 | RealtimeKit                                                     | /proc                     | /sbin/nologin  |
+| 23 | radvd               | x        |    75 |    75 | radvd user                                                      | /                         | /sbin/nologin  |
+| 24 | chrony              | x        |   995 |   993 |                                                                 | /var/lib/chrony           | /sbin/nologin  |
+| 25 | tss                 | x        |    59 |    59 | Account used by the trousers package to sandbox the tcsd daemon | /dev/null                 | /sbin/nologin  |
+| 26 | usbmuxd             | x        |   113 |   113 | usbmuxd user                                                    | /                         | /sbin/nologin  |
+| 27 | geoclue             | x        |   994 |   991 | User for geoclue                                                | /var/lib/geoclue          | /sbin/nologin  |
+| 28 | qemu                | x        |   107 |   107 | qemu user                                                       | /                         | /sbin/nologin  |
+| 29 | rpcuser             | x        |    29 |    29 | RPC Service User                                                | /var/lib/nfs              | /sbin/nologin  |
+| 30 | nfsnobody           | x        | 65534 | 65534 | Anonymous NFS User                                              | /var/lib/nfs              | /sbin/nologin  |
+| 31 | setroubleshoot      | x        |   993 |   990 |                                                                 | /var/lib/setroubleshoot   | /sbin/nologin  |
+| 32 | pulse               | x        |   171 |   171 | PulseAudio System Daemon                                        | /var/run/pulse            | /sbin/nologin  |
+| 33 | gdm                 | x        |    42 |    42 |                                                                 | /var/lib/gdm              | /sbin/nologin  |
+| 34 | gnome-initial-setup | x        |   992 |   987 |                                                                 | /run/gnome-initial-setup/ | /sbin/nologin  |
+| 35 | sshd                | x        |    74 |    74 | Privilege-separated SSH                                         | /var/empty/sshd           | /sbin/nologin  |
+| 36 | avahi               | x        |    70 |    70 | Avahi mDNS/DNS-SD Stack                                         | /var/run/avahi-daemon     | /sbin/nologin  |
+| 37 | postfix             | x        |    89 |    89 |                                                                 | /var/spool/postfix        | /sbin/nologin  |
+| 38 | ntp                 | x        |    38 |    38 |                                                                 | /etc/ntp                  | /sbin/nologin  |
+| 39 | tcpdump             | x        |    72 |    72 |                                                                 | /                         | /sbin/nologin  |
+| 40 | lisi                | x        |  1000 |  1000 | lisi                                                            | /home/lisi                | /bin/bash      |
+| 41 | mysql               | x        |    27 |    27 | MySQL Server                                                    | /var/lib/mysql            | /bin/false     |
+| 42 | apache              | x        |    48 |    48 | Apache                                                          | /usr/share/httpd          | /sbin/nologin  |
+| 43 | ok                  | x        |  2000 |  2000 | student user                                                    | /home/ok                  | /bin/bahs      |
+| 44 | ok                  | x        |  2000 |  2000 | student user                                                    | /home/ok                  | /bin/bash      |
+| 45 | ok                  | x        |  2000 |  2000 | student user                                                    | /home/ok                  | /bin/bash      |
+| 46 | ok                  | x        |  2000 |  2000 | student user                                                    | /home/ok                  | /bin/bash      |
+| 47 | lucy                | NULL     |  1999 |  NULL | NULL                                                            | NULL                      | /bin/bash      |
++----+---------------------+----------+-------+-------+-----------------------------------------------------------------+---------------------------+----------------+
+47 rows in set (0.00 sec)
+
+insert  into  user (name,shell,uid)
+values
+("lucy1","/bin/bash","1999"),
+("lucy2","/bin/bash","1999"),
+("lucy3","/bin/bash","1999");
+
+mysql> insert  into  user (name,shell,uid)
+    -> values
+    -> ("lucy1","/bin/bash","1999"),
+    -> ("lucy2","/bin/bash","1999"),
+    -> ("lucy3","/bin/bash","1999");
+Query OK, 3 rows affected (0.04 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> select  *  from user;
++----+---------------------+----------+-------+-------+-----------------------------------------------------------------+---------------------------+----------------+
+| id | name                | password | uid   | gid   | comment                                                         | homedir                   | shell          |
++----+---------------------+----------+-------+-------+-----------------------------------------------------------------+---------------------------+----------------+
+|  1 | root                | x        |     0 |     0 | root                                                            | /root                     | /bin/bash      |
+|  2 | bin                 | x        |     1 |     1 | bin                                                             | /bin                      | /sbin/nologin  |
+|  3 | daemon              | x        |     2 |     2 | daemon                                                          | /sbin                     | /sbin/nologin  |
+|  4 | adm                 | x        |     3 |     4 | adm                                                             | /var/adm                  | /sbin/nologin  |
+|  5 | lp                  | x        |     4 |     7 | lp                                                              | /var/spool/lpd            | /sbin/nologin  |
+|  6 | sync                | x        |     5 |     0 | sync                                                            | /sbin                     | /bin/sync      |
+|  7 | shutdown            | x        |     6 |     0 | shutdown                                                        | /sbin                     | /sbin/shutdown |
+|  8 | halt                | x        |     7 |     0 | halt                                                            | /sbin                     | /sbin/halt     |
+|  9 | mail                | x        |     8 |    12 | mail                                                            | /var/spool/mail           | /sbin/nologin  |
+| 10 | operator            | x        |    11 |     0 | operator                                                        | /root                     | /sbin/nologin  |
+| 11 | games               | x        |    12 |   100 | games                                                           | /usr/games                | /sbin/nologin  |
+| 12 | ftp                 | x        |    14 |    50 | FTP User                                                        | /var/ftp                  | /sbin/nologin  |
+| 13 | nobody              | x        |    99 |    99 | Nobody                                                          | /                         | /sbin/nologin  |
+| 14 | systemd-network     | x        |   192 |   192 | systemd Network Management                                      | /                         | /sbin/nologin  |
+| 15 | dbus                | x        |    81 |    81 | System message bus                                              | /                         | /sbin/nologin  |
+| 16 | polkitd             | x        |   999 |   998 | User for polkitd                                                | /                         | /sbin/nologin  |
+| 17 | libstoragemgmt      | x        |   998 |   996 | daemon account for libstoragemgmt                               | /var/run/lsm              | /sbin/nologin  |
+| 18 | rpc                 | x        |    32 |    32 | Rpcbind Daemon                                                  | /var/lib/rpcbind          | /sbin/nologin  |
+| 19 | colord              | x        |   997 |   995 | User for colord                                                 | /var/lib/colord           | /sbin/nologin  |
+| 20 | saslauth            | x        |   996 |    76 | Saslauthd user                                                  | /run/saslauthd            | /sbin/nologin  |
+| 21 | abrt                | x        |   173 |   173 |                                                                 | /etc/abrt                 | /sbin/nologin  |
+| 22 | rtkit               | x        |   172 |   172 | RealtimeKit                                                     | /proc                     | /sbin/nologin  |
+| 23 | radvd               | x        |    75 |    75 | radvd user                                                      | /                         | /sbin/nologin  |
+| 24 | chrony              | x        |   995 |   993 |                                                                 | /var/lib/chrony           | /sbin/nologin  |
+| 25 | tss                 | x        |    59 |    59 | Account used by the trousers package to sandbox the tcsd daemon | /dev/null                 | /sbin/nologin  |
+| 26 | usbmuxd             | x        |   113 |   113 | usbmuxd user                                                    | /                         | /sbin/nologin  |
+| 27 | geoclue             | x        |   994 |   991 | User for geoclue                                                | /var/lib/geoclue          | /sbin/nologin  |
+| 28 | qemu                | x        |   107 |   107 | qemu user                                                       | /                         | /sbin/nologin  |
+| 29 | rpcuser             | x        |    29 |    29 | RPC Service User                                                | /var/lib/nfs              | /sbin/nologin  |
+| 30 | nfsnobody           | x        | 65534 | 65534 | Anonymous NFS User                                              | /var/lib/nfs              | /sbin/nologin  |
+| 31 | setroubleshoot      | x        |   993 |   990 |                                                                 | /var/lib/setroubleshoot   | /sbin/nologin  |
+| 32 | pulse               | x        |   171 |   171 | PulseAudio System Daemon                                        | /var/run/pulse            | /sbin/nologin  |
+| 33 | gdm                 | x        |    42 |    42 |                                                                 | /var/lib/gdm              | /sbin/nologin  |
+| 34 | gnome-initial-setup | x        |   992 |   987 |                                                                 | /run/gnome-initial-setup/ | /sbin/nologin  |
+| 35 | sshd                | x        |    74 |    74 | Privilege-separated SSH                                         | /var/empty/sshd           | /sbin/nologin  |
+| 36 | avahi               | x        |    70 |    70 | Avahi mDNS/DNS-SD Stack                                         | /var/run/avahi-daemon     | /sbin/nologin  |
+| 37 | postfix             | x        |    89 |    89 |                                                                 | /var/spool/postfix        | /sbin/nologin  |
+| 38 | ntp                 | x        |    38 |    38 |                                                                 | /etc/ntp                  | /sbin/nologin  |
+| 39 | tcpdump             | x        |    72 |    72 |                                                                 | /                         | /sbin/nologin  |
+| 40 | lisi                | x        |  1000 |  1000 | lisi                                                            | /home/lisi                | /bin/bash      |
+| 41 | mysql               | x        |    27 |    27 | MySQL Server                                                    | /var/lib/mysql            | /bin/false     |
+| 42 | apache              | x        |    48 |    48 | Apache                                                          | /usr/share/httpd          | /sbin/nologin  |
+| 43 | ok                  | x        |  2000 |  2000 | student user                                                    | /home/ok                  | /bin/bahs      |
+| 44 | ok                  | x        |  2000 |  2000 | student user                                                    | /home/ok                  | /bin/bash      |
+| 45 | ok                  | x        |  2000 |  2000 | student user                                                    | /home/ok                  | /bin/bash      |
+| 46 | ok                  | x        |  2000 |  2000 | student user                                                    | /home/ok                  | /bin/bash      |
+| 47 | lucy                | NULL     |  1999 |  NULL | NULL                                                            | NULL                      | /bin/bash      |
+| 48 | lucy1               | NULL     |  1999 |  NULL | NULL                                                            | NULL                      | /bin/bash      |
+| 49 | lucy2               | NULL     |  1999 |  NULL | NULL                                                            | NULL                      | /bin/bash      |
+| 50 | lucy3               | NULL     |  1999 |  NULL | NULL                                                            | NULL                      | /bin/bash      |
++----+---------------------+----------+-------+-------+-----------------------------------------------------------------+---------------------------+----------------+
+50 rows in set (0.00 sec)
+
+
+mysql> select name,uid,shell from user;
++---------------------+-------+----------------+
+| name                | uid   | shell          |
++---------------------+-------+----------------+
+| root                |     0 | /bin/bash      |
+| bin                 |     1 | /sbin/nologin  |
+| daemon              |     2 | /sbin/nologin  |
+| adm                 |     3 | /sbin/nologin  |
+| lp                  |     4 | /sbin/nologin  |
+| sync                |     5 | /bin/sync      |
+| shutdown            |     6 | /sbin/shutdown |
+| halt                |     7 | /sbin/halt     |
+| mail                |     8 | /sbin/nologin  |
+| operator            |    11 | /sbin/nologin  |
+| games               |    12 | /sbin/nologin  |
+| ftp                 |    14 | /sbin/nologin  |
+| nobody              |    99 | /sbin/nologin  |
+| systemd-network     |   192 | /sbin/nologin  |
+| dbus                |    81 | /sbin/nologin  |
+| polkitd             |   999 | /sbin/nologin  |
+| libstoragemgmt      |   998 | /sbin/nologin  |
+| rpc                 |    32 | /sbin/nologin  |
+| colord              |   997 | /sbin/nologin  |
+| saslauth            |   996 | /sbin/nologin  |
+| abrt                |   173 | /sbin/nologin  |
+| rtkit               |   172 | /sbin/nologin  |
+| radvd               |    75 | /sbin/nologin  |
+| chrony              |   995 | /sbin/nologin  |
+| tss                 |    59 | /sbin/nologin  |
+| usbmuxd             |   113 | /sbin/nologin  |
+| geoclue             |   994 | /sbin/nologin  |
+| qemu                |   107 | /sbin/nologin  |
+| rpcuser             |    29 | /sbin/nologin  |
+| nfsnobody           | 65534 | /sbin/nologin  |
+| setroubleshoot      |   993 | /sbin/nologin  |
+| pulse               |   171 | /sbin/nologin  |
+| gdm                 |    42 | /sbin/nologin  |
+| gnome-initial-setup |   992 | /sbin/nologin  |
+| sshd                |    74 | /sbin/nologin  |
+| avahi               |    70 | /sbin/nologin  |
+| postfix             |    89 | /sbin/nologin  |
+| ntp                 |    38 | /sbin/nologin  |
+| tcpdump             |    72 | /sbin/nologin  |
+| lisi                |  1000 | /bin/bash      |
+| mysql               |    27 | /bin/false     |
+| apache              |    48 | /sbin/nologin  |
+| ok                  |  2000 | /bin/bahs      |
+| ok                  |  2000 | /bin/bash      |
+| ok                  |  2000 | /bin/bash      |
+| ok                  |  2000 | /bin/bash      |
+| lucy                |  1999 | /bin/bash      |
+| lucy1               |  1999 | /bin/bash      |
+| lucy2               |  1999 | /bin/bash      |
+| lucy3               |  1999 | /bin/bash      |
++---------------------+-------+----------------+
+50 rows in set (0.00 sec)
+
+mysql> select name,uid,shell from user where id=1;
++------+------+-----------+
+| name | uid  | shell     |
++------+------+-----------+
+| root |    0 | /bin/bash |
++------+------+-----------+
+1 row in set (0.00 sec)
+
+mysql> select name,uid,shell from user where id<6;
++--------+------+---------------+
+| name   | uid  | shell         |
++--------+------+---------------+
+| root   |    0 | /bin/bash     |
+| bin    |    1 | /sbin/nologin |
+| daemon |    2 | /sbin/nologin |
+| adm    |    3 | /sbin/nologin |
+| lp     |    4 | /sbin/nologin |
++--------+------+---------------+
+5 rows in set (0.00 sec)
+
+mysql> select name,uid,shell from user where id>=6;
++---------------------+-------+----------------+
+| name                | uid   | shell          |
++---------------------+-------+----------------+
+| sync                |     5 | /bin/sync      |
+| shutdown            |     6 | /sbin/shutdown |
+| halt                |     7 | /sbin/halt     |
+| mail                |     8 | /sbin/nologin  |
+| operator            |    11 | /sbin/nologin  |
+| games               |    12 | /sbin/nologin  |
+| ftp                 |    14 | /sbin/nologin  |
+| nobody              |    99 | /sbin/nologin  |
+| systemd-network     |   192 | /sbin/nologin  |
+| dbus                |    81 | /sbin/nologin  |
+| polkitd             |   999 | /sbin/nologin  |
+| libstoragemgmt      |   998 | /sbin/nologin  |
+| rpc                 |    32 | /sbin/nologin  |
+| colord              |   997 | /sbin/nologin  |
+| saslauth            |   996 | /sbin/nologin  |
+| abrt                |   173 | /sbin/nologin  |
+| rtkit               |   172 | /sbin/nologin  |
+| radvd               |    75 | /sbin/nologin  |
+| chrony              |   995 | /sbin/nologin  |
+| tss                 |    59 | /sbin/nologin  |
+| usbmuxd             |   113 | /sbin/nologin  |
+| geoclue             |   994 | /sbin/nologin  |
+| qemu                |   107 | /sbin/nologin  |
+| rpcuser             |    29 | /sbin/nologin  |
+| nfsnobody           | 65534 | /sbin/nologin  |
+| setroubleshoot      |   993 | /sbin/nologin  |
+| pulse               |   171 | /sbin/nologin  |
+| gdm                 |    42 | /sbin/nologin  |
+| gnome-initial-setup |   992 | /sbin/nologin  |
+| sshd                |    74 | /sbin/nologin  |
+| avahi               |    70 | /sbin/nologin  |
+| postfix             |    89 | /sbin/nologin  |
+| ntp                 |    38 | /sbin/nologin  |
+| tcpdump             |    72 | /sbin/nologin  |
+| lisi                |  1000 | /bin/bash      |
+| mysql               |    27 | /bin/false     |
+| apache              |    48 | /sbin/nologin  |
+| ok                  |  2000 | /bin/bahs      |
+| ok                  |  2000 | /bin/bash      |
+| ok                  |  2000 | /bin/bash      |
+| ok                  |  2000 | /bin/bash      |
+| lucy                |  1999 | /bin/bash      |
+| lucy1               |  1999 | /bin/bash      |
+| lucy2               |  1999 | /bin/bash      |
+| lucy3               |  1999 | /bin/bash      |
++---------------------+-------+----------------+
+45 rows in set (0.00 sec)
+
+mysql> select name,uid,shell from user where id<=6;
++--------+------+---------------+
+| name   | uid  | shell         |
++--------+------+---------------+
+| root   |    0 | /bin/bash     |
+| bin    |    1 | /sbin/nologin |
+| daemon |    2 | /sbin/nologin |
+| adm    |    3 | /sbin/nologin |
+| lp     |    4 | /sbin/nologin |
+| sync   |    5 | /bin/sync     |
++--------+------+---------------+
+6 rows in set (0.00 sec)
+
+mysql> select name,uid,shell from user where shell="/bin/bash";
++-------+------+-----------+
+| name  | uid  | shell     |
++-------+------+-----------+
+| root  |    0 | /bin/bash |
+| lisi  | 1000 | /bin/bash |
+| ok    | 2000 | /bin/bash |
+| ok    | 2000 | /bin/bash |
+| ok    | 2000 | /bin/bash |
+| lucy  | 1999 | /bin/bash |
+| lucy1 | 1999 | /bin/bash |
+| lucy2 | 1999 | /bin/bash |
+| lucy3 | 1999 | /bin/bash |
++-------+------+-----------+
+9 rows in set (0.00 sec)
+
+
+更新记录字段的值　update 
+
+update 表　set 字段名＝值，字段名＝值，　．．．where 条件；
+
+删除记录 delete (删除表里的行)
+delete from  表　where 条件；
+
+匹配条件的表示方式（）
+数值比较　　＞　　＞＝　　＜　　＜＝　　＝　　！＝
+where  字段名　符号　数值
+
+字符比较
+
+
+
+mysql>  insert into user(id ,name) values(51,""),(52,"null"),(53,null);
+Query OK, 3 rows affected (0.08 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> select id,name from user where id>50;
++----+------+
+| id | name |
++----+------+
+| 51 　|      　　|
+| 52 | null |
+| 53 | NULL |
++----+------+
+3 rows in set (0.00 sec)
+
+
+mysql> select id,name from user where name is null;
++----+------+
+| id | name |
++----+------+
+| 53 | NULL |
++----+------+
+1 row in set (0.00 sec)
+
+
+mysql> update user set password=null where name="bin";
+Query OK, 1 row affected (0.28 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select * from user where name="bin";
++----+------+----------+------+------+---------+---------+---------------+
+| id | name | password | uid  | gid  | comment | homedir | shell         |
++----+------+----------+------+------+---------+---------+---------------+
+|  2 | bin  | NULL     |    1 | 1000 | bin     | /bin    | /sbin/nologin |
++----+------+----------+------+------+---------+---------+---------------+
+1 row in set (0.00 sec)
+
+（）用来提高优先级
+
+mysql> select name ,uid  from user  where name="root" or name="bin" and uid=1;
++------+------+
+| name | uid  |
++------+------+
+| bin  |    1 |
+| root |    0 |
++------+------+
+2 rows in set (0.00 sec)
+
+mysql> select name ,uid  from user  where (name="root" or name="bin") and uid=1;
++------+------+
+| name | uid  |
++------+------+
+| bin  |    1 |
++------+------+
+1 row in set (0.00 sec)
 
 
 
