@@ -1554,4 +1554,75 @@ mysql> select * from user  where uid>=10  and uid <=20;
 3 rows in set (0.00 sec)
 
 
+distinct 字段名　　　／／　去重显示
+
+mysql> select  distinct shell from  user;
++----------------+
+| shell          |
++----------------+
+| /bin/bash      |
+| /sbin/nologin  |
+| /bin/sync      |
+| /sbin/shutdown |
+| /sbin/halt     |
+| /bin/false     |
+| NULL           |
++----------------+
+7 rows in set (0.01 sec)
+
+
+mysql> select shell from user where uid <= 500;
++----------------+
+| shell          |
++----------------+
+| /bin/bash      |
+| /sbin/nologin  |
+| /sbin/nologin  |
+| /sbin/nologin  |
+| /sbin/nologin  |
+| /bin/sync      |
+| /sbin/shutdown |
+| /sbin/halt     |
+| /sbin/nologin  |
+| /sbin/nologin  |
+| /sbin/nologin  |
+| /sbin/nologin  |
+| /sbin/nologin  |
+| /sbin/nologin  |
+| /sbin/nologin  |
+| /sbin/nologin  |
+| /sbin/nologin  |
+| /sbin/nologin  |
+| /sbin/nologin  |
+| /sbin/nologin  |
+| /sbin/nologin  |
+| /sbin/nologin  |
+| /sbin/nologin  |
+| /sbin/nologin  |
+| /sbin/nologin  |
+| /sbin/nologin  |
+| /sbin/nologin  |
+| /sbin/nologin  |
+| /sbin/nologin  |
+| /sbin/nologin  |
+| /bin/false     |
+| /sbin/nologin  |
++----------------+
+32 rows in set (0.00 sec)
+
+
+mysql> select  distinct shell from user where uid <= 500;
++----------------+
+| shell          |
++----------------+
+| /bin/bash      |
+| /sbin/nologin  |
+| /bin/sync      |
+| /sbin/shutdown |
+| /sbin/halt     |
+| /bin/false     |
++----------------+
+6 rows in set (0.00 sec)
+
+
 
