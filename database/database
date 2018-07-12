@@ -1481,8 +1481,77 @@ mysql> select name ,uid  from user  where (name="root" or name="bin") and uid=1;
 1 row in set (0.00 sec)
 
 
+mysql> select  name,uid from  user  where uid in(1,7,8,55,1000);
++------+------+
+| name | uid  |
++------+------+
+| bin  |    1 |
+| halt |    7 |
+| mail |    8 |
+| lisi | 1000 |
++------+------+
+4 rows in set (0.00 sec)
+
+mysql> select  name,shell  from user where shell not in ("/bin/bash","/sbin/nologin");
++----------+----------------+
+| name     | shell          |
++----------+----------------+
+| sync     | /bin/sync      |
+| shutdown | /sbin/shutdown |
+| halt     | /sbin/halt     |
+| mysql    | /bin/false     |
++----------+----------------+
+4 rows in set (0.00 sec)
 
 
+mysql> select name from user where name in ("root","sync","lucy");
++------+
+| name |
++------+
+| lucy |
+| root |
+| sync |
++------+
+3 rows in set (0.00 sec)
+
+
+mysql> select name,id from user where id between 1 and 10 ;
++----------+----+
+| name     | id |
++----------+----+
+| root     |  1 |
+| bin      |  2 |
+| daemon   |  3 |
+| adm      |  4 |
+| lp       |  5 |
+| sync     |  6 |
+| shutdown |  7 |
+| halt     |  8 |
+| mail     |  9 |
+| operator | 10 |
++----------+----+
+10 rows in set (0.00 sec)
+
+mysql> select   *  from user where  uid between  10 and 20;
++----+----------+----------+------+------+----------+------------+---------------+
+| id | name     | password | uid  | gid  | comment  | homedir    | shell         |
++----+----------+----------+------+------+----------+------------+---------------+
+| 10 | operator | A        |   11 | 1000 | operator | /root      | /sbin/nologin |
+| 11 | games    | A        |   12 | 1000 | games    | /usr/games | /sbin/nologin |
+| 12 | ftp      | A        |   14 | 1000 | FTP User | /var/ftp   | /sbin/nologin |
++----+----------+----------+------+------+----------+------------+---------------+
+3 rows in set (0.00 sec)
+
+
+mysql> select * from user  where uid>=10  and uid <=20;
++----+----------+----------+------+------+----------+------------+---------------+
+| id | name     | password | uid  | gid  | comment  | homedir    | shell         |
++----+----------+----------+------+------+----------+------------+---------------+
+| 10 | operator | A        |   11 | 1000 | operator | /root      | /sbin/nologin |
+| 11 | games    | A        |   12 | 1000 | games    | /usr/games | /sbin/nologin |
+| 12 | ftp      | A        |   14 | 1000 | FTP User | /var/ftp   | /sbin/nologin |
++----+----------+----------+------+------+----------+------------+---------------+
+3 rows in set (0.00 sec)
 
 
 
