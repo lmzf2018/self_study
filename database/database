@@ -1,0 +1,447 @@
+1.装包
+软件源来源？ 官网下载  XXX.主.次（偶数为稳定版）.修改次数
+软件包封包类型（rpm 源码）？
+源码 可以自定义配置和安装  必须解决依赖关系
+rpm 软件是封装好的不可以自定义安装  安装卸载简单
+     rpm -ivh 
+     rpm  -e
+2.[root@host50 ~]# ss -antup | grep mysqld
+tcp    LISTEN     0      80       :::3306               :::*       users:(("mysqld",pid=3468,fd=18))
+[root@host50 ~]# ps  -C  mysqld   //单独查
+  PID TTY          TIME CMD
+ 3468 ?        00:00:00 mysqld
+###########################################################
+
+1.临时和永久设置密码验证策略为只验证长度的命令分别是什么?
+2.MySQL的主配置文件,数据库目录,端口号,进程名,传输协议,进程所有者,进程所属组分别是啥?
+3.显示已有的库,切换库,显示当前所在的库,创建新库,显示已有的表,删除库的命令分别是啥?
+4.查看表结构,查看表记录,删除表的命令分别是啥?
+5.查看表记录,插入表记录,修改表记录,删除表记录的命令分别是啥?
+
+
+
+1. 1)临时:mysql> set global validate_password_policy=0; 
+    2)永久: vim  /etc/my.cnf
+  validate_password_policy=0 
+2.主配置文件   /etc/my.cnf
+  数据库目录    /var/lib/mysql
+  默认端口号   3306
+   进程名         mysqld
+  传输协议       TCP
+  进程所有者     mysql
+  进程所属组     mysql
+3.Show    databases;      //显示已有的库
+  Use  库名;                            //切换库
+  Select   database();    //显示当前所在的库
+  Create  database  库名;    //创建新库
+  Show   tables;          //显示已有的表
+  Drop    database  库名；  //删除库
+4.  Desc   表名;                         //查看表结构
+    Select   *  from   表名； //查看表记录
+    Drop  table  表名;              //删除表
+5.  Insert   into  表名   values(值列表);  //插入表记录
+    Update 表名  set  字段=值;                        //修改表记录  
+    Delete  from   表名;                                //删除表记录
+
+###########################################################
+
+3.mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| db1                |
+| db2                |
+| hao                |
+| hao2               |
+| lujiawen           |
+| mysql              |
+| performance_schema |
+| studb              |
+| sys                |
+| yy                 |
++--------------------+
+11 rows in set (0.08 sec)
+
+mysql> desc db2;
+ERROR 1046 (3D000): No database selected
+mysql> use db2;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+mysql> 
+mysql> select database();
++------------+
+| database() |
++------------+
+| db2        |
++------------+
+1 row in set (0.00 sec)
+
+mysql> show table db2;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'db2' at line 1
+mysql> show table db2.t9;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'db2.t9' at line 1
+mysql> show table db2.t9;
+
+
+
+
+
+
+
+mysql> desc db2.t9;
+ERROR 1146 (42S02): Table 'db2.t9' doesn't exist
+mysql> desc db2.t10;
+ERROR 1146 (42S02): Table 'db2.t10' doesn't exist
+mysql> desc db2.t8;
++-------+--------------------+------+-----+---------+-------+
+| Field | Type               | Null | Key | Default | Extra |
++-------+--------------------+------+-----+---------+-------+
+| name  | char(14)           | NO   |     |         |       |
+| class | char(17)           | YES  |     | nsd1000 |       |
+| age   | tinyint(2)         | NO   |     | 19      |       |
+| sex   | enum('boy','girl') | NO   |     | boy     |       |
++-------+--------------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+mysql> show tables;
++---------------+
+| Tables_in_db2 |
++---------------+
+| dogperson     |
+| stuinfo       |
+| t11111        |
+| t2            |
+| t5            |
+| t7            |
+| t8            |
++---------------+
+7 rows in set (0.00 sec)
+
+mysql> create index aaa on stuinfo(name);
+Query OK, 0 rows affected (0.23 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> desc stuinfo;
++------------+-----------------------------------+------+-----+---------+-------+
+| Field      | Type                              | Null | Key | Default | Extra |
++------------+-----------------------------------+------+-----+---------+-------+
+| stu_number | varchar(9)                        | YES  |     | NULL    |       |
+| name       | char(14)                          | NO   | MUL |         |       |
+| sex        | enum('boy','girl','no')           | NO   |     | boy     |       |
+| class      | char(17)                          | YES  |     | nsd1000 |       |
+| age        | int(2)                            | NO   |     | 19      |       |
+| likes      | set('eat','sleeps','game','film') | YES  |     | NULL    |       |
++------------+-----------------------------------+------+-----+---------+-------+
+6 rows in set (0.00 sec)
+
+mysql> show index from stuinfo;
++---------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+| Table   | Non_unique | Key_name | Seq_in_index | Column_name | Collation | Cardinality | Sub_part | Packed | Null | Index_type | Comment | Index_comment |
++---------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+| stuinfo |          1 | aaa      |            1 | name        | A         |           2 |     NULL | NULL   |      | BTREE      |         |               |
++---------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+1 row in set (0.00 sec)
+
+mysql>  show index from stuinfo\G; 
+*************************** 1. row ***************************
+        Table: stuinfo
+   Non_unique: 1
+     Key_name: aaa
+ Seq_in_index: 1
+  Column_name: name
+    Collation: A
+  Cardinality: 2
+     Sub_part: NULL
+       Packed: NULL
+         Null: 
+   Index_type: BTREE
+      Comment: 
+Index_comment: 
+1 row in set (0.00 sec)
+
+mysql> drop index aaa on  stuinfo;
+Query OK, 0 rows affected (0.23 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> desc stuinfo;
++------------+-----------------------------------+------+-----+---------+-------+
+| Field      | Type                              | Null | Key | Default | Extra |
++------------+-----------------------------------+------+-----+---------+-------+
+| stu_number | varchar(9)               mysql> show  index from stuinfo;
+Empty set (0.00 sec)
+
+         | YES  |     | NULL    |       |
+| name       | char(14)                          | NO   |     |         |       |
+| sex        | enum('boy','girl','no')           | NO   |     | boy     |       |
+| class      | char(17)                          | YES  |     | nsd1000 |       |
+| age        | int(2)                            | NO   |     | 19      |       |
+| likes      | set('eat','sleeps','game','film') | YES  |     | NULL    |       |
++------------+-----------------------------------+------+-----+---------+-------+
+6 rows in set (0.00 sec)
+mysql> show  index from stuinfo;
+Empty set (0.00 sec)biaoji
+
+
+两种方式设置主键
+mysql> create table t10(stu_id char(9)  primary key , name char(10) , age  int(2));
+Query OK, 0 rows affected (0.32 sec)
+
+mysql> desc t10;
++--------+----------+------+-----+---------+-------+
+| Field  | Type     | Null | Key | Default | Extra |
++--------+----------+------+-----+---------+-------+
+| stu_id | char(9)  | NO   | PRI | NULL    |       |
+| name   | char(10) | YES  |     | NULL    |       |
+| age    | int(2)   | YES  |     | NULL    |       |
++--------+----------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+mysql> create table t11(stu_id char(9) , name char(10) , age  int(2),primary key(stu_id));
+Query OK, 0 rows affected (0.28 sec)
+
+mysql> desc t11;
++--------+----------+------+-----+---------+-------+
+| Field  | Type     | Null | Key | Default | Extra |
++--------+----------+------+-----+---------+-------+
+| stu_id | char(9)  | NO   | PRI | NULL    |       |
+| name   | char(10) | YES  |     | NULL    |       |
+| age    | int(2)   | YES  |     | NULL    |       |
++--------+----------+------+-----+---------+-------+
+3 rows in set (0.01 sec)
+
+
+删除主键
+mysql> alter  table t10 drop primary key;
+Query OK, 0 rows affected (0.43 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> desc t10;
++--------+----------+------+-----+---------+-------+
+| Field  | Type     | Null | Key | Default | Extra |
++--------+----------+------+-----+---------+-------+
+| stu_id | char(9)  | NO   |     | NULL    |       |
+| name   | char(10) | YES  |     | NULL    |       |
+| age    | int(2)   | YES  |     | NULL    |       |
++--------+----------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+
+mysql> insert into t10  values("nsd","haio",21);                                             Query OK, 1 row affected (0.06 sec)
+
+mysql> insert into t10  values("nsd","haiosa",21);
+Query OK, 1 row affected (0.04 sec)
+
+mysql> insert into t10  values("null","haiosa",21);
+Query OK, 1 row affected (0.08 sec)
+
+mysql> insert into t10  values(null,"haiosa",21);biaoji
+ERROR 1048 (23000): Column 'stu_id' cannot be null
+mysql> desc t10;
++--------+----------+------+-----+---------+-------+
+| Field  | Type     | Null | Key | Default | Extra |
++--------+----------+------+-----+---------+-------+
+| stu_id | char(9)  | NO   |     | NULL    |       |
+| name   | char(10) | YES  |     | NULL    |       |
+| age    | int(2)   | YES  |     | NULL    |       |ho
++--------+----------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+mysql> insert into t10  values("nsd","haiosa",21);
+Query OK, 1 row affected (0.04 sec)
+
+mysql> select * from  t10;
++--------+--------+------+
+| stu_id | name   | age  |
++--------+--------+------+
+| nsd    | haio   |   21 |
+| nsd    | haiosa |   21 |
+| null   | haiosa |   21 |
+| nsd    | haiosa |   21 |
++--------+--------+------+
+4 rows in set (0.00 sec)
+
+
+在已经主键里创建主键字段
+
+delete  from  t10;
+  alter table t10 add primary key (stu_id);
+desc t10;
+
+mysql> delete  from  t10;
+Query OK, 4 rows affected (0.04 sec)
+
+mysql> desc t10;
++--------+----------+------+-----+---------+-------+
+| Field  | Type     | Null | Key | Default | Extra |
++--------+----------+------+-----+---------+-------+
+| stu_id | char(9)  | NO   |     | NULL    |       |
+| name   | char(10) | YES  |     | NULL    |       |
+| age    | int(2)   | YES  |     | NULL    |       |
++--------+----------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+mysql> select * from  t10;
+Empty set (0.00 sec)
+
+mysql> alter table t10 add primary key (stu_id);
+Query OK, 0 rows affected (0.45 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> desc t10;
++--------+----------+------+-----+---------+-------+
+| Field  | Type     | Null | Key | Default | Extra |                                 
++--------+----------+------+-----+---------+-------+
+| stu_id | char(9)  | NO   | PRI | NULL    |       |
+| name   | char(10) | YES  |     | NULL    |       |
+| age    | int(2)   | YES  |     | NULL    |       |
++--------+----------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+创建复合主键:表中的多个字段一起做主键,赋值时,主键字段的值不同时重复
+
+create table t13(
+name char(15),
+class char(15),
+pay enum("yes","no"),
+primary key (name,class)
+);
+mysql> create table t13(
+    -> name char(15),
+    -> class char(15),
+    -> pay enum("yes","no"),
+    -> primary key (name,class)
+    -> );
+Query OK, 0 rows affected (0.32 sec)
+
+mysql> desc t13;
++-------+------------------+------+-----+---------+-------+
+| Field | Type             | Null | Key | Default | Extra |
++-------+------------------+------+-----+---------+-------+
+| name  | char(15)         | NO   | PRI | NULL    |       |
+| class | char(15)         | NO   | PRI | NULL    |       |
+| pay   | enum('yes','no') | YES  |     | NULL    |       |
++-------+------------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+但是不能下列方式创建复合主键
+create table t13(
+name char(15) primary key,
+class char(15) primary key,
+pay enum("yes","no")
+);
+
+PRI   PRImysql> create table t13(
+    -> name char(15) primary key,
+    -> class char(15) primary key,
+    -> pay enum("yes","no")
+    -> );
+ERROR 1068 (42000): Multiple primary key defined
+
+mysql> insert  into  t13 values("bob","nsd1804","yes");
+Query OK, 1 row affected (0.06 sec)
+
+mysql> insert  into  t13 values("bob","nsd1805","yes");
+Query OK, 1 row affected (0.05 sec)
+
+mysql> insert  into  t13 values("bob","nsd1804","no");
+ERROR 1062 (23000): Duplicate entry 'bob-nsd1804' for key 'PRIMARY'
+mysql> insert  into  t13 values("lucy","nsd1804","no");
+Query OK, 1 row affected (0.07 sec)
+
+mysql> select  *  from t13;
++------+---------+------+
+| name | class   | pay  |
++------+---------+------+
+| bob  | nsd1804 | yes  |
+| bob  | nsd1805 | yes  |
+| lucy | nsd1804 | no   |
++------+---------+------+
+3 rows in set (0.00 sec)
+
+name  class      pay
+bob   nsd1804    yes 
+bob   nsd1804    no
+lucy  nsd1805    yes
+
+删除复合键
+
+alter table t12 drop primary key;
+
+在已经有表中创建复合主键
+
+delete *  from  t12;
+alter table t12 add primary key (name,class);
+
+##########################################################################
+
+2018年 07月 12日 星期四 09:05:08 CST
+
+批量更新表字段值
+
+mysql> select * from t11;
++--------+-------+------+
+| stu_id | name  | age  |
++--------+-------+------+
+| hao    | nihao |   55 |
++--------+-------+------+
+1 row in set (0.00 sec)
+
+mysql> update t11 set stu_id="good"  where age=55;
+Query OK, 1 row affected (0.04 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select * from t11;
++--------+-------+------+
+| stu_id | name  | age  |
++--------+-------+------+
+| good   | nihao |   55 |
++--------+-------+------+
+1 row in set (0.00 sec)
+
+mysql> update t11 set stu_id="good",name="hhhhhh"  where age=55;
+Query OK, 1 row affected (0.05 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select * from t11;
++--------+--------+------+
+| stu_id | name   | age  |
++--------+--------+------+
+| good   | hhhhhh |   55 |
++--------+--------+------+
+1 row in set (0.00 sec)
+
+mysql> update t11 set stu_id="goodgood",name="haohaohaohaoah"  where age=55;
+ERROR 1406 (22001): Data too long for column 'name' at row 1
+mysql> update t11 set stu_id="goodgood",name="haohao"  where age=55;
+Query OK, 1 row affected (0.05 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select * from t11;
++----------+--------+------+
+| stu_id   | name   | age  |
++----------+--------+------+
+| goodgood | haohao |   55 |
++----------+--------+------+
+1 row in set (0.00 sec)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
