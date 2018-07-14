@@ -163,7 +163,7 @@ Index_comment:
 1 row in set (0.00 sec)
 
 mysql> drop index aaa on  stuinfo;
-Query OK, 0 rows affected (0.23 sec)
+Query OK, 0 rows affected (0.23 sec)alter
 Records: 0  Duplicates: 0  Warnings: 0
 
 mysql> desc stuinfo;
@@ -1623,6 +1623,386 @@ mysql> select  distinct shell from user where uid <= 500;
 | /bin/false     |
 +----------------+
 6 rows in set (0.00 sec)
+
+#############################################################
+
+
+查看mysql历史记录:
+
+查看设置mysql genneral log
+
+
+show VARIABLES like '%general_log%';
+
+set GLOBAL general_log = off;// on-打开; off-关闭
+
+general_log ON
+general_log_file    /var/log/mysql/query.log
+
+
+############################################################################
+
+2018年 07月 14日 星期六 14:32:29 CST
+
+mysql> create table  b4 select *  from teadb.usertab;
+Query OK, 42 rows affected (0.55 sec)
+Records: 42  Duplicates: 0  Warnings: 0
+
+mysql> select  *  from b4;
++----+---------------------+----------+-------+-------+-----------------------------------------------------------------+---------------------------+----------------+
+| id | name                | password | uid   | gid   | comment                                                         | homedir                   | shell          |
++----+---------------------+----------+-------+-------+-----------------------------------------------------------------+---------------------------+----------------+
+|  1 | root                | x        | 0     | 0     | root                                                            | /root                     | /bin/bash      |
+|  2 | bin                 | x        | 1     | 1     | bin                                                             | /bin                      | /sbin/nologin  |
+|  3 | daemon              | x        | 2     | 2     | daemon                                                          | /sbin                     | /sbin/nologin  |
+|  4 | adm                 | x        | 3     | 4     | adm                                                             | /var/adm                  | /sbin/nologin  |
+|  5 | lp                  | x        | 4     | 7     | lp                                                              | /var/spool/lpd            | /sbin/nologin  |
+|  6 | sync                | x        | 5     | 0     | sync                                                            | /sbin                     | /bin/sync      |
+|  7 | shutdown            | x        | 6     | 0     | shutdown                                                        | /sbin                     | /sbin/shutdown |
+|  8 | halt                | x        | 7     | 0     | halt                                                            | /sbin                     | /sbin/halt     |
+|  9 | mail                | x        | 8     | 12    | mail                                                            | /var/spool/mail           | /sbin/nologin  |
+| 10 | operator            | x        | 11    | 0     | operator                                                        | /root                     | /sbin/nologin  |
+| 11 | games               | x        | 12    | 100   | games                                                           | /root                     | /sbin/nologin  |
+| 12 | ftp                 | x        | 14    | 50    | FTP User                                                        | /var/ftp                  | /sbin/nologin  |
+| 13 | nobody              | x        | 99    | 99    | Nobody                                                          | /                         | /sbin/nologin  |
+| 14 | systemd-network     | x        | 192   | 192   | systemd Network Management                                      | /root                     | /sbin/nologin  |
+| 15 | dbus                | x        | 81    | 81    | System message bus                                              | /                         | /sbin/nologin  |
+| 16 | polkitd             | x        | 999   | 998   | User for polkitd                                                | /                         | /sbin/nologin  |
+| 17 | libstoragemgmt      | x        | 998   | 996   | daemon account for libstoragemgmt                               | /var/run/lsm              | /sbin/nologin  |
+| 18 | rpc                 | x        | 32    | 32    | Rpcbind Daemon                                                  | /var/lib/rpcbind          | /sbin/nologin  |
+| 19 | colord              | x        | 997   | 995   | User for colord                                                 | /var/lib/colord           | /sbin/nologin  |
+| 20 | saslauth            | x        | 996   | 76    | Saslauthd user                                                  | /run/saslauthd            | /sbin/nologin  |
+| 21 | abrt                | x        | 173   | 173   |                                                                 | /root                     | /sbin/nologin  |
+| 22 | rtkit               | x        | 172   | 172   | RealtimeKit                                                     | /root                     | /sbin/nologin  |
+| 23 | radvd               | x        | 75    | 75    | radvd user                                                      | /                         | /sbin/nologin  |
+| 24 | chrony              | x        | 995   | 993   |                                                                 | /var/lib/chrony           | /sbin/nologin  |
+| 25 | tss                 | x        | 59    | 59    | Account used by the trousers package to sandbox the tcsd daemon | /dev/null                 | /sbin/nologin  |
+| 26 | usbmuxd             | x        | 113   | 113   | usbmuxd user                                                    | /root                     | /sbin/nologin  |
+| 27 | geoclue             | x        | 994   | 991   | User for geoclue                                                | /var/lib/geoclue          | /sbin/nologin  |
+| 28 | qemu                | x        | 107   | 107   | qemu user                                                       | /root                     | /sbin/nologin  |
+| 29 | rpcuser             | x        | 29    | 29    | RPC Service User                                                | /var/lib/nfs              | /sbin/nologin  |
+| 30 | nfsnobody           | x        | 65534 | 65534 | Anonymous NFS User                                              | /var/lib/nfs              | /sbin/nologin  |
+| 31 | setroubleshoot      | x        | 993   | 990   |                                                                 | /var/lib/setroubleshoot   | /sbin/nologin  |
+| 32 | pulse               | x        | 171   | 171   | PulseAudio System Daemon                                        | /root                     | /sbin/nologin  |
+| 33 | gdm                 | x        | 42    | 42    |                                                                 | /var/lib/gdm              | /sbin/nologin  |
+| 34 | gnome-initial-setup | x        | 992   | 987   |                                                                 | /run/gnome-initial-setup/ | /sbin/nologin  |
+| 35 | sshd                | x        | 74    | 74    | Privilege-separated SSH                                         | /var/empty/sshd           | /sbin/nologin  |
+| 36 | avahi               | x        | 70    | 70    | Avahi mDNS/DNS-SD Stack                                         | /var/run/avahi-daemon     | /sbin/nologin  |
+| 37 | postfix             | x        | 89    | 89    |                                                                 | /var/spool/postfix        | /sbin/nologin  |
+| 38 | ntp                 | x        | 38    | 38    |                                                                 | /etc/ntp                  | /sbin/nologin  |
+| 39 | tcpdump             | x        | 72    | 72    |                                                                 | /                         | /sbin/nologin  |
+| 40 | lisi                | x        | 1000  | 1000  | lisi                                                            | /home/lisi                | /bin/bash      |
+| 41 | mysql               | x        | 27    | 27    | MySQL Server                                                    | /var/lib/mysql            | /bin/false     |
+| 42 | apache              | x        | 48    | 48    | Apache                                                          | /usr/share/httpd          | /sbin/nologin  |
++----+---------------------+----------+-------+-------+-----------------------------------------------------------------+---------------------------+----------------+
+42 rows in set (0.00 sec)
+
+mysql> 
+mysql> create table b5 select id,name,uid from b4  order by uid;
+Query OK, 42 rows affected (0.29 sec)
+Records: 42  Duplicates: 0  Warnings: 0
+
+mysql> select  *  from b5;
++----+---------------------+-------+
+| id | name                | uid   |
++----+---------------------+-------+
+|  1 | root                | 0     |
+|  2 | bin                 | 1     |
+| 40 | lisi                | 1000  |
+| 28 | qemu                | 107   |
+| 10 | operator            | 11    |
+| 26 | usbmuxd             | 113   |
+| 11 | games               | 12    |
+| 12 | ftp                 | 14    |
+| 32 | pulse               | 171   |
+| 22 | rtkit               | 172   |
+| 21 | abrt                | 173   |
+| 14 | systemd-network     | 192   |
+|  3 | daemon              | 2     |
+| 41 | mysql               | 27    |
+| 29 | rpcuser             | 29    |
+|  4 | adm                 | 3     |
+| 18 | rpc                 | 32    |
+| 38 | ntp                 | 38    |
+|  5 | lp                  | 4     |
+| 33 | gdm                 | 42    |
+| 42 | apache              | 48    |
+|  6 | sync                | 5     |
+| 25 | tss                 | 59    |
+|  7 | shutdown            | 6     |
+| 30 | nfsnobody           | 65534 |
+|  8 | halt                | 7     |
+| 36 | avahi               | 70    |
+| 39 | tcpdump             | 72    |
+| 35 | sshd                | 74    |
+| 23 | radvd               | 75    |
+|  9 | mail                | 8     |
+| 15 | dbus                | 81    |
+| 37 | postfix             | 89    |
+| 13 | nobody              | 99    |
+| 34 | gnome-initial-setup | 992   |
+| 31 | setroubleshoot      | 993   |
+| 27 | geoclue             | 994   |
+| 24 | chrony              | 995   |
+| 20 | saslauth            | 996   |
+| 19 | colord              | 997   |
+| 17 | libstoragemgmt      | 998   |
+| 16 | polkitd             | 999   |
++----+---------------------+-------+
+42 rows in set (0.00 sec)
+
+mysql> create  table user1  select *  from  teadb.usertab where 2=5;    //  where 2=5 这个条件不存在,所以创建这个字段表
+Query OK, 0 rows affected (0.27 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> select  *  from user1;
+Empty set (0.00 sec)
+
+mysql> desc user1;
++----------+-------------+------+-----+---------+-------+
+| Field    | Type        | Null | Key | Default | Extra |
++----------+-------------+------+-----+---------+-------+
+| id       | int(11)     | NO   |     | NULL    |       |
+| name     | char(66)    | YES  |     | NULL    |       |
+| password | char(22)    | YES  |     | NULL    |       |
+| uid      | varchar(55) | YES  |     | NULL    |       |
+| gid      | varchar(66) | YES  |     | NULL    |       |
+| comment  | varchar(99) | YES  |     | NULL    |       |
+| homedir  | varchar(88) | YES  |     | NULL    |       |
+| shell    | varchar(66) | YES  |     | NULL    |       |
++----------+-------------+------+-----+---------+-------+
+8 rows in set (0.00 sec)
+
+
+mysql> select *  from t1;
++--------+------+---------------+
+| name   | uid  | shell         |
++--------+------+---------------+
+| root   | 0    | /bin/bash     |
+| bin    | 1    | /sbin/nologin |
+| daemon | 2    | /sbin/nologin |
++--------+------+---------------+
+3 rows in set (0.00 sec)
+
+mysql> create table t2 select name,password,uid ,homedir from b4 limit 5;
+Query OK, 5 rows affected (0.28 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> select  *  from t2;
++--------+----------+------+----------------+
+| name   | password | uid  | homedir        |
++--------+----------+------+----------------+
+| root   | x        | 0    | /root          |
+| bin    | x        | 1    | /bin           |
+| daemon | x        | 2    | /sbin          |
+| adm    | x        | 3    | /var/adm       |
+| lp     | x        | 4    | /var/spool/lpd |
++--------+----------+------+----------------+
+5 rows in set (0.00 sec)
+
+
+mysql> select *  from t1,t2;  //笛卡尔积
++--------+------+---------------+--------+----------+------+----------------+
+| name   | uid  | shell         | name   | password | uid  | homedir        |
++--------+------+---------------+--------+----------+------+----------------+
+| root   | 0    | /bin/bash     | root   | x        | 0    | /root          |
+| bin    | 1    | /sbin/nologin | root   | x        | 0    | /root          |
+| daemon | 2    | /sbin/nologin | root   | x        | 0    | /root          |
+| root   | 0    | /bin/bash     | bin    | x        | 1    | /bin           |
+| bin    | 1    | /sbin/nologin | bin    | x        | 1    | /bin           |
+| daemon | 2    | /sbin/nologin | bin    | x        | 1    | /bin           |
+| root   | 0    | /bin/bash     | daemon | x        | 2    | /sbin          |
+| bin    | 1    | /sbin/nologin | daemon | x        | 2    | /sbin          |
+| daemon | 2    | /sbin/nologin | daemon | x        | 2    | /sbin          |
+| root   | 0    | /bin/bash     | adm    | x        | 3    | /var/adm       |
+| bin    | 1    | /sbin/nologin | adm    | x        | 3    | /var/adm       |
+| daemon | 2    | /sbin/nologin | adm    | x        | 3    | /var/adm       |
+| root   | 0    | /bin/bash     | lp     | x        | 4    | /var/spool/lpd |
+| bin    | 1    | /sbin/nologin | lp     | x        | 4    | /var/spool/lpd |
+| daemon | 2    | /sbin/nologin | lp     | x        | 4    | /var/spool/lpd |
++--------+------+---------------+--------+----------+------+----------------+
+15 rows in set (0.00 sec)
+
+
+
+嵌套查询:
+
+相同表
+
+mysql>  select name ,uid from  b4 where uid <= (select avg(uid) from b4); //b4可以为不同数据库的不同表
++---------------------+------+
+| name                | uid  |
++---------------------+------+
+| root                | 0    |
+| bin                 | 1    |
+| daemon              | 2    |
+| adm                 | 3    |
+| lp                  | 4    |
+| sync                | 5    |
+| shutdown            | 6    |
+| halt                | 7    |
+| mail                | 8    |
+| operator            | 11   |
+| games               | 12   |
+| ftp                 | 14   |
+| nobody              | 99   |
+| systemd-network     | 192  |
+| dbus                | 81   |
+| polkitd             | 999  |
+| libstoragemgmt      | 998  |
+| rpc                 | 32   |
+| colord              | 997  |
+| saslauth            | 996  |
+| abrt                | 173  |
+| rtkit               | 172  |
+| radvd               | 75   |
+| chrony              | 995  |
+| tss                 | 59   |
+| usbmuxd             | 113  |
+| geoclue             | 994  |
+| qemu                | 107  |
+| rpcuser             | 29   |
+| setroubleshoot      | 993  |
+| pulse               | 171  |
+| gdm                 | 42   |
+| gnome-initial-setup | 992  |
+| sshd                | 74   |
+| avahi               | 70   |
+| postfix             | 89   |
+| ntp                 | 38   |
+| tcpdump             | 72   |
+| lisi                | 1000 |
+| mysql               | 27   |
+| apache              | 48   |
++---------------------+------+
+41 rows in set (0.00 sec)
+
+
+不同表
+
+mysql> select *  from t1;
++--------+------+---------------+
+| name   | uid  | shell         |
++--------+------+---------------+
+| root   | 0    | /bin/bash     |
+| bin    | 1    | /sbin/nologin |
+| daemon | 2    | /sbin/nologin |
++--------+------+---------------+
+3 rows in set (0.00 sec)
+
+mysql> create table t2 select name,password,uid ,homedir from b4 limit 5;
+Query OK, 5 rows affected (0.28 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> select  *  from t2;
++--------+----------+------+----------------+
+| name   | password | uid  | homedir        |
++--------+----------+------+----------------+
+| root   | x        | 0    | /root          |
+| bin    | x        | 1    | /bin           |
+| daemon | x        | 2    | /sbin          |
+| adm    | x        | 3    | /var/adm       |
+| lp     | x        | 4    | /var/spool/lpd |
++--------+----------+------+----------------+
+5 rows in set (0.00 sec)
+
+
+
+mysql> select name from t2 where name in (select name from t1);
++--------+
+| name   |
++--------+
+| root   |
+| bin    |
+| daemon |
++--------+
+3 rows in set (0.00 sec)
+
+
+########################################################
+
+连接查询
+
+左连接:以左边的为主显示查询结果    
+select  字段名列表  from  表名A  left join  表名B on 条件;
+
+
+右连接:以右边的为主显示查询结果    right join
+
+
+
+
+mysql> select *  from b61;
++--------+------+---------------+
+| name   | uid  | shell         |
++--------+------+---------------+
+| root   | 0    | /bin/bash     |
+| bin    | 1    | /sbin/nologin |
+| daemon | 2    | /sbin/nologin |
+| adm    | 3    | /sbin/nologin |
+| lp     | 4    | /sbin/nologin |
++--------+------+---------------+
+5 rows in set (0.00 sec)
+
+
+mysql> create  table  b62  select  name ,uid, shell from b4 limit 7;
+Query OK, 7 rows affected (0.34 sec)
+Records: 7  Duplicates: 0  Warnings: 0
+
+mysql> select *  from b62;
++----------+------+----------------+
+| name     | uid  | shell          |
++----------+------+----------------+
+| root     | 0    | /bin/bash      |
+| bin      | 1    | /sbin/nologin  |
+| daemon   | 2    | /sbin/nologin  |
+| adm      | 3    | /sbin/nologin  |
+| lp       | 4    | /sbin/nologin  |
+| sync     | 5    | /bin/sync      |
+| shutdown | 6    | /sbin/shutdown |
++----------+------+----------------+
+7 rows in set (0.00 sec)
+
+mysql> select * from  b61 left join b62 on b61.uid = b62.uid;
++--------+------+---------------+--------+------+---------------+
+| name   | uid  | shell         | name   | uid  | shell         |
++--------+------+---------------+--------+------+---------------+
+| root   | 0    | /bin/bash     | root   | 0    | /bin/bash     |
+| bin    | 1    | /sbin/nologin | bin    | 1    | /sbin/nologin |
+| daemon | 2    | /sbin/nologin | daemon | 2    | /sbin/nologin |
+| adm    | 3    | /sbin/nologin | adm    | 3    | /sbin/nologin |
+| lp     | 4    | /sbin/nologin | lp     | 4    | /sbin/nologin |
++--------+------+---------------+--------+------+---------------+
+5 rows in set (0.00 sec)
+
+mysql> select * from  b61 right join b62 on b61.uid = b62.uid;
++--------+------+---------------+----------+------+----------------+
+| name   | uid  | shell         | name     | uid  | shell          |
++--------+------+---------------+----------+------+----------------+
+| root   | 0    | /bin/bash     | root     | 0    | /bin/bash      |
+| bin    | 1    | /sbin/nologin | bin      | 1    | /sbin/nologin  |
+| daemon | 2    | /sbin/nologin | daemon   | 2    | /sbin/nologin  |
+| adm    | 3    | /sbin/nologin | adm      | 3    | /sbin/nologin  |
+| lp     | 4    | /sbin/nologin | lp       | 4    | /sbin/nologin  |
+| NULL   | NULL | NULL          | sync     | 5    | /bin/sync      |
+| NULL   | NULL | NULL          | shutdown | 6    | /sbin/shutdown |
++--------+------+---------------+----------+------+----------------+
+7 rows in set (0.00 sec)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
