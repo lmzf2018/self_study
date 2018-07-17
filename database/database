@@ -1,3 +1,4 @@
+
 1.装包
 软件源来源？ 官网下载  XXX.主.次（偶数为稳定版）.修改次数
 软件包封包类型（rpm 源码）？
@@ -1989,12 +1990,192 @@ mysql> select * from  b61 right join b62 on b61.uid = b62.uid;
 +--------+------+---------------+----------+------+----------------+
 7 rows in set (0.00 sec)
 
+###################################################################
+
+
+查询主机名
+mysql> select  @@hostname;
++------------+
+| @@hostname |
++------------+
+| host50     |
++------------+
+1 row in set (0.00 sec)
+
+查看当前的数据服务，支持哪种搜索引擎
+mysql> show engines;
++--------------------+---------+----------------------------------------------------------------+--------------+------+------------+
+| Engine             | Support | Comment                                                        | Transactions | XA   | Savepoints |
++--------------------+---------+----------------------------------------------------------------+--------------+------+------------+
+| InnoDB             | DEFAULT | Supports transactions, row-level locking, and foreign keys     | YES          | YES  | YES        |
+| MRG_MYISAM         | YES     | Collection of identical MyISAM tables                          | NO           | NO   | NO         |
+| MEMORY             | YES     | Hash based, stored in memory, useful for temporary tables      | NO           | NO   | NO         |
+| BLACKHOLE          | YES     | /dev/null storage engine (anything you write to it disappears) | NO           | NO   | NO         |
+| MyISAM             | YES     | MyISAM storage engine                                          | NO           | NO   | NO         |
+| CSV                | YES     | CSV storage engine                                             | NO           | NO   | NO         |
+| ARCHIVE            | YES     | Archive storage engine                                         | NO           | NO   | NO         |
+| PERFORMANCE_SCHEMA | YES     | Performance Schema                                             | NO           | NO   | NO         |
+| FEDERATED          | NO      | Federated MySQL storage engine                                 | NULL         | NULL | NULL       |
++--------------------+---------+----------------------------------------------------------------+--------------+------+------------+
+9 rows in set (0.00 sec)
 
 
 
 
+InnoDB
+事物Transactions
+
+修改数据库服务的默认使用搜索引擎？
+#sytemctl stop  mysqld
+#vim   /etvc/my.cnf
+[mysqld]
+default-storage-engine=myisam
+:x
+#systemctl start mysqld
+
+mysql>show engines;
+
+建表
+create table 表名 (name int) engine=存储引擎名
 
 
+修改表使用的存储引擎
+alter table 表名  engine=存储引擎名
+
+
+myisam 存储引擎的特点
+支持表级锁（客户端连接数据库服务器后，对表的数据做访问时，若表的存储是myisam的话，会给整张表加锁）
+不支持事务和事务回滚
+每个表对应三个表文件
+表.frm   表结构  desc 表  
+表.MYD   表数据
+表.MYI   表的index索引信息
+
+
+InnoDB的特点
+支持行级锁（客户端连接数据库服务器后，对表的数据做访问时，若表的存储是InnoDB的话，只会给表中被访问的行加锁）
+支持事务回滚，外键   
+每个表对应2个表文件
+表.frm  表结构 
+表.ibd  表数据和index索引
+
+
+锁粒度 （锁表的范围）
+表锁
+锁类型：
+读锁 （共享锁）         当对一张表查询时（select）操作时 会加读锁
+写锁  (排他锁或互斥锁)  当对一张表执行写（insert update delete）操作时 会加写锁
+
+
+事务(transaction)：一次sql操作从建立连接到操作完成断开连接的访问过程称作事务
+
+支持事务的表可以做事务回滚:一次sql操作有任意一步美亚执行成功会恢复所有操作。（对innoDB存储引擎的表访问时必须任意一步操作都成功，才能完成操作）
+
+使用事务的的操作  银行的汇款或转账业务
+
+默认
+mysql> show  variables like "autocommit";
++---------------+-------+
+| Variable_name | Value |
++---------------+-------+
+| autocommit    | ON    |
++---------------+-------+
+1 row in set (0.00 sec)
+
+
+mysql> set autocommit=off;
+
+
+mysql> show  variables like "autocommit";
++---------------+-------+
+| Variable_name | Value |
++---------------+-------+
+| autocommit    | OFF   |
++---------------+-------+
+1 row in set (0.00 sec)
+
+
+mysql> show  variables like "autocommit";
++---------------+-------+
+| Variable_name | Value |
++---------------+-------+
+| autocommit    | OFF   |
++---------------+-------+
+1 row in set (0.00 sec)
+
+
+###########################################################
+
+完全备份：mysqldump
+完全恢复：mysql
+
+
+]#man  mysqldump
+]#mysqldump    -uroot   -p123456 库名 > 目录名/文件名.sql
+
+库名的表示方式：
+--all-databases  或 -A 所有库所有表
+]#mysqldump   -uroot -p123456  -A > /bakdir/alldb.sql
+mysqldump: [Warning] Using a password on the command line interface can be insecure.
+
+
+库名  备份库下的所有表
+]#mysqldump   -uroot -p123456  db5 > /bakdir/db5.sql
+mysqldump: [Warning] Using a password on the command line interface can be insecure.
+
+库名  表名   备份一张表的所有记录
+]#mysqldump   -uroot -p123456  db5  t1 > /bakdir/db5_user.sql
+mysqldump: [Warning] Using a password on the command line interface can be insecure.
+
+
+-B  库名1  库名2  备份某几个库的所有数据
+]#mysqldump   -uroot -p123456  -B  db5  db55 > /bakdir/twodb.sql
+mysqldump: [Warning] Using a password on the command line interface can be insecure.
+
+
+mysqldump备份和恢复会锁表
+
+vim  /bakdir/db5.sql
+...
+LOCK TABLES `t1` WRITE;
+/*!40000 ALTER TABLE `t1` DISABLE KEYS */;
+/*!40000 ALTER TABLE `t1` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+...
+
+
+完全恢复：mysql
+
+方法一：]# mysql -uroot -p123456  库名  < 目录名/文件名.sql
+
+方法二：mysql> source 目录名/文件名.sql
+
+
+
+每周一 23点备份数据库服务器上db5库下的所有表到系统的/bakdir
+
+vim  /root/alldb5.sh
+#！/bin/bash
+x=`date +%F`
+ [ -e /bakdir ]  ||  mkdir /bakdir 
+mysqldump  -uroot -p123456 db5  > /bakdir/db5_${x}.sql
+:x
+
+]#chmod  +x  /root/alldb5.sh
+
+
+]#/root/alldb5.sh
+
+
+]#crontab   -e 
+00  23  *  *   1    /root/alldb5.sh  &> /dev/null
+:x
+
+
+增量备份与恢复
+1.启用mysql服务自带的binlog日志文件
+2.安装第3方软件提供的命令innobackupex ***
 
 
 
