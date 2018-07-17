@@ -1633,9 +1633,9 @@ mysql> select  distinct shell from user where uid <= 500;
 查看设置mysql genneral log
 
 
-show VARIABLES like '%general_log%';
+smysql> show VARIABLES like '%general_log%';
 
-set GLOBAL general_log = off;// on-打开; off-关闭
+mysql> set GLOBAL general_log = off;// on-打开; off-关闭
 
 general_log ON
 general_log_file    /var/log/mysql/query.log
@@ -1829,7 +1829,7 @@ mysql> select *  from t1,t2;  //笛卡尔积
 嵌套查询:
 
 相同表
-
+ /var/lib/mysql/host50.log
 mysql>  select name ,uid from  b4 where uid <= (select avg(uid) from b4); //b4可以为不同数据库的不同表
 +---------------------+------+
 | name                | uid  |
@@ -2176,6 +2176,113 @@ mysqldump  -uroot -p123456 db5  > /bakdir/db5_${x}.sql
 增量备份与恢复
 1.启用mysql服务自带的binlog日志文件
 2.安装第3方软件提供的命令innobackupex ***
+
+
+binlog日志的使用：
+日志介绍：是服务日志文件中的一种（默认没有开启）记录除查询之外的sql命令
+
+启用日志：
+vim  /etc/my.cnf
+[mysqld]
+server_id=50   //指定id值
+log-bin
+binlog-format="mixed"
+
+]# systemctl restart  mysqld
+]# cd /var/lib/mysql
+]# ls
+host50-bin.000001   日志文件> 500M 时自动生成第二个日志文件
+host50-bin.index 
+
+查看日志内容：
+]# mysqlbinlog  host50-bin.000001
+
+
+
+自定义binlog日志名称及存储目录
+]#mkdir /logdir
+]#chown  mysql  /logdir
+
+vim /etc/my.cnf
+[mysql]
+log-bin=/logdir/db50
+:x
+
+]#systemctl  restart  mysqld
+]#mysqlbinlog   /logdir/db50.000001
+
+
+
+日志记录格式：
+
+
+偏移量
+
+
+]# mysqlbinlog   选项   /logdir/db50.000001
+--start-position=数字
+--stop-position=数字
+
+
+时间点
+--start-datetime=“yyyy-mm-dd hh:mm:ss”
+--stop-datetime=“yyyy-mm-dd hh:mm:ss”
+
+执行日志文件记录的sql命令恢复数据
+
+]# mysqlbinlog  选项 日志文件名 | mysql  -uroot -p123456
+
+]#mysqlbinlog  --start-position=10186  --stop-position=10364  /logdir/db50.000001 | mysql  -uroot -p123456
+
+###################################################################
+
+
+手动生成新的日志文件
+
+]#mysqldump  -uroot -p123456 --flush-logs  db3 > /bakdir/db3.sql
+
+
+或者
+
+mysql>flush  logs;
+
+或者
+
+]#mysqld  -uroot -p123456 -e "flush logs"
+
+
+mysql> show  master status;   //--查看正在使用的日志文件
++-------------+----------+--------------+------------------+-------------------+
+| File        | Position | Binlog_Do_DB | Binlog_Ignore_DB | Executed_Gtid_Set |
++-------------+----------+--------------+------------------+-------------------+
+| db50.000001 |    13564 |              |                  |                   |
++-------------+----------+--------------+------------------+-------------------+
+1 row in set (0.00 sec)
+
+
+
+
+删除已有的日志文件
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
