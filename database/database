@@ -11,6 +11,97 @@ tcp    LISTEN     0      80       :::3306               :::*       users:(("mysq
 [root@host50 ~]# ps  -C  mysqld   //单独查
   PID TTY          TIME CMD
  3468 ?        00:00:00 mysqld
+
+###########################################################
+
+数据库  庞丽静工作邮箱:  panglj@tedu.cn
+
+rhel7     yum -y install mariadb-server
+rhel6     yum -y install mysql
+
+学习环境:
+禁用selinux
+关闭防火墙
+ftp 176.19.7.250
+Name:  anonymous                          //匿名登录ftp
+Password： Enter
+
+
+
+createrepo /var/ftp/mysql                 //创建yum仓库
+
+[mysql]
+name=mysql
+baseurl=ftp://192.168.4.254/mysql
+enable=1
+gpgcheck=0
+
+[dvd]
+name=rhel7
+baseurl=ftp://192.168.4.254/rhel7
+enable=1
+gpgcheck=0
+
+
+yum -y install mysql-*                     //装包
+
+systemctl start mysqld                     //启服务
+
+grep -i password /var/log/mysqld.log       //查密码
+
+mysql -uroot -p"密码"    登录
+
+set global validate_password_policy=0;     //修改安全策略只要求长度
+
+set global validate_password_length=6;     //修改密码长度为6
+
+alter user user() identified by "123456";  //修改密码为123456
+
+vim /etc/my.cnf                            //永久修改
+validate_password_policy=0      
+validate_password_length=6
+
+
+
+数据库的命名规则:可以使用数字/字母/下划线,但不能为纯数字
+                区分大小写,具有唯一性
+                不可以使用指令关键字,特殊字符
+
+SQL命令:
+show databases;            	//显示已有的库
+create database (库名);    	//创建库
+drop database (库名);       	//删除库
+use (库名);                 	//切换库
+select database();          	//显示当前所在的库
+show tables;                	//显示已有的表
+
+使用SQL(结构化查询语言)命令的使用规则和分类:
+  1.每条命令必须以;(分号)结束或分隔
+  2.命令不区分大小写(密码和变量除外)
+  3.不支持tab自动补全数据库操作:
+  4.\c可以废弃当前的命令
+
+常用SQL的操作指令
+  1.DDL数据定义语言   (create  alter  drop)
+  2.DML数据操作语言   (insert  update  delete)
+  3.DCL数据控制语言   (grant  remoke)
+  4.DTL数据事物语言   (commit  rollback  savepoint)
+
+数据表:
+
+表必须在库里创建
+
+create database md1;         //创建md1库
+create table md1.student(    //在md1库中创建student表
+name char(15),               //第一个字段名为name,最多15个字符
+sex char(10),                //第二个字段名为sex,最多10个字符
+age int,                     //第三个字段名为age,只能为整数
+tel char(11)                 //第四个字段名为tel,最多11个字符
+);
+
+
+
+
 ###########################################################
 
 1.临时和永久设置密码验证策略为只验证长度的命令分别是什么?
@@ -2247,8 +2338,11 @@ log-bin=/logdir/db50
 mysql>flush  logs;
 
 或者
+systemctl restart mysqld
 
-]#mysqld  -uroot -p123456 -e "flush logs"
+或者
+
+]#mysql -uroot -p123456 -e "flush logs"
 
 
 mysql> show  master status;   //--查看正在使用的日志文件
@@ -2261,22 +2355,56 @@ mysql> show  master status;   //--查看正在使用的日志文件
 
 
 
-
+  
 删除已有的日志文件
 
+方法一：
+mysql> purge  master logs to "db50.000005";
+mysql> reset master;
+
+]#rm  -rf /logdir/ *
+
+方法二：安装第3方软件percona提供的命令innobackupex
+
+
+yum -y install perl-DBD-MySQL.x86_64  perl-Digest-MD5.x86_64
+
+rpm  -ivh  libev-4.15-1.el6.rf.x86_64.rpm
+
+rpm -ivh  percona-xtrabackup-24-2.4.7-1.el7.x86_64.rpm
+
+
+完全备份和恢复
+
+]#innobackupex  --user root --password 123456  --databases="mysql  performance_schema sys  db"  /allbak  --no-timestamp 
+
+mysql  performance_schema  sys  // --这三个库是系统自带的库
+
+完全恢复
+（要求数据库目录必须是空的）
 
 
 
 
+准备恢复数据（回滚备份目录下日志信息）
+]# innobackupex  --user root --password 123456  --databases="mysql  performance_schema sys  db"  --apply-log   /allbak  
+
+]#systemctl  stop mysqld
+
+]#rm -rf /var/lib/mysql/ *
+
+把备份目录下数据库拷贝会数据库目录下
+]# innobackupex  --user root --password 123456  --databases="mysql  performance_schema sys  db"   --copy-back   /allbak  
 
 
+修改数据库目录下所有者和组用户为mysql
+]#chown -R   mysql:mysql   /var/lib/mysql
+
+重启数据库服务
+]#systemctl  restart mysqld
 
 
-
-
-
-
-
+登录查看数据
 
 
 
