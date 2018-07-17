@@ -2406,6 +2406,171 @@ mysql  performance_schema  sys  // --这三个库是系统自带的库
 
 登录查看数据
 
+####################################################################
+
+--修改数据库名：
+mysql> show  databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| db                 |
+| db1                |
+| gamedb             |
+| mysql              |
+| performance_schema |
+| sys                |
++--------------------+
+7 rows in set (0.01 sec)
+
+进入/var/lib/mysql
+[root@host50 ~]# cd /var/lib/mysql
+[root@host50 mysql]# ls
+auto.cnf  ib_buffer_pool  ibtmp1           performance_schema
+db        ibdata1         mysql            sys
+db1       ib_logfile0     mysql.sock       xtrabackup_binlog_pos_innodb
+gamedb    ib_logfile1     mysql.sock.lock  xtrabackup_info
+[root@host50 mysql]# mv  db1  db11
+[root@host50 mysql]# ls
+auto.cnf  ib_buffer_pool  ibtmp1           performance_schema
+db        ibdata1         mysql            sys
+db11      ib_logfile0     mysql.sock       xtrabackup_binlog_pos_innodb
+gamedb    ib_logfile1     mysql.sock.lock  xtrabackup_info
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| db                 |
+| db11               |
+| gamedb             |
+| mysql              |
+| performance_schema |
+| sys                |
++--------------------+
+7 rows in set (0.01 sec)
+
+###################################################################
+
+--修改数据库表名：
+ alter table v1 rename v2;              //把v1表改为v2,内容不变
+
+mysql> select  *  from  STUDENT;
++-----+--------+------+---------------------+-------+
+| SNO | SNAME  | SSEX | SBIRTHDAY           | CLASS |
++-----+--------+------+---------------------+-------+
+| 108 | 曾华   | 男   | 1977-09-01 00:00:00 | 95033 |
+| 105 | 匡明   | 男   | 1975-10-02 00:00:00 | 95031 |
+| 107 | 王丽   | 女   | 1976-01-23 00:00:00 | 95033 |
+| 101 | 李军   | 男   | 1976-02-20 00:00:00 | 95033 |
+| 109 | 王芳   | 女   | 1975-02-10 00:00:00 | 95031 |
+| 103 | 陆君   | 男   | 1974-06-03 00:00:00 | 95031 |
++-----+--------+------+---------------------+-------+
+6 rows in set (0.00 sec)
+
+--mysql> ALTER table STUDENT rename student;
+Query OK, 0 rows affected (0.05 sec)
+
+mysql> show tables;
++---------------+
+| Tables_in_db1 |
++---------------+
+| student       |
++---------------+
+1 row in set (0.00 sec)
+
+--修改字段名：
+
+alter table v1 change age xx char(11);  //把v1表中age字段改为xx字段
++---------+---------------------------+------+-----+---------+-------+
+| Field   | Type                      | Null | Key | Default | Extra |
++---------+---------------------------+------+-----+---------+-------+
+| stu_num | char(9)                   | YES  |     | NULL    |       |
+| name    | varchar(15)               | YES  |     | NULL    |       |
+| class   | char(7)                   | YES  |     | NULL    |       |
+| likes   | set('eat','sleep','game') | YES  |     | NULL    |       |
+| xx      | char(11)                  | YES  |     | NULL    |       |
++---------+---------------------------+------+-----+---------+-------+
+
+--修改字段类型:
+alter table v1 modify name varchar(15);//修改v1表中name字段类型为varchar(15)
++---------+---------------------------+------+-----+---------+-------+
+| Field   | Type                      | Null | Key | Default | Extra |
++---------+---------------------------+------+-----+---------+-------+
+| stu_num | char(9)                   | YES  |     | NULL    |       |
+| name    | varchar(15)               | YES  |     | NULL    |       |
+| class   | char(7)                   | YES  |     | NULL    |       |
+| age     | tinyint(2)                | YES  |     | NULL    |       |
+| likes   | set('eat','sleep','game') | YES  |     | NULL    |       |
++---------+---------------------------+------+-----+---------+-------+
+
+alter table v1 modify age int(2) not null default 18;
+--修改字段类型时,若新的类型与字段已经存储的数据冲突,不允许修改,不修改的部分要原样抄下来,否则就是还原
++---------+---------------------------+------+-----+---------+-------+
+| Field   | Type                      | Null | Key | Default | Extra |
++---------+---------------------------+------+-----+---------+-------+
+| stu_num | char(9)                   | YES  |     | NULL    |       |
+| name    | varchar(15)               | YES  |     | NULL    |       |
+| class   | char(7)                   | YES  |     | NULL    |       |
+| age     | int(2)                    | NO   |     | 18      |       |
+| likes   | set('eat','sleep','game') | YES  |     | NULL    |       |
++---------+---------------------------+------+-----+---------+-------+
+
+--修改字段位置:
+alter table v1 modify age int(2) not null default 18 after likes;
+                                       //把age字段移到likes之后,其他不变
++---------+---------------------------+------+-----+---------+-------+
+| Field   | Type                      | Null | Key | Default | Extra |
++---------+---------------------------+------+-----+---------+-------+
+| stu_num | char(9)                   | YES  |     | NULL    |       |
+| name    | varchar(15)               | YES  |     | NULL    |       |
+| class   | char(7)                   | YES  |     | NULL    |       |
+| likes   | set('eat','sleep','game') | YES  |     | NULL    |       |
+| age     | int(2)                    | NO   |     | 18      |       |
++---------+---------------------------+------+-----+---------+-------+
+
+--修改表中已存在的记录：
+
+mysql> select  * from  student;
++-----+--------+------+---------------------+-------+
+| SNO | SNAME  | SSEX | SBIRTHDAY           | ons   |
++-----+--------+------+---------------------+-------+
+| 108 | 曾华   | 男   | 1977-09-01 00:00:00 | 95033 |
+| 105 | 匡明   | 男   | 1975-10-02 00:00:00 | 95031 |
+| 107 | 王丽   | 女   | 1976-01-23 00:00:00 | 95033 |
+| 101 | 李军   | 男   | 1976-02-20 00:00:00 | 95033 |
+| 109 | 王芳   | 女   | 1975-02-10 00:00:00 | 95031 |
+| 103 | 陆君   | 男   | 1974-06-03 00:00:00 | 95031 |
++-----+--------+------+---------------------+-------+
+6 rows in set (0.00 sec)
+
+mysql> update  student set SNAME='增肥' where SNO=108;
+Query OK, 1 row affected (0.03 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select  * from  student;
++-----+--------+------+---------------------+-------+
+| SNO | SNAME  | SSEX | SBIRTHDAY           | ons   |
++-----+--------+------+---------------------+-------+
+| 108 | 增肥   | 男   | 1977-09-01 00:00:00 | 95033 |
+| 105 | 匡明   | 男   | 1975-10-02 00:00:00 | 95031 |
+| 107 | 王丽   | 女   | 1976-01-23 00:00:00 | 95033 |
+| 101 | 李军   | 男   | 1976-02-20 00:00:00 | 95033 |
+| 109 | 王芳   | 女   | 1975-02-10 00:00:00 | 95031 |
+| 103 | 陆君   | 男   | 1974-06-03 00:00:00 | 95031 |
++-----+--------+------+---------------------+-------+
+6 rows in set (0.00 sec)
+
+
+
+
+
+
+
+
+
+
 
 
 
