@@ -2651,6 +2651,768 @@ mysql> insert  into  a  values(57985),(254489872),(11566111);
 #################################################################################
 
 
+多表查询
+复制表:备份表   快速建表
+
+备份表:
+create table xxx select * from yyy;
+create table user select * from usertab;
+                           //以usertab的结构和数据建一张表user
++---------+---------------------+------+-----+---------+-------+
+| Field   | Type                | Null | Key | Default | Extra |
++---------+---------------------+------+-----+---------+-------+
+| id      | int(3)              | NO   |     | NULL    |       |
+| name    | char(150)           | YES  |     | NULL    |       |
+| age     | tinyint(2) unsigned | YES  |     | 18      |       |
+| passwd  | char(10)            | YES  |     | NULL    |       |
+| uid     | int(8)              | YES  |     | NULL    |       |
+| gid     | int(8)              | YES  |     | NULL    |       |
+| homedir | char(150)           | YES  |     | NULL    |       |
+| shell   | char(150)           | YES  |     | NULL    |       |
++---------+---------------------+------+-----+---------+-------+
+                                     //user内容和usertab一模一样
+
+create table user1 select name,uid,shell from user order by uid limit 5;
+                                 //查找user表中name,uid,shell的信息,
+                                     按照uid的值从小到大排列显示前5行,
+                                        最后用此查询结果创建一张user1表
++--------+------+---------------+
+| name   | uid  | shell         |
++--------+------+---------------+
+| NULL   | NULL | NULL          |
+| root   |    0 | /sbin/nologin |
+| bin    |    1 | /sbin/nologin |
+| daemon |    2 | /sbin/nologin |
+| adm    |    3 | /sbin/nologin |
++--------+------+---------------+
+
+快速建表:
+create table user2 select * from user where name="1";
+                               //以一个没结果的查询来复制表即为快速建表
+                               //user表中没有name为1的行
++---------+---------------------+------+-----+---------+-------+
+| Field   | Type                | Null | Key | Default | Extra |
++---------+---------------------+------+-----+---------+-------+
+| id      | int(3)              | NO   |     | NULL    |       |
+| name    | char(150)           | YES  |     | NULL    |       |
+| age     | tinyint(2) unsigned | YES  |     | 18      |       |
+| passwd  | char(10)            | YES  |     | NULL    |       |
+| uid     | int(8)              | YES  |     | NULL    |       |
+| gid     | int(8)              | YES  |     | NULL    |       |
+| homedir | char(150)           | YES  |     | NULL    |       |
+| shell   | char(150)           | YES  |     | NULL    |       |
++---------+---------------------+------+-----+---------+-------+
+
+多表查询:
+select 字段名列表 from 表名列表 where 条件;
+
+create table v1 select name,uid,gid,shell from 晨练.user limit 3;
+                 //用晨练库里user表中name,uid,gid,shell行的前三个值创建新表v1
++--------+------+---------------+
+| name   | uid  | shell         |
++--------+------+---------------+
+| root   |    0 | /sbin/nologin |
+| bin    |    1 | /sbin/nologin |
+| daemon |    2 | /sbin/nologin |
++--------+------+---------------+
+
+create table v2 select name,passwd,gid,homedir from 晨练.user limit 5;
+              //用晨练库里user表中的name,passwd,gid,homedir行的前5个值创建新表v2
++--------+--------+------+----------------+
+| name   | passwd | gid  | homedir        |
++--------+--------+------+----------------+
+| root   | x      |    0 | /root          |
+| bin    | x      |    1 | /bin           |
+| daemon | x      |    2 | /sbin          |
+| adm    | x      |    4 | /var/adm       |
+| lp     | x      |    7 | /var/spool/lpd |
++--------+--------+------+----------------+
+
+笛卡尔集
+select * from v1,v2;                    //结果为笛卡尔集,共有15行
++--------+------+---------------+--------+--------+------+----------------+
+| name   | uid  | shell         | name   | passwd | gid  | homedir        |
++--------+------+---------------+--------+--------+------+----------------+
+| root   |    0 | /sbin/nologin | root   | x      |    0 | /root          |
+| bin    |    1 | /sbin/nologin | root   | x      |    0 | /root          |
+| daemon |    2 | /sbin/nologin | root   | x      |    0 | /root          |
+| root   |    0 | /sbin/nolo
+多表查询
+复制表:备份表   快速建表
+
+备份表:
+create table xxx select * from yyy;
+create table user select * from usertab;
+                           //以usertab的结构和数据建一张表user
++---------+---------------------+------+-----+---------+-------+
+| Field   | Type                | Null | Key | Default | Extra |
++---------+---------------------+------+-----+---------+-------+
+| id      | int(3)              | NO   |     | NULL    |       |
+| name    | char(150)           | YES  |     | NULL    |       |
+| age     | tinyint(2) unsigned | YES  |     | 18      |       |
+| passwd  | char(10)            | YES  |     | NULL    |       |
+| uid     | int(8)              | YES  |     | NULL    |       |
+| gid     | int(8)              | YES  |     | NULL    |       |
+| homedir | char(150)           | YES  |     | NULL    |       |
+| shell   | char(150)           | YES  |     | NULL    |       |
++---------+---------------------+------+-----+---------+-------+
+                                     //user内容和usertab一模一样
+
+create table user1 select name,uid,shell from user order by uid limit 5;
+                                 //查找user表中name,uid,shell的信息,
+                                     按照uid的值从小到大排列显示前5行,
+                                        最后用此查询结果创建一张user1表
++--------+------+---------------+
+| name   | uid  | shell         |
++--------+------+---------------+
+| NULL   | NULL | NULL          |
+| root   |    0 | /sbin/nologin |
+| bin    |    1 | /sbin/nologin |
+| daemon |    2 | /sbin/nologin |
+| adm    |    3 | /sbin/nologin |
++--------+------+---------------+
+
+快速建表:
+create table user2 select * from user where name="1";
+                               //以一个没结果的查询来复制表即为快速建表
+                               //user表中没有name为1的行
++---------+---------------------+------+-----+---------+-------+
+| Field   | Type                | Null | Key | Default | Extra |
++---------+---------------------+------+-----+---------+-------+
+| id      | int(3)              | NO   |     | NULL    |       |
+| name    | char(150)           | YES  |     | NULL    |       |
+| age     | tinyint(2) unsigned | YES  |     | 18      |       |
+| passwd  | char(10)            | YES  |     | NULL    |       |
+| uid     | int(8)              | YES  |     | NULL    |       |
+| gid     | int(8)              | YES  |     | NULL    |       |
+| homedir | char(150)           | YES  |     | NULL    |       |
+| shell   | char(150)           | YES  |     | NULL    |       |
++---------+---------------------+------+-----+---------+-------+
+
+多表查询:
+select 字段名列表 from 表名列表 where 条件;
+
+create table v1 select name,uid,gid,shell from 晨练.user limit 3;
+                 //用晨练库里user表中name,uid,gid,shell行的前三个值创建新表v1
++--------+------+---------------+
+| name   | uid  | shell         |
++--------+------+---------------+
+| root   |    0 | /sbin/nologin |
+| bin    |    1 | /sbin/nologin |
+| daemon |    2 | /sbin/nologin |
++--------+------+---------------+
+
+create table v2 select name,passwd,gid,homedir from 晨练.user limit 5;
+              //用晨练库里user表中的name,passwd,gid,homedir行的前5个值创建新表v2
++--------+--------+------+----------------+
+| name   | passwd | gid  | homedir        |
++--------+--------+------+----------------+
+| root   | x      |    0 | /root          |
+| bin    | x      |    1 | /bin           |
+| daemon | x      |    2 | /sbin          |
+| adm    | x      |    4 | /var/adm       |
+| lp     | x      |    7 | /var/spool/lpd |
++--------+--------+------+----------------+
+
+笛卡尔集
+select * from v1,v2;                    //结果为笛卡尔集,共有15行
++--------+------+---------------+--------+--------+------+----------------+
+| name   | uid  | shell         | name   | passwd | gid  | homedir        |
++--------+------+---------------+--------+--------+------+----------------+
+| root   |    0 | /sbin/nologin | root   | x      |    0 | /root          |
+| bin    |    1 | /sbin/nologin | root   | x      |    0 | /root          |
+| daemon |    2 | /sbin/nologin | root   | x      |    0 | /root          |
+| root   |    0 | /sbin/nologin | bin    | x      |    1 | /bin           |
+| bin    |    1 | /sbin/nologin | bin    | x      |    1 | /bin           |
+| daemon |    2 | /sbin/nologin | bin    | x      |    1 | /bin           |
+| root   |    0 | /sbin/nologin | daemon | x      |    2 | /sbin          |
+| bin    |    1 | /sbin/nologin | daemon | x      |    2 | /sbin          |
+| daemon |    2 | /sbin/nologin | daemon | x      |    2 | /sbin          |
+| root   |    0 | /sbin/nologin | adm    | x      |    4 | /var/adm       |
+| bin    |    1 | /sbin/nologin | adm    | x      |    4 | /var/adm       |
+| daemon |    2 | /sbin/nologin | adm    | x      |    4 | /var/adm       |
+| root   |    0 | /sbin/nologin | lp     | x      |    7 | /var/spool/lpd |
+| bin    |    1 | /sbin/nologin | lp     | x      |    7 | /var/spool/lpd |
+| daemon |    2 | /sbin/nologin | lp     | x      |    7 | /var/spool/lpd |
++--------+------+---------------+--------+--------+------+----------------+
+         
+select v1.*,v2.passwd,v2.gid,v2.homedir from v1,v2;
++--------+------+---------------+--------+------+----------------+
+| name   | uid  | shell         | passwd | gid  | homedir        |
++--------+------+---------------+--------+------+----------------+
+| root   |    0 | /sbin/nologin | x      |    0 | /root          |
+| bin    |    1 | /sbin/nologin | x      |    0 | /root          |
+| daemon |    2 | /sbin/nologin | x      |    0 | /root          |
+| root   |    0 | /sbin/nologin | x      |    1 | /bin           |
+| bin    |    1 | /sbin/nologin | x      |    1 | /bin           |
+| daemon |    2 | /sbin/nologin | x      |    1 | /bin           |
+| root   |    0 | /sbin/nologin | x      |    2 | /sbin          |
+| bin    |    1 | /sbin/nologin | x      |    2 | /sbin          |
+| daemon |    2 | /sbin/nologin | x      |    2 | /sbin          |
+| root   |    0 | /sbin/nologin | x      |    4 | /var/adm       |
+| bin    |    1 | /sbin/nologin | x      |    4 | /var/adm       |
+| daemon |    2 | /sbin/nologin | x      |    4 | /var/adm       |
+| root   |    0 | /sbin/nologin | x      |    7 | /var/spool/lpd |
+| bin    |    1 | /sbin/nologin | x      |    7 | /var/spool/lpd |
+| daemon |    2 | /sbin/nologin | x      |    7 | /var/spool/lpd |
++--------+------+---------------+--------+------+----------------+
+         //v1表中的每一列都和v2表中的每一列匹配并显示一次,所以v2表每一列都会显示3次
+
+select v1.*,v2.passwd,v2.gid,v2.homedir from v1,v2 where v1.name=v2.name;
++--------+------+---------------+--------+------+---------+
+| name   | uid  | shell         | passwd | gid  | homedir |
++--------+------+---------------+--------+------+---------+
+| root   |    0 | /sbin/nologin | x      |    0 | /root   |
+| bin    |    1 | /sbin/nologin | x      |    1 | /bin    |
+| daemon |    2 | /sbin/nologin | x      |    2 | /sbin   |
++--------+------+---------------+--------+------+---------+
+
+select v1.*,v2.name,v2.passwd,v2.gid,v2.homedir 
+from v1,v2 where v1.name=v2.name;
++--------+------+---------------+--------+--------+------+---------+
+| name   | uid  | shell         | name   | passwd | gid  | homedir |
++--------+------+---------------+--------+--------+------+---------+
+| root   |    0 | /sbin/nologin | root   | x      |    0 | /root   |
+| bin    |    1 | /sbin/nologin | bin    | x      |    1 | /bin    |
+| daemon |    2 | /sbin/nologin | daemon | x      |    2 | /sbin   |
++--------+------+---------------+--------+--------+------+---------+
+                                //只显示v1,v2表中name字段相同的行的数据
+
+嵌套查询:
+select 字段名列表 from 表名 where 条件(select 字段名列表 from 表名 where 条件);
+                                //把括号内的查询结果作为括号外查询条件
+select name,uid from 晨练.user where uid>(select avg(uid) from 晨练.user);
+                               //查询晨练库user表中uid大于uid平均值的值
++-----------+-------+
+| name      | uid   |
++-----------+-------+
+| nfsnobody | 65535 |
++-----------+-------+
+
+select name from 晨练.user where name in (select name from db4.v1);
+                                 //查看晨练库user表与db4库v1表中同时存在的用户
++--------+
+| name   |
++--------+
+| root   |
+| bin    |
+| daemon |
++--------+
+
+链接查询:
+create table v3 select name,uid,shell from 晨练.user limit 5;
++--------+------+---------------+
+| name   | uid  | shell         |
++--------+------+---------------+
+| root   |    0 | /sbin/nologin |
+| bin    |    1 | /sbin/nologin |
+| daemon |    2 | /sbin/nologin |
+| adm    |    3 | /sbin/nologin |
+| lp     |    4 | /sbin/nologin |
++--------+------+---------------+
+
+create table v4 select name,uid,shell from 晨练.user limit 7;
++----------+------+----------------+
+| name     | uid  | shell          |
++----------+------+----------------+
+| root     |    0 | /sbin/nologin  |
+| bin      |    1 | /sbin/nologin  |
+| daemon   |    2 | /sbin/nologin  |
+| adm      |    3 | /sbin/nologin  |
+| lp       |    4 | /sbin/nologin  |
+| sync     |    5 | /sbin/nologin  |
+| shutdown |    6 | /sbin/shutdown |
++----------+------+----------------+
+
+左链接:以左边的表为主显示查询结果 left join
+select 字段名列表 from 表名1 left jion 表名2 on 条件;
+select * from v3 left join v4 on v3.uid=v4.uid;
+                        //以v3表为主显示v3表中uid与v4表中uid相等的行的所有值
++--------+------+---------------+--------+------+---------------+
+| name   | uid  | shell         | name   | uid  | shell         |
++--------+------+---------------+--------+------+---------------+
+| root   |    0 | /sbin/nologin | root   |    0 | /sbin/nologin |
+| bin    |    1 | /sbin/nologin | bin    |    1 | /sbin/nologin |
+| daemon |    2 | /sbin/nologin | daemon |    2 | /sbin/nologin |
+| adm    |    3 | /sbin/nologin | adm    |    3 | /sbin/nologin |
+| lp     |    4 | /sbin/nologin | lp     |    4 | /sbin/nologin |
++--------+------+---------------+--------+------+---------------+
+
+右链接:以右边的表为主显示查询结果 right join
+select 字段名列表 from 表名1 right jion 表名2 on 条件;
+select * from v3 right join v4 on v3.uid=v4.uid;
+                        //以v4表为主显示v3表中uid与v4表中uid相等的行的所有值
++--------+------+---------------+----------+------+----------------+
+| name   | uid  | shell         | name     | uid  | shell          |
++--------+------+---------------+----------+------+----------------+
+| root   |    0 | /sbin/nologin | root     |    0 | /sbin/nologin  |
+| bin    |    1 | /sbin/nologin | bin      |    1 | /sbin/nologin  |
+| daemon |    2 | /sbin/nologin | daemon   |    2 | /sbin/nologin  |
+| adm    |    3 | /sbin/nologin | adm      |    3 | /sbin/nologin  |
+| lp     |    4 | /sbin/nologin | lp       |    4 | /sbin/nologin  |
+多表查询
+复制表:备份表   快速建表
+
+备份表:
+create table xxx select * from yyy;
+create table user select * from usertab;
+                           //以usertab的结构和数据建一张表user
++---------+---------------------+------+-----+---------+-------+
+| Field   | Type                | Null | Key | Default | Extra |
++---------+---------------------+------+-----+---------+-------+
+| id      | int(3)              | NO   |     | NULL    |       |
+| name    | char(150)           | YES  |     | NULL    |       |
+| age     | tinyint(2) unsigned | YES  |     | 18      |       |
+| passwd  | char(10)            | YES  |     | NULL    |       |
+| uid     | int(8)              | YES  |     | NULL    |       |
+| gid     | int(8)              | YES  |     | NULL    |       |
+| homedir | char(150)           | YES  |     | NULL    |       |
+| shell   | char(150)           | YES  |     | NULL    |       |
++---------+---------------------+------+-----+---------+-------+
+                                     //user内容和usertab一模一样
+
+create table user1 select name,uid,shell from user order by uid limit 5;
+                                 //查找user表中name,uid,shell的信息,
+                                     按照uid的值从小到大排列显示前5行,
+                                        最后用此查询结果创建一张user1表
++--------+------+---------------+
+| name   | uid  | shell         |
++--------+------+---------------+
+| NULL   | NULL | NULL          |
+| root   |    0 | /sbin/nologin |
+| bin    |    1 | /sbin/nologin |
+| daemon |    2 | /sbin/nologin |
+| adm    |    3 | /sbin/nologin |
++--------+------+---------------+
+
+快速建表:
+create table user2 select * from user where name="1";
+                               //以一个没结果的查询来复制表即为快速建表
+                               //user表中没有name为1的行
++---------+---------------------+------+-----+---------+-------+
+| Field   | Type                | Null | Key | Default | Extra |
++---------+---------------------+------+-----+---------+-------+
+| id      | int(3)              | NO   |     | NULL    |       |
+| name    | char(150)           | YES  |     | NULL    |       |
+| age     | tinyint(2) unsigned | YES  |     | 18      |       |
+| passwd  | char(10)            | YES  |     | NULL    |       |
+| uid     | int(8)              | YES  |     | NULL    |       |
+| gid     | int(8)              | YES  |     | NULL    |       |
+| homedir | char(150)           | YES  |     | NULL    |       |
+| shell   | char(150)           | YES  |     | NULL    |       |
++---------+---------------------+------+-----+---------+-------+
+
+多表查询:
+select 字段名列表 from 表名列表 where 条件;
+
+create table v1 select name,uid,gid,shell from 晨练.user limit 3;
+                 //用晨练库里user表中name,uid,gid,shell行的前三个值创建新表v1
++--------+------+---------------+
+| name   | uid  | shell         |
++--------+------+---------------+
+| root   |    0 | /sbin/nologin |
+| bin    |    1 | /sbin/nologin |
+| daemon |    2 | /sbin/nologin |
++--------+------+---------------+
+
+create table v2 select name,passwd,gid,homedir from 晨练.user limit 5;
+              //用晨练库里user表中的name,passwd,gid,homedir行的前5个值创建新表v2
++--------+--------+------+----------------+
+| name   | passwd | gid  | homedir        |
++--------+--------+------+----------------+
+| root   | x      |    0 | /root          |
+| bin    | x      |    1 | /bin           |
+| daemon | x      |    2 | /sbin          |
+| adm    | x      |    4 | /var/adm       |
+| lp     | x      |    7 | /var/spool/lpd |
++--------+--------+------+----------------+
+
+笛卡尔集
+select * from v1,v2;                    //结果为笛卡尔集,共有15行
++--------+------+---------------+--------+--------+------+----------------+
+| name   | uid  | shell         | name   | passwd | gid  | homedir        |
++--------+------+---------------+--------+--------+------+----------------+
+| root   |    0 | /sbin/nologin | root   | x      |    0 | /root          |
+| bin    |    1 | /sbin/nologin | root   | x      |    0 | /root          |
+| daemon |    2 | /sbin/nologin | root   | x      |    0 | /root          |
+| root   |    0 | /sbin/nologin | bin    | x      |    1 | /bin           |
+| bin    |    1 | /sbin/nologin | bin    | x      |    1 | /bin           |
+| daemon |    2 | /sbin/nologin | bin    | x      |    1 | /bin           |
+| root   |    0 | /sbin/nologin | daemon | x      |    2 | /sbin          |
+| bin    |    1 | /sbin/nologin | daemon | x      |    2 | /sbin          |
+| daemon |    2 | /sbin/nologin | daemon | x      |    2 | /sbin          |
+| root   |    0 | /sbin/nologin | adm    | x      |    4 | /var/adm       |
+| bin    |    1 | /sbin/nologin | adm    | x      |    4 | /var/adm       |
+| daemon |    2 | /sbin/nologin | adm    | x      |    4 | /var/adm       |
+| root   |    0 | /sbin/nologin | lp     | x      |    7 | /var/spool/lpd |
+| bin    |    1 | /sbin/nologin | lp     | x      |    7 | /var/spool/lpd |
+| daemon |    2 | /sbin/nologin | lp     | x      |    7 | /var/spool/lpd |
++--------+------+---------------+--------+--------+------+----------------+
+         
+select v1.*,v2.passwd,v2.gid,v2.homedir from v1,v2;
++--------+------+---------------+--------+------+----------------+
+| name   | uid  | shell         | passwd | gid  | homedir        |
++--------+------+---------------+--------+------+----------------+
+| root   |    0 | /sbin/nologin | x      |    0 | /root          |
+| bin    |    1 | /sbin/nologin | x      |    0 | /root          |
+| daemon |    2 | /sbin/nologin | x      |    0 | /root          |
+| root   |    0 | /sbin/nologin | x      |    1 | /bin           |
+| bin    |    1 | /sbin/nologin | x      |    1 | /bin           |
+| daemon |    2 | /sbin/nologin | x      |    1 | /bin           |
+| root   |    0 | /sbin/nologin | x      |    2 | /sbin          |
+| bin    |    1 | /sbin/nologin | x      |    2 | /sbin          |
+| daemon |    2 | /sbin/nologin | x      |    2 | /sbin          |
+| root   |    0 | /sbin/nologin | x      |    4 | /var/adm       |
+| bin    |    1 | /sbin/nologin | x      |    4 | /var/adm       |
+| daemon |    2 | /sbin/nologin | x      |    4 | /var/adm       |
+| root   |    0 | /sbin/nologin | x      |    7 | /var/spool/lpd |
+| bin    |    1 | /sbin/nologin | x      |    7 | /var/spool/lpd |
+| daemon |    2 | /sbin/nologin | x      |    7 | /var/spool/lpd |
++--------+------+---------------+--------+------+----------------+
+         //v1表中的每一列都和v2表中的每一列匹配并显示一次,所以v2表每一列都会显示3次
+
+select v1.*,v2.passwd,v2.gid,v2.homedir from v1,v2 where v1.name=v2.name;
++--------+------+---------------+--------+------+---------+
+| name   | uid  | shell         | passwd | gid  | homedir |
++--------+------+---------------+--------+------+---------+
+| root   |    0 | /sbin/nologin | x      |    0 | /root   |
+| bin    |    1 | /sbin/nologin | x      |    1 | /bin    |
+| daemon |    2 | /sbin/nologin | x      |    2 | /sbin   |
++--------+------+---------------+--------+------+---------+
+
+select v1.*,v2.name,v2.passwd,v2.gid,v2.homedir 
+from v1,v2 where v1.name=v2.name;
++--------+------+---------------+--------+--------+------+---------+
+| name   | uid  | shell         | name   | passwd | gid  | homedir |
++--------+------+---------------+--------+--------+------+---------+
+| root   |    0 | /sbin/nologin | root   | x      |    0 | /root   |
+| bin    |    1 | /sbin/nologin | bin    | x      |    1 | /bin    |
+| daemon |    2 | /sbin/nologin | daemon | x      |    2 | /sbin   |
++--------+------+---------------+--------+--------+------+---------+
+                                //只显示v1,v2表中name字段相同的行的数据
+
+嵌套查询:
+select 字段名列表 from 表名 where 条件(select 字段名列表 from 表名 where 条件);
+                                //把括号内的查询结果作为括号外查询条件
+select name,uid from 晨练.user where uid>(select avg(uid) from 晨练.user);
+                               //查询晨练库user表中uid大于uid平均值的值
++-----------+-------+
+| name      | uid   |
++-----------+-------+
+| nfsnobody | 65535 |
++-----------+-------+
+
+select name from 晨练.user where name in (select name from db4.v1);
+                                 //查看晨练库user表与db4库v1表中同时存在的用户
++--------+
+| name   |
++--------+
+| root   |
+| bin    |
+| daemon |
++--------+
+
+链接查询:
+create table v3 select name,uid,shell from 晨练.user limit 5;
++--------+------+---------------+
+| name   | uid  | shell         |
++--------+------+---------------+
+| root   |    0 | /sbin/nologin |
+| bin    |    1 | /sbin/nologin |
+| daemon |    2 | /sbin/nologin |
+| adm    |    3 | /sbin/nologin |
+| lp     |    4 | /sbin/nologin |
++--------+------+---------------+
+
+create table v4 select name,uid,shell from 晨练.user limit 7;
++----------+------+----------------+
+| name     | uid  | shell          |
++----------+------+----------------+
+| root     |    0 | /sbin/nologin  |
+| bin      |    1 | /sbin/nologin  |
+| daemon   |    2 | /sbin/nologin  |
+| adm      |    3 | /sbin/nologin  |
+| lp       |    4 | /sbin/nologin  |
+| sync     |    5 | /sbin/nologin  |
+| shutdown |    6 | /sbin/shutdown |
++----------+------+----------------+
+
+左链接:以左边的表为主显示查询结果 left join
+select 字段名列表 from 表名1 left jion 表名2 on 条件;
+select * from v3 left join v4 on v3.uid=v4.uid;
+                        //以v3表为主显示v3表中uid与v4表中uid相等的行的所有值
++--------+------+---------------+--------+------+---------------+
+| name   | uid  | shell         | name   | uid  | shell         |
++--------+------+---------------+--------+------+---------------+
+| root   |    0 | /sbin/nologin | root   |    0 | /sbin/nologin |
+| bin    |    1 | /sbin/nologin | bin    |    1 | /sbin/nologin |
+| daemon |    2 | /sbin/nologin | daemon |    2 | /sbin/nologin |
+| adm    |    3 | /sbin/nologin | adm    |    3 | /sbin/nologin |
+| lp     |    4 | /sbin/nologin | lp     |    4 | /sbin/nologin |
++--------+------+---------------+--------+------+---------------+
+
+右链接:以右边的表为主显示查询结果 right join
+select 字段名列表 from 表名1 right jion 表名2 on 条件;
+select * from v3 right join v4 on v3.uid=v4.uid;
+                        //以v4表为主显示v3表中uid与v4表中uid相等的行的所有值
++--------+------+---------------+----------+------+----------------+
+| name   | uid  | shell         | name     | uid  | shell          |
++--------+------+---------------+----------+------+----------------+
+| root   |    0 | /sbin/nologin | root     |    0 | /sbin/nologin  |
+| bin    |    1 | /sbin/nologin | bin      |    1 | /sbin/nologin  |
+| daemon |    2 | /sbin/nologin | daemon   |    2 | /sbin/nologin  |
+| adm    |    3 | /sbin/nologin | adm      |    3 | /sbin/nologin  |
+| lp     |    4 | /sbin/nologin | lp       |    4 | /sbin/nologin  |
+| NULL   | NULL | NULL          | sync     |    5 | /sbin/nologin  |
+| NULL   | NULL | NULL          | shutdown |    6 | /sbin/shutdown |
++--------+------+---------------+----------+------+----------------+
+
+安装phpMyAdmin:
+部署环境LAMP或者LNMP
+yum -y install httpd php php-mysql 
+systemctl restart httpd
+
+tar -xf phpMyAdmin-2.11.11-all-languages.tar.gz 
+                                  //解包
+cd phpMyAdmin-2.11.11-all-languages/
+                                  //进目录
+mv phpMyAdmin-2.11.11-all-languages /var/www/html/phpadmin
+                                  //移动到网页目录下并改名
+
+创建配置文件,指定管理数据库的服务器
+cd /var/www/html/phpadmin
+                                  //进入目录
+cp config.sample.inc.php config.inc.php
+                                  //拷贝模板文件创建配置文件
+vim config.inc.php
+                                  //修改配置文件
+firefox http://192.168.4.50/phpadmin     
+                                  //链接网页版数据库
+
+创建授权:
+grant 权限列表 on 库名.表名
+grant all on *.* to ljw@'192.168.4.%' identified by "123456";
+                   //192.168.4.0网段可以用ljw,密码123456来登录mysql
+
+grant all on *.* to ljw@'%' identified by "123456";
+                   //所有主机都可以用ljw,密码123456来登录mysql
+
+grant select,insert on 晨练.user to ljw@'192.168.4.254' identified by "123456";
+                  //192.168.4.254主机可以用ljw,密码123456来登录mysql,
+                     对晨练库的user表有查询和插入权限
+
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+                                      //命令执行成功的提示
+| NULL   | NULL | NULL          | sync     |    5 | /sbin/nologin  |
+| NULL   | NULL | NULL          | shutdown |    6 | /sbin/shutdown |
++--------+------+---------------+----------+------+----------------+
+
+安装phpMyAdmin:
+部署环境LAMP或者LNMP
+yum -y install httpd php php-mysql 
+systemctl restart httpd
+
+tar -xf phpMyAdmin-2.11.11-all-languages.tar.gz 
+                                  //解包
+cd phpMyAdmin-2.11.11-all-languages/
+                                  //进目录
+mv phpMyAdmin-2.11.11-all-languages /var/www/html/phpadmin
+                                  //移动到网页目录下并改名
+
+创建配置文件,指定管理数据库的服务器
+cd /var/www/html/phpadmin
+                                  //进入目录
+cp config.sample.inc.php config.inc.php
+                                  //拷贝模板文件创建配置文件
+vim config.inc.php
+                                  //修改配置文件
+firefox http://192.168.4.50/phpadmin     
+                                  //链接网页版数据库
+
+创建授权:
+grant 权限列表 on 库名.表名
+grant all on *.* to ljw@'192.168.4.%' identified by "123456";
+                   //192.168.4.0网段可以用ljw,密码123456来登录mysql
+
+grant all on *.* to ljw@'%' identified by "123456";
+                   //所有主机都可以用ljw,密码123456来登录mysql
+
+grant select,insert on 晨练.user to ljw@'192.168.4.254' identified by "123456";
+                  //192.168.4.254主机可以用ljw,密码123456来登录mysql,
+                     对晨练库的user表有查询和插入权限
+
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+                                      //命令执行成功的提示gin | bin    | x      |    1 | /bin           |
+| bin    |    1 | /sbin/nologin | bin    | x      |    1 | /bin           |
+| daemon |    2 | /sbin/nologin | bin    | x      |    1 | /bin           |
+| root   |    0 | /sbin/nologin | daemon | x      |    2 | /sbin          |
+| bin    |    1 | /sbin/nologin | daemon | x      |    2 | /sbin          |
+| daemon |    2 | /sbin/nologin | daemon | x      |    2 | /sbin          |
+| root   |    0 | /sbin/nologin | adm    | x      |    4 | /var/adm       |
+| bin    |    1 | /sbin/nologin | adm    | x      |    4 | /var/adm       |
+| daemon |    2 | /sbin/nologin | adm    | x      |    4 | /var/adm       |
+| root   |    0 | /sbin/nologin | lp     | x      |    7 | /var/spool/lpd |
+| bin    |    1 | /sbin/nologin | lp     | x      |    7 | /var/spool/lpd |
+| daemon |    2 | /sbin/nologin | lp     | x      |    7 | /var/spool/lpd |
++--------+------+---------------+--------+--------+------+----------------+
+         
+select v1.*,v2.passwd,v2.gid,v2.homedir from v1,v2;
++--------+------+---------------+--------+------+----------------+
+| name   | uid  | shell         | passwd | gid  | homedir        |
++--------+------+---------------+--------+------+----------------+
+| root   |    0 | /sbin/nologin | x      |    0 | /root          |
+| bin    |    1 | /sbin/nologin | x      |    0 | /root          |
+| daemon |    2 | /sbin/nologin | x      |    0 | /root          |
+| root   |    0 | /sbin/nologin | x      |    1 | /bin           |
+| bin    |    1 | /sbin/nologin | x      |    1 | /bin           |
+| daemon |    2 | /sbin/nologin | x      |    1 | /bin           |
+| root   |    0 | /sbin/nologin | x      |    2 | /sbin          |
+| bin    |    1 | /sbin/nologin | x      |    2 | /sbin          |
+| daemon |    2 | /sbin/nologin | x      |    2 | /sbin          |
+| root   |    0 | /sbin/nologin | x      |    4 | /var/adm       |
+| bin    |    1 | /sbin/nologin | x      |    4 | /var/adm       |
+| daemon |    2 | /sbin/nologin | x      |    4 | /var/adm       |
+| root   |    0 | /sbin/nologin | x      |    7 | /var/spool/lpd |
+| bin    |    1 | /sbin/nologin | x      |    7 | /var/spool/lpd |
+| daemon |    2 | /sbin/nologin | x      |    7 | /var/spool/lpd |
++--------+------+---------------+--------+------+----------------+
+         //v1表中的每一列都和v2表中的每一列匹配并显示一次,所以v2表每一列都会显示3次
+
+select v1.*,v2.passwd,v2.gid,v2.homedir from v1,v2 where v1.name=v2.name;
++--------+------+---------------+--------+------+---------+
+| name   | uid  | shell         | passwd | gid  | homedir |
++--------+------+---------------+--------+------+---------+
+| root   |    0 | /sbin/nologin | x      |    0 | /root   |
+| bin    |    1 | /sbin/nologin | x      |    1 | /bin    |
+| daemon |    2 | /sbin/nologin | x      |    2 | /sbin   |
++--------+------+---------------+--------+------+---------+
+
+select v1.*,v2.name,v2.passwd,v2.gid,v2.homedir 
+from v1,v2 where v1.name=v2.name;
++--------+------+---------------+--------+--------+------+---------+
+| name   | uid  | shell         | name   | passwd | gid  | homedir |
++--------+------+---------------+--------+--------+------+---------+
+| root   |    0 | /sbin/nologin | root   | x      |    0 | /root   |
+| bin    |    1 | /sbin/nologin | bin    | x      |    1 | /bin    |
+| daemon |    2 | /sbin/nologin | daemon | x      |    2 | /sbin   |
++--------+------+---------------+--------+--------+------+---------+
+                                //只显示v1,v2表中name字段相同的行的数据
+
+嵌套查询:
+select 字段名列表 from 表名 where 条件(select 字段名列表 from 表名 where 条件);
+                                //把括号内的查询结果作为括号外查询条件
+select name,uid from 晨练.user where uid>(select avg(uid) from 晨练.user);
+                               //查询晨练库user表中uid大于uid平均值的值
++-----------+-------+
+| name      | uid   |
++-----------+-------+
+| nfsnobody | 65535 |
++-----------+-------+
+
+select name from 晨练.user where name in (select name from db4.v1);
+                                 //查看晨练库user表与db4库v1表中同时存在的用户
++--------+
+| name   |
++--------+
+| root   |
+| bin    |
+| daemon |
++--------+
+
+链接查询:
+create table v3 select name,uid,shell from 晨练.user limit 5;
++--------+------+---------------+
+| name   | uid  | shell         |
++--------+------+---------------+
+| root   |    0 | /sbin/nologin |
+| bin    |    1 | /sbin/nologin |
+| daemon |    2 | /sbin/nologin |
+| adm    |    3 | /sbin/nologin |
+| lp     |    4 | /sbin/nologin |
++--------+------+---------------+
+
+create table v4 select name,uid,shell from 晨练.user limit 7;
++----------+------+----------------+
+| name     | uid  | shell          |
++----------+------+----------------+
+| root     |    0 | /sbin/nologin  |
+| bin      |    1 | /sbin/nologin  |
+| daemon   |    2 | /sbin/nologin  |
+| adm      |    3 | /sbin/nologin  |
+| lp       |    4 | /sbin/nologin  |
+| sync     |    5 | /sbin/nologin  |
+| shutdown |    6 | /sbin/shutdown |
++----------+------+----------------+
+
+左链接:以左边的表为主显示查询结果 left join
+select 字段名列表 from 表名1 left jion 表名2 on 条件;
+select * from v3 left join v4 on v3.uid=v4.uid;
+                        //以v3表为主显示v3表中uid与v4表中uid相等的行的所有值
++--------+------+---------------+--------+------+---------------+
+| name   | uid  | shell         | name   | uid  | shell         |
++--------+------+---------------+--------+------+---------------+
+| root   |    0 | /sbin/nologin | root   |    0 | /sbin/nologin |
+| bin    |    1 | /sbin/nologin | bin    |    1 | /sbin/nologin |
+| daemon |    2 | /sbin/nologin | daemon |    2 | /sbin/nologin |
+| adm    |    3 | /sbin/nologin | adm    |    3 | /sbin/nologin |
+| lp     |    4 | /sbin/nologin | lp     |    4 | /sbin/nologin |
++--------+------+---------------+--------+------+---------------+
+
+右链接:以右边的表为主显示查询结果 right join
+select 字段名列表 from 表名1 right jion 表名2 on 条件;
+select * from v3 right join v4 on v3.uid=v4.uid;
+                        //以v4表为主显示v3表中uid与v4表中uid相等的行的所有值
++--------+------+---------------+----------+------+----------------+
+| name   | uid  | shell         | name     | uid  | shell          |
++--------+------+---------------+----------+------+----------------+
+| root   |    0 | /sbin/nologin | root     |    0 | /sbin/nologin  |
+| bin    |    1 | /sbin/nologin | bin      |    1 | /sbin/nologin  |
+| daemon |    2 | /sbin/nologin | daemon   |    2 | /sbin/nologin  |
+| adm    |    3 | /sbin/nologin | adm      |    3 | /sbin/nologin  |
+| lp     |    4 | /sbin/nologin | lp       |    4 | /sbin/nologin  |
+| NULL   | NULL | NULL          | sync     |    5 | /sbin/nologin  |
+| NULL   | NULL | NULL          | shutdown |    6 | /sbin/shutdown |
++--------+------+---------------+----------+------+----------------+
+
+安装phpMyAdmin:
+部署环境LAMP或者LNMP
+yum -y install httpd php php-mysql 
+systemctl restart httpd
+
+tar -xf phpMyAdmin-2.11.11-all-languages.tar.gz 
+                                  //解包
+cd phpMyAdmin-2.11.11-all-languages/
+                                  //进目录
+mv phpMyAdmin-2.11.11-all-languages /var/www/html/phpadmin
+                                  //移动到网页目录下并改名
+
+创建配置文件,指定管理数据库的服务器
+cd /var/www/html/phpadmin
+                                  //进入目录
+cp config.sample.inc.php config.inc.php
+                                  //拷贝模板文件创建配置文件
+vim config.inc.php
+                                  //修改配置文件
+firefox http://192.168.4.50/phpadmin     
+                                  //链接网页版数据库
+
+创建授权:
+grant 权限列表 on 库名.表名
+grant all on *.* to ljw@'192.168.4.%' identified by "123456";
+                   //192.168.4.0网段可以用ljw,密码123456来登录mysql
+
+grant all on *.* to ljw@'%' identified by "123456";
+                   //所有主机都可以用ljw,密码123456来登录mysql
+
+grant select,insert on 晨练.user to ljw@'192.168.4.254' identified by "123456";
+                  //192.168.4.254主机可以用ljw,密码123456来登录mysql,
+                     对晨练库的user表有查询和插入权限
+
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+                                      //命令执行成功的提示
+####################################################################################################################
+
+
 innobackupex   --user  root   --password  123456  --databases="gamedb"  /gamedb  --no-timestamp
  
 mysql> drop table a;
