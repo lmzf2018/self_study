@@ -2562,6 +2562,105 @@ mysql> select  * from  student;
 +-----+--------+------+---------------------+-------+
 6 rows in set (0.00 sec)
 
+###################################################################
+
+2018年 07月 18日 星期三 09:16:58 CST
+
+--innobackupex增量备份
+
+第一次备份 所有数据
+]#innobackupex   --user root  --password  123456  /fullbak  --no-timestamp 
+
+完全备份后插入数据
+
+insert into  gamedb.a  values(56565),(23);
+
+insert  into  gamedb.b  values(1213),(655621);
+
+
+
+对数据增量备份：
+]# innobackupex  --user root --password 123456 --incremental  /new1dir  --incremental-basedir=/fullbak  --no-timestamp 
+
+增量备份后想表中存储新数据
+insert  into  gamedb.a  values(982238),(56640);
+insert  into  gamedb.b  values(828982238),(520000);
+
+对数据增量备份：
+]# innobackupex  --user root --password 123456 --incremental  /new2dir  --incremental-basedir=/new1dir  --no-timestamp 
+
+
+
+vim  /root/allbak.sh
+#!/bin/bash
+
+day=`date +%F`
+innobackupex  --user root --password 123456 --incremental  /fullbak_{day} --no-timestamp
+:x
+
+
+vim /root/newallbak.sh
+#!/bin/bash
+jt=`date +%d`
+zt=`expr  $jt - 1`
+m=`date +%m`
+innobackupex  --user root --password 123456 --incremental  /new${m}_${jt}dir  --incremental-basedir=/new${m}_${zt}dir  --no-timestamp
+:x
+ 
+chmod +x /root/allbak.sh
+chmod +x /root/newallbak.sh
+crontab -e 
+00 23  * *  1          /root/allbak.sh
+00 23  * *  2-7        /root/newallbak.sh
+
+--innobackupex 增量恢复
+
+准备恢复数据
+
+]#innobackupex  --user root --password 123456 --apply-log  --redo-only  /fullbak
+
+]#innobackupex  --user root --password 123456 --apply-log  --redo-only  /fullbak  --incremental-dir=/new1dir
+
+]#innobackupex  --user root --password 123456 --apply-log  --redo-only  /fullbak  --incremental-dir=/new2dir
+
+]#rm -rf  /new1dir/     
+
+]#rm -rf  /new1dir/     
+
+
+sysytemctl  stop mysqld
+rm -rf  /var/lib/mysql/ *
+
+
+把备份目录下的数据拷贝到数据库目录并修改所有者和组为mysql
+]#innobackupex  --user root --password 123456 --copy-back  /fullbak
+]#chown  -R  mysql:mysql  /var/lib/mysql
+
+
+启动数据库服务
+]#systemctl  restart mysqld	
+
+
+恢复数据后插入数据后继续增量备份
+
+mysql>insert  into  a  values(555555555),(22222222),(1111111111);
+mysql> insert  into  a  values(57985),(254489872),(11566111);
+
+]#innobackupex  --user root --password  123456  --incremental /dir1  --incremental-basedir=/fullbak  --no-timestamp 
+
+#################################################################################
+
+
+innobackupex   --user  root   --password  123456  --databases="gamedb"  /gamedb  --no-timestamp
+ 
+mysql> drop table a;
+
+恢复单个表
+create table gamedb.a(id int);
+select *  from gamedb.a;
+
+alter  table gamedb.a discard tablespace;
+
 
 
 
