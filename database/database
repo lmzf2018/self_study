@@ -3412,26 +3412,45 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
                                       //命令执行成功的提示
 ####################################################################################################################
 
+innobackupex 基本选项
 
-innobackupex   --user  root   --password  123456  --databases="gamedb"  /gamedb  --no-timestamp
+  常用选项                        含义
+--redo-only                    日志合并
+--apply-log                    准备还原 ( 回滚日志 )
+--copy-back                    恢复数据
+--incremental 目录名            增量备份
+--incremental--basedir=目录名   增量备份时,指定上一次备份数据存储的目录名
+--incremental-dir=目录名        准备恢复数据时,指定增量备份数据存储的目录名
+--export                       导出表信息
+import                         导入表空间
+
+####################################################################################################################
+
+--在完全备份文件中恢复单个表：
+
+innobackupex   --user  root   --password  123456  --databases="gamedb"  /allbak  --no-timestamp
  
 mysql> drop table a;
 
-恢复单个表
-create table gamedb.a(id int);
+create table gamedb.a(id int);                               // 创建表
 select *  from gamedb.a;
 
-alter  table gamedb.a discard tablespace;
+alter  table gamedb.a discard tablespace;                    // 删除表空间
+
+innobackupex --user root --password 123456 --databases="gamedb" --apply-log --export /allbak   //导出表信息
 
 
+cp  /allbak/gamedb/a.{ibd,cfg,exp}  /var/lib/mysql/gamedb    // 拷贝表信息文件
+
+chown -R  mysql:mysql /var/lib/mysql/                        // 修改所有者
+ 
+
+mysql> alter table gamedb.a import tablespace;               // 导入表空间
 
 
+mysql> select * from gamedb.a;
 
-
-
-
-
-
+###############################################################################################################
 
 
 
