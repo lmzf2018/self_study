@@ -3242,19 +3242,7 @@ grant select,insert on 晨练.user to ljw@'192.168.4.254' identified by "123456"
                      对晨练库的user表有查询和插入权限
 
 Query OK, 0 rows affected, 1 warning (0.00 sec)
-                                      //命令执行成功的提示gin | bin    | x      |    1 | /bin           |
-| bin    |    1 | /sbin/nologin | bin    | x      |    1 | /bin           |
-| daemon |    2 | /sbin/nologin | bin    | x      |    1 | /bin           |
-| root   |    0 | /sbin/nologin | daemon | x      |    2 | /sbin          |
-| bin    |    1 | /sbin/nologin | daemon | x      |    2 | /sbin          |
-| daemon |    2 | /sbin/nologin | daemon | x      |    2 | /sbin          |
-| root   |    0 | /sbin/nologin | adm    | x      |    4 | /var/adm       |
-| bin    |    1 | /sbin/nologin | adm    | x      |    4 | /var/adm       |
-| daemon |    2 | /sbin/nologin | adm    | x      |    4 | /var/adm       |
-| root   |    0 | /sbin/nologin | lp     | x      |    7 | /var/spool/lpd |
-| bin    |    1 | /sbin/nologin | lp     | x      |    7 | /var/spool/lpd |
-| daemon |    2 | /sbin/nologin | lp     | x      |    7 | /var/spool/lpd |
-+--------+------+---------------+--------+--------+------+----------------+
+                                      //命令执行成功的提示
          
 select v1.*,v2.passwd,v2.gid,v2.homedir from v1,v2;
 +--------+------+---------------+--------+------+----------------+
