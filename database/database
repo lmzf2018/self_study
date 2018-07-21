@@ -3837,52 +3837,322 @@ mysql> show variables  like 'rpl_semi_sync_%_enabled';
 2 rows in set (0.00 sec)
 
 
+###############################################################################################
+
+
+mysql数据读写分离：把客户端查询（读，select）数据库的请求和写（insert）入数据的请求，分别给不同的数据库服务器处理
 
 
 
 
+mysql数据读写分离结构的目的：减轻主库的并发访问压力，提高从库的硬件利用率
+
+部署mysql数据读写分离：
+人肉分类：需要程序员协同完成，规定程序咋其存储数据时连接master数据库服务，查询数据时连接slave数据库服务
+
+部署实现数据读写分离服务实现：mysql中间件  -———>  mycat  mysql-proxy  maxscale
+
+maxscale-2.1.2-1.rhel.7.x86_64.rpm
+
+
+##############################################################################################
+    +----------+         +----------+
+    |  host50  | ------> |  host56  |
+    +----------+         +----------+                
+                             | 
+                             |
+          ---------------------------------------
+                  |                      |
+           +------------+          +------------+
+           |   host51   |          |   host52   |
+           +------------+          +------------+
+
+配置数据读写分离服务：
+1.部署mysql主从同步结构（一主（host51）一丛（host52））
 
 
 
+2.测试主从同步配置
+2.1在主库给客户端授权存储数据时，连接服务器的用户密码
+
+mysql> create database testdb;
+mysql> create table testdb.t1(id  int);
+mysql> grant  select  ,insert  on db1.*  to  yaya99@'%'  identified by '123qqq...A';
 
 
 
+修改配置文件(host56)
+
+]# cp  /etc/maxscale.cnf{,.bak}  //备份
+
+vim /etc/maxscale.cnf
+    ...
+  
+  9 [maxscale]
+ 10 threads=auto     //线程数设置
+    ...
+ 
+ 18 [server1]
+ 19 type=server
+ 20 address=192.168.4.51
+ 21 port=3306
+ 22 protocol=MySQLBackend
+ 23
+ 24 [server2]
+ 25 type=server
+ 26 address=192.168.4.52
+ 27 port=3306
+ 28 protocol=MySQLBackend
+    ...
+
+ 35 [MySQL Monitor]      //定义监控的服务器
+ 36 type=monitor
+ 37 module=mysqlmon
+ 38 servers=server1, server2
+ 39 user=scalemon
+ 40 passwd=123qqq...A
+ 41 monitor_interval=10000  //10000毫秒
+    ...
+
+//注释掉52-58行  ctrl v --> 下键  --> shift i --> #  ---> esc
+ 52 #[Read-Only Service]       
+ 53 #type=service 
+ 54 #router=readconnroute
+ 55 #servers=server1
+ 56 #user=myuser
+ 57 #passwd=mypwd
+ 58 #router_options=slave
+    ...
+
+ 63 [Read-Write Service]             //定义读写数据分离服务
+ 64 type=service
+ 65 router=readwritesplit
+ 66 servers=server1, server2
+ 67 user=maxscale                    //设置用户
+ 68 passwd=123qqq...A                //设置密码
+ 69 max_slave_connections=100%
+    ...
+
+ 85 #[Read-Only Listener]
+ 86 #type=listener
+ 87 #service=Read-Only Service
+ 88 #protocol=MySQLClient
+ 89 #port=4008
+    ...
+ 
+ 97 [MaxAdmin Listener]
+ 98 type=listener
+ 99 service=MaxAdmin Service
+100 protocol=maxscaled
+101 socket=default
+102 port=4016
+
+ 
+
+根据配置文件的设置(-- host51 上配置)
 
 
 
+mysql > grant replication  slave,replication client on *.* to scalemon@'%'  identified by '123qqq...A';
+
+
+mysql > grant select on mysql.*  to maxscale@'%' identified by '123qqq...A';
+
+
+mysql > select user from mysql.user where user in ("scalemax","maxscale");
+
+
+在服务器host56上测试授权用户
+
+]#which  mysql 
+]#yum -y install mariadb
+
+]# mysql  -h192.168.4.51  -uscalemon  -p123qqq...A
+]# mysql  -h192.168.4.52  -uscalemon  -p123qqq...A
+
+]# mysql  -h192.168.4.51  -umaxsacle  -p123qqq...A
+]# mysql  -h192.168.4.52  -umaxsacle  -p123qqq...A
+
+
+启动服务
+
+[root@host56 ~]# maxscale  -f  /etc/maxscale.cnf 
+
+查看服务信息
+
+[root@host56 ~]# ps -C maxscale
+  PID TTY          TIME CMD
+ 4192 ?        00:00:00 maxscale
+[root@host56 ~]# ss -antulp  | grep -i maxscale
+tcp    LISTEN     0      128      :::4016         :::*           users:(("maxscale",pid=4192,fd=12))
+tcp    LISTEN     0      128      :::4006         :::*           users:(("maxscale",pid=4192,fd=11))
+
+测试读写分离服务器的配置
+4.1在host56本机上访问管理，查看
+
+[root@host56 ~]# maxadmin  -uadmin  -pmariadb  -P4016
+MaxScale> list servers
+Servers.
+-------------------+-----------------+-------+-------------+--------------------
+Server             | Address         | Port  | Connections | Status              
+-------------------+-----------------+-------+-------------+--------------------
+server1            | 192.168.4.51    |  3306 |           0 | Master, Running
+server2            | 192.168.4.52    |  3306 |           0 | Slave, Running
+-------------------+-----------------+-------+-------------+--------------------
+MaxScale> 
 
 
 
+[root@host51~]#
+mysql> show master status;
++-------------+----------+--------------+------------------+-------------------+
+| File        | Position | Binlog_Do_DB | Binlog_Ignore_DB | Executed_Gtid_Set |
++-------------+----------+--------------+------------------+-------------------+
+| db51.000001 |     4055 |              |                  |                   |
++-------------+----------+--------------+------------------+-------------------+
+1 row in set (0.00 sec)
+
+[root@host50 ~]# mysql -h192.168.4.56  -P4006 -uyaya9  -p123qqq...A
+mysql> insert into  db1.t1 values(777);
+
+[root@host51~]#mysql -uroot -p123456
+mysql> show master status;
++-------------+----------+--------------+------------------+-------------------+
+| File        | Position | Binlog_Do_DB | Binlog_Ignore_DB | Executed_Gtid_Set |
++-------------+----------+--------------+------------------+-------------------+
+| db51.000001 |     4865 |              |                  |                   |
++-------------+----------+--------------+------------------+-------------------
+
+--position改变证明写在host51
+
+___________________________________________________________________________________
+
+[root@host52~]#mysql -uroot -p123456
+mysql> insert  into  db1.t1 values (333);
+Query OK, 1 row affected (0.06 sec)
+mysql> insert  into  db1.t1 values (333);
+Query OK, 1 row affected (0.06 sec)
+mysql> insert  into  db1.t1 values (333);
+Query OK, 1 row affected (0.06 sec)
+
+
+[root@host50~]#mysql  -h192.168.4.56  -uyaya99  -p123qqq...A
+mysql> select  *  from db1.t1;
++------+
+| id   |
++------+
+|    1 |
+|   11 |
+|  111 |
+|    9 |
+|    9 |
+|    9 |
+|  666 |
+|  666 |
+|  666 |
+|  333 |
+|  333 |
+|  333 |
++------+
+12 rows in set (0.00 sec)
+
+
+[root@host51~#mysql -uroot -p123456
+
+mysql> select  *  from  db1.t1;
++------+
+| id   |
++------+
+|    1 |
+|   11 |
+|  111 |
+|    9 |
+|    9 |
+|    9 |
+|  666 |
+|  666 |
+|  666 |
++------+
+9 rows in set (0.00 sec)
+
+--在host52中插入数据，在host50中可以查到，但在host51中查不到，证明读在host51
+
+___________________________________________________________________________________________
 
 
 
+mysql多实例：在一台物理主机上运行多个数据库服务
+
+[root@host50 ~]# systemctl  stop mysqld
+[root@host50 ~]# systemctl  disable  mysqld
 
 
 
+装包
+
+[root@host50 ~]# tar  -zxvf  mysql-5.7.20-linux-glibc2.12-x86_64.tar.gz 
+[root@host50 ~]# mv  mysql-5.7.20-linux-glibc2.12-x86_64  /usr/local/mysql
+[root@host50 ~]# vim  /etc/profile
+   ...
+ export  PATH=/usr/local/mysql/bin:$PATH
+
+[root@host50 ~]# source /etc/profile
+[root@host50 ~]# echo $PATH
+/usr/local/mysql/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin
+
+
+创建主配置文件
+
+[root@host50 ~]# mv  /etc/my.cnf{,.bak}
+[root@host50 ~]#
+
+[mysqld_multi]                                // 启用多实例
+mysqld = /usr/local/mysql/bin/mysqld_safe     // 指定进程文件的路径
+mysqladmin = /usr/local/mysql/bin/mysqladmin  // 指定管理命令路径
+user = root                                   // 指定调用进程的用户
+
+[mysql1]   // 实例进程名称 ,X 表示实例名称 , 如 [mysql2]
+port = 3307                                // 端口号
+datadir = /data3307                        // 数据库目录 ,要手动创建
+socket =/data3307/mysql.sock               // 指定 sock 文件的路径和名称
+pid-file = /data3307/mysqld.pid            // 进程 pid 号文件位置
+log-error = /data3307/mysqld.err           // 错误日志位置
+
+[mysql1]   // 实例进程名称 ,X 表示实例名称 , 如 [mysql2]
+port = 3308                                // 端口号
+datadir = /data3308                        // 数据库目录 ,要手动创建
+socket =/data3308/mysql.sock               // 指定 sock 文件的路径和名称
+pid-file = /data3308/mysqld.pid            // 进程 pid 号文件位置
+log-error = /data3308/mysqld.err           // 错误日志位置
+
+:x
+
+
+mkdir /data3307
+mkdir /data3308
+
+初始化授权库
+
+[root@localhost bin]# mysqld --user=mysql --basedir= /usr/local/mysql --datadir=/data3307 --initialize      // 初始化授权库
 
 
 
+[root@host50 data3307]# mysqld --user=mysql --basedir=/usr/local/mysql --datadir=/data3307 --initialize
+2018-07-21T10:49:11.168803Z 0 [Warning] TIMESTAMP with implicit DEFAULT value is deprecated. Please use --explicit_defaults_for_timestamp server option (see documentation for more details).
+2018-07-21T10:49:13.015929Z 0 [Warning] InnoDB: New log files created, LSN=45790
+2018-07-21T10:49:13.413405Z 0 [Warning] InnoDB: Creating foreign key constraint system tables.
+2018-07-21T10:49:13.556705Z 0 [Warning] No existing UUID has been found, so we assume that this is the first time that this server has been started. Generating a new UUID: b4e30c01-8cd3-11e8-9312-525400d096a2.
+2018-07-21T10:49:13.593909Z 0 [Warning] Gtid table is not ready to be used. Table 'mysql.gtid_executed' cannot be opened.
+2018-07-21T10:49:13.594652Z 1 [Note] A temporary password is generated for root@localhost: 6umelTr4:tt<
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+[root@host50 data3307]# mysqld --user=mysql --basedir=/usr/local/mysql --datadir=/data3308 --initialize
+2018-07-21T10:51:07.700238Z 0 [Warning] TIMESTAMP with implicit DEFAULT value is deprecated. Please use --explicit_defaults_for_timestamp server option (see documentation for more details).
+2018-07-21T10:51:09.419038Z 0 [Warning] InnoDB: New log files created, LSN=45790
+2018-07-21T10:51:09.887175Z 0 [Warning] InnoDB: Creating foreign key constraint system tables.
+2018-07-21T10:51:10.059782Z 0 [Warning] No existing UUID has been found, so we assume that this is the first time that this server has been started. Generating a new UUID: fa540170-8cd3-11e8-97b1-525400d096a2.
+2018-07-21T10:51:10.085670Z 0 [Warning] Gtid table is not ready to be used. Table 'mysql.gtid_executed' cannot be opened.
+2018-07-21T10:51:10.086495Z 1 [Note] A temporary password is generated for root@localhost: 8xE?i2(s9bKq
+[root@host50 data3307]# 
 
 
 
