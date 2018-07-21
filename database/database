@@ -84,7 +84,7 @@ show tables;                	//显示已有的表
 常用SQL的操作指令
   1.DDL数据定义语言   (create  alter  drop)
   2.DML数据操作语言   (insert  update  delete)
-  3.DCL数据控制语言   (grant  remoke)
+  3.DCL数据控制语言   (grant  revoke)
   4.DTL数据事物语言   (commit  rollback  savepoint)
 
 数据表:
@@ -2088,8 +2088,7 @@ mysql> select * from  b61 right join b62 on b61.uid = b62.uid;
 mysql> select  @@hostname;
 +------------+
 | @@hostname |
-+------------+
-| host50     |
++------------+ host50     |
 +------------+
 1 row in set (0.00 sec)
 
@@ -2238,9 +2237,9 @@ UNLOCK TABLES;
 
 完全恢复：mysql
 
-方法一：]# mysql -uroot -p123456  库名  < 目录名/文件名.sql
+--方法一：]# mysql -uroot -p123456  库名  < 目录名/文件名.sql
 
-方法二：mysql> source 目录名/文件名.sql
+--方法二：mysql > source 目录名/文件名.sql
 
 
 
@@ -2453,7 +2452,7 @@ mysql> show databases;
 
 ###################################################################
 
---修改数据库表名：
+--修改数据库表名：  --rename 
  alter table v1 rename v2;              //把v1表改为v2,内容不变
 
 mysql> select  *  from  STUDENT;
@@ -2480,7 +2479,7 @@ mysql> show tables;
 +---------------+
 1 row in set (0.00 sec)
 
---修改字段名：
+--修改字段名：  --change 
 
 alter table v1 change age xx char(11);  //把v1表中age字段改为xx字段
 +---------+---------------------------+------+-----+---------+-------+
@@ -2493,7 +2492,7 @@ alter table v1 change age xx char(11);  //把v1表中age字段改为xx字段
 | xx      | char(11)                  | YES  |     | NULL    |       |
 +---------+---------------------------+------+-----+---------+-------+
 
---修改字段类型:
+--修改字段类型:  --modify 
 alter table v1 modify name varchar(15);//修改v1表中name字段类型为varchar(15)
 +---------+---------------------------+------+-----+---------+-------+
 | Field   | Type                      | Null | Key | Default | Extra |
@@ -2517,7 +2516,7 @@ alter table v1 modify age int(2) not null default 18;
 | likes   | set('eat','sleep','game') | YES  |     | NULL    |       |
 +---------+---------------------------+------+-----+---------+-------+
 
---修改字段位置:
+--修改字段位置:  --modify
 alter table v1 modify age int(2) not null default 18 after likes;
                                        //把age字段移到likes之后,其他不变
 +---------+---------------------------+------+-----+---------+-------+
@@ -2595,7 +2594,7 @@ vim  /root/allbak.sh
 #!/bin/bash
 
 day=`date +%F`
-innobackupex  --user root --password 123456 --incremental  /fullbak_{day} --no-timestamp
+innobackupex  --user root --password 123456 --incremental  /fullbak_${day} --no-timestamp
 :x
 
 
@@ -2690,7 +2689,7 @@ create table user1 select name,uid,shell from user order by uid limit 5;
 create table user2 select * from user where name="1";
                                //以一个没结果的查询来复制表即为快速建表
                                //user表中没有name为1的行
-+---------+---------------------+------+-----+---------+-------+
++---------+---------------------+------+-----+------innobackupex  --user  root  --password 123456  /good  --no-timestamp---+-------+
 | Field   | Type                | Null | Key | Default | Extra |
 +---------+---------------------+------+-----+---------+-------+
 | id      | int(3)              | NO   |     | NULL    |       |
@@ -2728,7 +2727,7 @@ create table v2 select name,passwd,gid,homedir from 晨练.user limit 5;
 | lp     | x      |    7 | /var/spool/lpd |
 +--------+--------+------+----------------+
 
-笛卡尔集
+笛卡尔集innobackupex  --user  root  --password 123456  /good  --no-timestamp
 select * from v1,v2;                    //结果为笛卡尔集,共有15行
 +--------+------+---------------+--------+--------+------+----------------+
 | name   | uid  | shell         | name   | passwd | gid  | homedir        |
@@ -3243,6 +3242,55 @@ grant select,insert on 晨练.user to ljw@'192.168.4.254' identified by "123456"
 
 Query OK, 0 rows affected, 1 warning (0.00 sec)
                                       //命令执行成功的提示
+
+########################################################################################
+
+多表查询:
+select 字段名列表 from 表名列表 where 条件;
+
+create table v1 select name,uid,gid,shell from 晨练.user limit 3;
+                 //用晨练库里user表中name,uid,gid,shell行的前三个值创建新表v1
++--------+------+---------------+
+| name   | uid  | shell         |
++--------+------+---------------+
+| root   |    0 | /sbin/nologin |
+| bin    |    1 | /sbin/nologin |
+| daemon |    2 | /sbin/nologin |
++--------+------+---------------+
+
+create table v2 select name,passwd,gid,homedir from 晨练.user limit 5;
+              //用晨练库里user表中的name,passwd,gid,homedir行的前5个值创建新表v2
++--------+--------+------+----------------+
+| name   | passwd | gid  | homedir        |
++--------+--------+------+----------------+
+| root   | x      |    0 | /root          |
+| bin    | x      |    1 | /bin           |
+| daemon | x      |    2 | /sbin          |
+| adm    | x      |    4 | /var/adm       |
+| lp     | x      |    7 | /var/spool/lpd |
++--------+--------+------+----------------+
+
+笛卡尔集
+select * from v1,v2;                    //结果为笛卡尔集,共有15行
++--------+------+---------------+--------+--------+------+----------------+
+| name   | uid  | shell         | name   | passwd | gid  | homedir        |
++--------+------+---------------+--------+--------+------+----------------+
+| root   |    0 | /sbin/nologin | root   | x      |    0 | /root          |
+| bin    |    1 | /sbin/nologin | root   | x      |    0 | /root          |
+| daemon |    2 | /sbin/nologin | root   | x      |    0 | /root          |
+| root   |    0 | /sbin/nologin | bin    | x      |    1 | /bin           |
+| bin    |    1 | /sbin/nologin | bin    | x      |    1 | /bin           |
+| daemon |    2 | /sbin/nologin | bin    | x      |    1 | /bin           |
+| root   |    0 | /sbin/nologin | daemon | x      |    2 | /sbin          |
+| bin    |    1 | /sbin/nologin | daemon | x      |    2 | /sbin          |
+| daemon |    2 | /sbin/nologin | daemon | x      |    2 | /sbin          |
+| root   |    0 | /sbin/nologin | adm    | x      |    4 | /var/adm       |
+| bin    |    1 | /sbin/nologin | adm    | x      |    4 | /var/adm       |
+| daemon |    2 | /sbin/nologin | adm    | x      |    4 | /var/adm       |
+| root   |    0 | /sbin/nologin | lp     | x      |    7 | /var/spool/lpd |
+| bin    |    1 | /sbin/nologin | lp     | x      |    7 | /var/spool/lpd |
+| daemon |    2 | /sbin/nologin | lp     | x      |    7 | /var/spool/lpd |
++--------+------+---------------+--------+--------+------+----------------+
          
 select v1.*,v2.passwd,v2.gid,v2.homedir from v1,v2;
 +--------+------+---------------+--------+------+----------------+
@@ -3439,6 +3487,398 @@ mysql> alter table gamedb.a import tablespace;               // 导入表空间
 mysql> select * from gamedb.a;
 
 ###############################################################################################################
+
+2018年 07月 20日 星期五 09:37:58 CST
+
+192.168.4.50--host50（客户端）
+192.168.4.51--host51（主master）
+192.168.4.52--host52（从slave）
+
+mysql主从同步
+什么是主从同步？
+实现的功能是什么？
+怎么配置？
+ 
+1.--主master库(192.168.4.51-host51)配置如下：
+1）启用binlog日志文件
+[mysqld]
+log-bin=master51
+server_id=51
+binlog_format="mixed"
+
+2）用户授权：给从库体内加连接时使用的用户名
+mysql > grant  replication slave on *.*  to  repluser@'%' identified  by "123qqq...A";
+
+
+3）查看正在使用的binlog日志信息
+mysql> show  master status;
++-----------------+----------+--------------+------------------+-------------------+
+| File            | Position | Binlog_Do_DB | Binlog_Ignore_DB | Executed_Gtid_Set |
++-----------------+----------+--------------+------------------+-------------------+
+| master51.000001 |      739 |              |                  |                   |
++-----------------+----------+--------------+------------------+-------------------+
+1 row in set (0.00 sec)
+
+2.--从slave库(192.168.4.52-host52)配置如下：
+1)指定server—id
+[mysqld]
+server_id=52
+
+]# systemctl restart mysqld
+
+2)测试授权用户
+mysql  -h 192.168.4.51  -urepluser  -p123qqq...A;
+
+mysql> show  grants;
++--------------------------------------------------+
+| Grants for repluser@%                            |
++--------------------------------------------------+
+| GRANT REPLICATION SLAVE ON *.* TO 'repluser'@'%' |
++--------------------------------------------------+
+1 row in set (0.00 sec)
+
+
+3)管理本机登录指定主库信息
+[1]]# mysql  -uroot -p123456
+
+[2]mysql> change master to master_host="192.168.4.51",master_user="repluser",master_password="123qqq...A",master_log_file="master51.000001",master_log_pos=739;
+Query OK, 0 rows affected, 2 warnings (0.19 sec)
+
+[3]mysql> start slave;
+Query OK, 0 rows affected (0.03 sec)
+
+[4]mysql> show  slave status\G;
+...
+Slave_IO_Running: Yes      
+Slave_SQL_Running: Yes
+...
+
+排错方法：
+
+
+mysql > stop slave;
+mysql > change master to master_log_file="master51.000001";
+
+4)查看配置
+
+
+客户端测试主从同配置？
+在mster主库(host51)服务器上管理员本机登录，添加客户端(host50)存储数据时，使用的连接用户。
+mysql> create database  gamedb;
+Query OK, 1 row affected (0.08 sec)
+
+mysql> create table gamedb.t1(id  int);
+Query OK, 0 rows affected (0.23 sec)
+
+mysql> grant select,insert  on  gamedb.* to webadmin@"%"  identified by "123qqq...A";
+Query OK, 0 rows affected, 1 warning (0.05 sec)
+
+
+客户端连接主库存储数据
+
+--[root@host50 ~]
+
+[root@host50 ~]# mysql  -h192.168.4.51  -uwebadmin  -p123qqq...A
+
+mysql> show grants;
++------------------------------------------------------+
+| Grants for webadmin@%                                |
++------------------------------------------------------+
+| GRANT USAGE ON *.* TO 'webadmin'@'%'                 |
+| GRANT SELECT, INSERT ON `gamedb`.* TO 'webadmin'@'%' |
++------------------------------------------------------+
+[root@host50 ~]
+mysql> insert  into  t1  values(222);
+mysql> insert  into  t1  values(2222);
+mysql> insert  into  t1  values(22222);
+mysql> insert  into  t1  values(222265562);
+mysql> insert  into  t1  values(22432);
+
+mysql> select  *  from  t1;
++-----------+
+| id        |
++-----------+
+|       222 |
+|      2222 |
+|     22222 |
+| 222265562 |
+|     22432 |
++-----------+
+
+
+
+--[root@host51~]
+
+mysql> select * from t1;
++-----------+
+| id        |
++-----------+
+|       222 |
+|      2222 |
+|     22222 |
+| 222265562 |
+|     22432 |
++-----------+
+5 rows in set (0.00 sec)
+
+
+
+
+--[root@host52~]
+
+mysql> select * from   gamedb.t1;
++-----------+
+| id        |
++-----------+
+|       222 |
+|      2222 |
+|     22222 |
+| 222265562 |
+|     22432 |
++-----------+
+5 rows in set (0.00 sec)
+
+
+
+主从同步原理？
+
+mysql> show  processlist;
++----+----------+--------------------+--------+-------------+------+---------------------------------------------------------------+-------------------+
+| Id | User     | Host               | db     | Command     | Time | State                                                         | Info              |
++----+----------+--------------------+--------+-------------+------+---------------------------------------------------------------+-------------------+
+|  8 | repluser | 192.168.4.52:56916 | NULL   | Binlog Dump | 5439 | Master has sent all binlog to slave; waiting for more updates | NULL              |
+|  9 | webadmin | 192.168.4.50:33540 | gamedb | Sleep       |  804 |                                                               | NULL              |
+| 15 | root     | localhost          | NULL   | Query       |    0 | starting                                                      | show  processlist |
++----+----------+--------------------+--------+-------------+------+---------------------------------------------------------------+-------------------+
+3 rows in set (0.00 sec)
+
+
+--如何让从库暂时不同步主库的数据
+在从库执行：mysql > stop  slave
+
+
+--如何把从库还原成独立的数据库服务器？
+]#rm  -rf  master.info   relay-log.info
+]#rm  -rf  host53-relay-bin.*
+]# systemctl  restart mysqld
+mysql > show slave status;
+
+
+--[root@host53 ~]# cd  /var/lib/mysql
+--[root@host53 mysql]# ls
+auto.cnf         gamedb                   ibdata1      mysql               public_key.pem
+ca-key.pem       host53-relay-bin.000002  ib_logfile0  mysql.sock          relay-log.info
+ca.pem           host53-relay-bin.000003  ib_logfile1  mysql.sock.lock     server-cert.pem
+client-cert.pem  host53-relay-bin.index   ibtmp1       performance_schema  server-key.pem
+client-key.pem   ib_buffer_pool           master.info  private_key.pem     sys
+--[root@host53 mysql]# rm  -rf  master.info  relay-log.info 
+--[root@host53 mysql]# rm  -rf  host53-relay-bin.* 
+--[root@host53 mysql]# systemctl  restart  mysqld
+--[root@host53 mysql]# ls
+auto.cnf         client-key.pem  ib_logfile0  mysql.sock          public_key.pem
+ca-key.pem       gamedb          ib_logfile1  mysql.sock.lock     server-cert.pem
+ca.pem           ib_buffer_pool  ibtmp1       performance_schema  server-key.pem
+client-cert.pem  ibdata1         mysql        private_key.pem     sys
+
+
+########################################################################################################
+
+mysql主从同步模式：
+
+主从同步结构模式：
+
+一主一从
+一主多从
+
+--mysql> select  user,host from mysql.user;
++-----------+-------------+
+| user      | host        |
++-----------+-------------+
+| repluser  | %           |
+| webadmin  | %           |
+| webuser   | %           |
+| admin     | 192.168.4.% |
+| mysql.sys | localhost   |
+| root      | localhost   |
++-----------+-------------+
+6 rows in set (0.00 sec)
+
+
+
+###########################################################################
+
+
+2018年 07月 21日 星期六 09:32:31 CST
+
+
+master 选项
+binlog_do_db=库列表名   //只允许同步的库 
+
+binlog_ignore_db=库列表名   //只不允许同步的库
+
+
+slave 选项
+
+
+主从同步复制模式
+
+
+--master：
+
+
+mysql> show  variables like "have_dynamic_loading"
+    -> ;
++----------------------+-------+
+| Variable_name        | Value |
++----------------------+-------+
+| have_dynamic_loading | YES   |
++----------------------+-------+
+1 row in set (0.01 sec)
+
+mysql> install   plugin  rpl_semi_sync_master
+    -> soname 'semisync_master.so';
+Query OK, 0 rows affected (0.08 sec)
+
+
+mysql> select plugin_name ,plugin_status from information_schema.plugins  where plugin_name like '%semi%';
++----------------------+---------------+
+| plugin_name          | plugin_status |
++----------------------+---------------+
+| rpl_semi_sync_master | ACTIVE        |
++----------------------+---------------+
+1 row in set (0.01 sec)
+
+
+启用半同步复制
+
+mysql> show  variables like "rpl_semi_sync_%_enabled";
++------------------------------+-------+
+| Variable_name                | Value |
++------------------------------+-------+
+| rpl_semi_sync_master_enabled | OFF   |
++------------------------------+-------+
+1 row in set (0.01 sec)
+
+mysql> set  global   rpl_semi_sync_master_enabled=1;
+Query OK, 0 rows affected (0.00 sec)
+
+
+mysql> show  variables like "rpl_semi_sync_%_enabled";
++------------------------------+-------+
+| Variable_name                | Value |
++------------------------------+-------+
+| rpl_semi_sync_master_enabled | ON    |
++------------------------------+-------+
+1 row in set (0.00 sec)
+
+
+
+
+--slave：
+
+
+
+mysql> install   plugin  rpl_semi_sync_slave soname 'semisync_slave.so';              Query OK, 0 rows affected (0.06 sec)
+
+mysql> select plugin_name ,plugin_status from information_schema.plugins  where plugin_name like '%semi%';
++----------------------+---------------+
+| plugin_name          | plugin_status |
++----------------------+---------------+
+| rpl_semi_sync_master | ACTIVE        |
+| rpl_semi_sync_slave  | ACTIVE        |
++----------------------+---------------+
+2 rows in set (0.00 sec)
+
+
+
+mysql> set  global   rpl_semi_sync_slave_enabled=1;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> show  variables like "rpl_semi_sync_%_enabled";
++------------------------------+-------+
+| Variable_name                | Value |
++------------------------------+-------+
+| rpl_semi_sync_master_enabled | ON    |
+| rpl_semi_sync_slave_enabled  | ON    |
++------------------------------+-------+
+2 rows in set (0.01 sec)
+
+
+
+永久配置半同步模式：
+
+master：
+
+[mysqld]
+plugin-load=rpl_semi_sync_master=semisync_master.so
+rpl_semi_sync_master_enabled=1
+
+
+slave：
+
+[mysqld]
+plugin-load=rpl_semi_sync_slave=semisync_slave.so
+rpl_semi_sync_slave_enabled=1
+
+
+master and slave（既有主又有从的服务器）
+[mysqld]
+plugin-load="rpl_semi_sync_master=semisync_master.so;rpl_semi_sync_slave=semisync_slave.so"  --必须写在一起
+rpl_semi_sync_master_enabled=1
+rpl_semi_sync_slave_enabled=1
+
+mysql> show variables  like 'rpl_semi_sync_%_enabled';
++------------------------------+-------+
+| Variable_name                | Value |
++------------------------------+-------+
+| rpl_semi_sync_master_enabled | ON    |
+| rpl_semi_sync_slave_enabled  | ON    |
++------------------------------+-------+
+2 rows in set (0.00 sec)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
