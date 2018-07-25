@@ -43,7 +43,7 @@ enable=1
 gpgcheck=0
 
 
-yum -y install mysql-*                     //装包
+yum -y install     mysql-community-*        //装包
 
 systemctl start mysqld                     //启服务
 
@@ -84,7 +84,7 @@ show tables;                	//显示已有的表
 常用SQL的操作指令
   1.DDL数据定义语言   (create  alter  drop)
   2.DML数据操作语言   (insert  update  delete)
-  3.DCL数据控制语言   (grant  revoke)
+  3.DCL数据控制语言   (grant  H)
   4.DTL数据事物语言   (commit  rollback  savepoint)
 
 数据表:
@@ -112,8 +112,8 @@ tel char(11)                 //第四个字段名为tel,最多11个字符
 
 
 
-1. 1)临时:mysql> set global validate_password_policy=0; 
-    2)永久: vim  /etc/my.cnf
+1.1)临时:mysql> set global validate_password_policy=0; 
+  2)永久: vim  /etc/my.cnf
   validate_password_policy=0 
 2.主配置文件   /etc/my.cnf
   数据库目录    /var/lib/mysql
@@ -1743,7 +1743,7 @@ Records: 42  Duplicates: 0  Warnings: 0
 mysql> select  *  from b4;
 +----+---------------------+----------+-------+-------+-----------------------------------------------------------------+---------------------------+----------------+
 | id | name                | password | uid   | gid   | comment                                                         | homedir                   | shell          |
-+----+---------------------+----------+-------+-------+-----------------------------------------------------------------+---------------------------+----------------+
++----+---------------------+----------+-------+-------+-----------------------------------------------------------------+---------------------------+----------------+ 
 |  1 | root                | x        | 0     | 0     | root                                                            | /root                     | /bin/bash      |
 |  2 | bin                 | x        | 1     | 1     | bin                                                             | /bin                      | /sbin/nologin  |
 |  3 | daemon              | x        | 2     | 2     | daemon                                                          | /sbin                     | /sbin/nologin  |
@@ -2151,7 +2151,7 @@ InnoDB的特点
 
 
 锁粒度 （锁表的范围）
-表锁
+表锁 
 锁类型：
 读锁 （共享锁）         当对一张表查询时（select）操作时 会加读锁
 写锁  (排他锁或互斥锁)  当对一张表执行写（insert update delete）操作时 会加写锁
@@ -4111,14 +4111,14 @@ mysqld = /usr/local/mysql/bin/mysqld_safe     // 指定进程文件的路径
 mysqladmin = /usr/local/mysql/bin/mysqladmin  // 指定管理命令路径
 user = root                                   // 指定调用进程的用户
 
-[mysql1]   // 实例进程名称 ,X 表示实例名称 , 如 [mysql2]
-port = 3307                                // 端口号
+[mysqld1]   // 实例进程名称 ,X 表示实例名称 , 如 [mysql2]
+port = 3307                     /           // 端口号
 datadir = /data3307                        // 数据库目录 ,要手动创建
 socket =/data3307/mysql.sock               // 指定 sock 文件的路径和名称
 pid-file = /data3307/mysqld.pid            // 进程 pid 号文件位置
 log-error = /data3307/mysqld.err           // 错误日志位置
 
-[mysql1]   // 实例进程名称 ,X 表示实例名称 , 如 [mysql2]
+[mysqld2]   // 实例进程名称 ,X 表示实例名称 , 如 [mysql2]
 port = 3308                                // 端口号
 datadir = /data3308                        // 数据库目录 ,要手动创建
 socket =/data3308/mysql.sock               // 指定 sock 文件的路径和名称
@@ -4138,21 +4138,1061 @@ mkdir /data3308
 
 
 [root@host50 data3307]# mysqld --user=mysql --basedir=/usr/local/mysql --datadir=/data3307 --initialize
-2018-07-21T10:49:11.168803Z 0 [Warning] TIMESTAMP with implicit DEFAULT value is deprecated. Please use --explicit_defaults_for_timestamp server option (see documentation for more details).
-2018-07-21T10:49:13.015929Z 0 [Warning] InnoDB: New log files created, LSN=45790
-2018-07-21T10:49:13.413405Z 0 [Warning] InnoDB: Creating foreign key constraint system tables.
-2018-07-21T10:49:13.556705Z 0 [Warning] No existing UUID has been found, so we assume that this is the first time that this server has been started. Generating a new UUID: b4e30c01-8cd3-11e8-9312-525400d096a2.
-2018-07-21T10:49:13.593909Z 0 [Warning] Gtid table is not ready to be used. Table 'mysql.gtid_executed' cannot be opened.
+
 2018-07-21T10:49:13.594652Z 1 [Note] A temporary password is generated for root@localhost: 6umelTr4:tt<
 
 [root@host50 data3307]# mysqld --user=mysql --basedir=/usr/local/mysql --datadir=/data3308 --initialize
-2018-07-21T10:51:07.700238Z 0 [Warning] TIMESTAMP with implicit DEFAULT value is deprecated. Please use --explicit_defaults_for_timestamp server option (see documentation for more details).
-2018-07-21T10:51:09.419038Z 0 [Warning] InnoDB: New log files created, LSN=45790
-2018-07-21T10:51:09.887175Z 0 [Warning] InnoDB: Creating foreign key constraint system tables.
-2018-07-21T10:51:10.059782Z 0 [Warning] No existing UUID has been found, so we assume that this is the first time that this server has been started. Generating a new UUID: fa540170-8cd3-11e8-97b1-525400d096a2.
-2018-07-21T10:51:10.085670Z 0 [Warning] Gtid table is not ready to be used. Table 'mysql.gtid_executed' cannot be opened.
+
 2018-07-21T10:51:10.086495Z 1 [Note] A temporary password is generated for root@localhost: 8xE?i2(s9bKq
-[root@host50 data3307]# 
+
+
+
+启动服务
+
+[root@host50 ~]#mysqld_multi  start 1 
+[root@host50 ~]#ss -antupl  |grep 3307
+tcp    LISTEN     0      80       :::3307      :::*     u[root@ho[r
+[root@host50 ~]# mysql  -uroot -p'6umelTr4:tt<'  -S  /data3307/mysql.sock
+mysql> alter  user  root@"localhost"   identified  by "123456";
+Query OK, 0 rows affected (0.00 sec)
+
+[root@host50 ~]# mysqld_multi  start 2
+[root@host50 ~]# ss -antupl  |grep 3308
+tcp    LISTEN     0      80       :::3308     :::*       users:(("mysqld",pid=2130,fd=18))
+[root@host50 ~]# mysql  -uroot -p'6umelTr4:tt<'  -S  /data3308/mysql.sock
+mysql> alter  user  root@"localhost"  identified  by  "123456";
+Query OK, 0 rows affected (0.00 sec)
+
+
+
+停止指定的实例服务
+[root@host50 ~]#mysqld_multi  --user=root   --password=密码  stop 编号
+
+###########################################################################
+
+
+mysql> show  variables like '%password%';
++---------------------------------------+--------+
+| Variable_name                         | Value  |
++---------------------------------------+--------+
+| default_password_lifetime             | 0      |
+| disconnect_on_expired_password        | ON     |
+| log_builtin_as_identified_by_password | OFF    |
+| mysql_native_password_proxy_users     | OFF    |
+| old_passwords                         | 0      |
+| report_password                       |        |
+| sha256_password_proxy_users           | OFF    |
+| validate_password_check_user_name     | OFF    |
+| validate_password_dictionary_file     |        |
+| validate_password_length              | 8      |
+| validate_password_mixed_case_count    | 1      |
+| validate_password_number_count        | 1      |
+| validate_password_policy              | MEDIUM |
+| validate_password_special_char_count  | 1      |
++---------------------------------------+--------+
+14 rows in set (0.00 sec)
+
+mysql> set [global]  变量名=值;   //临时修改
+
+vim /etc/my.cnf                  //永久修改 
+
+mysql服务日志的类型有四种： 
+错误日志  binlog日志  查询日志  慢查询日志
+
+查询日志：记录执行的所有sql命令，默认没有开启
+
+
+
+三.部署高可用集群：
+3.1 准备实验拓扑:
+host 56 管理主机（不需要运行数据库服务）
+host 51-55 是数据库服务器（只保留初始的4个库）
+
+
+把软件包拷贝到所有的主机里51-56
+在所有的主机上安装软件包51-56
+]# cd mha-soft-student 
+]# ls 
+master_ip_failover
+mha4mysql-manager-0.56.tar.gz
+mha4mysql-node-0.56-0.el6.noarch.rpm
+perl-Config-Tiny-2.14-7.el7.noarch.rpm
+perl-Email-Date-Format-1.002-15.el7.noarch.rpm
+perl-Log-Dispatch-2.41-1.el7.1.noarch.rpm
+perl-Mail-Sender-0.8.23-1.el7.noarch.rpm
+perl-Mail-Sendmail-0.79-21.el7.art.noarch.rpm
+perl-MIME-Lite-3.030-1.el7.noarch.rpm
+perl-MIME-Types-1.38-2.el7.noarch.rpm
+perl-Parallel-ForkManager-1.18-2.el7.noarch.rpm
+]#yum  -y  install  perl-*
+
+所有数据库服务器之间可以无密码登录
+
+#######################################################################################################################
+
+--MHA高可用配置
+
+部署集群环境:
+一主多从  主从同步结构
+在做主库的主机上开启半同步复制 且设置不自动删除中继日志
+配置免密钥登录:56 -->(51-55)  51<-->55
+所有主机都要安装软件依赖包perl
+
+配置集群:
+1.配置数据库服务器:安装mha_node软件包
+2.配置管理主机:
+2.1安装软件包:mha_node(51-56)和 mha_manager(56)
+2.2创建管理命令
+2.3编写主配置文件app1.cnf（定义56主机本机的配置  指定数据库服务器）
+2.4根据配置文件的设置在数据库服务器上创建监控用户和在本机创建故障切换脚本并修改
+2.5测试主配置文件的免密服务（masterha_check_ssh --conf=/etc/mha/app1.cnf）和主从同步服务（masterha_check_repl --conf=/etc/mha/app1.cnf）
+2.6手动把规定的vip地址部署在主库上
+2.7启动管理服务（masterha_check_repl --conf=/etc/mha/app1.cnf）并查看状态（masterha_check_status --conf=/etc/mha/app1.cnf）
+
+3.测试集群
+3.1访问集群存储数据 （客户端连接VIP地址访问数据库服务）
+3.2测试高可用
+
+4.把挂掉的原主库添加到集群里
+4.1把挂掉的主机的数据库与当前的主库同步
+4.2把挂掉的主机设置为当前主库的从库
+4.3把挂掉主机的信息添加到管理主机的主配置文件作为备用主库
+
+
+########################################################################################################################
+
+
+拓扑结构
+
+            master51
+	        |
+		|
+______________________________________________________
+  |		|         |         |		|
+ slave52    slave53   slave54     slave55      mgm56
+                                              Manager
+
+
+一、配置所有数据节点主机之间可以互相以ssh密钥对方式认证登陆
+二、配置manager56主机 无密码ssh登录 所有数据节点主机
+
+三、配置主从同步,要求如下：
+51 主库		    开半同步复制
+52 从库（备用主库）  开半同步复制
+53 从库（备用主库）  开半同步复制
+54 从库 不做备用主库所以不用开半同步复制 
+55 从库 不做备用主库所以不用开半同步复制
+
+
+3.1、master51配置：
+vim  /etc/my.cnf
+[mysqld]
+plugin-load = "rpl_semi_sync_master=semisync_master.so;rpl_semi_sync_slave=semisync_slave.so"
+rpl-semi-sync-master-enabled = 1
+rpl-semi-sync-slave-enabled = 1
+
+server_id=51
+log-bin=master51
+binlog-format="mixed"
+:wq
+
+[root@db107 ~]# systemctl  restart mysqld
+
+[root@db107 ~]# ls /var/lib/mysql/master51.*
+/var/lib/mysql/master51.000001  /var/lib/mysql/master51.index
+
+[root@db107 ~]# mysql -uroot -p123456
+mysql> grant  replication slave  on  *.*  to repluser@"%"  identified by "123456";
+Query OK, 0 rows affected, 1 warning (10.04 sec)
+
+mysql> set global relay_log_purge=off;
+Query OK, 0 rows affected (0.15 sec)
+
+mysql> show master status;
++-----------------+----------+--------------+------------------+-------------------+
+| File            | Position | Binlog_Do_DB | Binlog_Ignore_DB | Executed_Gtid_Set |
++-----------------+----------+--------------+------------------+-------------------+
+| master51.000001 |      441 |              |                  |                   |
++-----------------+----------+--------------+------------------+-------------------+
+mysql> quit;
+
+
+3.2、备用master52的配置
+vim /etc/my.cnf
+[mysqld]
+plugin-load = "rpl_semi_sync_master=semisync_master.so;rpl_semi_sync_slave=semisync_slave.so"
+rpl-semi-sync-master-enabled = 1
+rpl-semi-sync-slave-enabled = 1
+
+server_id=52
+log-bin=master52
+binlog-format="mixed"
+
+]# systemctl restart mysqld
+[root@db108 ~]# ls /var/lib/mysql/master52.*
+/var/lib/mysql/master52.000001  /var/lib/mysql/master52.index
+
+[root@db108 ~]# mysql  -uroot  -p123456
+
+mysql> set global relay_log_purge=off; 
+Query OK, 0 rows affected (0.13 sec)
+
+mysql> change master to 
+    -> master_host="192.168.4.51",
+    -> master_user="repluser",
+    -> master_password="123456",
+    -> master_log_file="master51.000001",
+    -> master_log_pos=441;
+Query OK, 0 rows affected, 2 warnings (0.04 sec长生)
+
+mysql> start slave;
+Query OK, 0 rows affected (0.01 sec)
+
+
+[root@db108 ~]# mysql -uroot -p123456 -e "show slave status\G"  | grep -i YES
+mysql: [Warning] Using a password on the command line interface can be insecure.
+             Slave_IO_Running: Yes
+            Slave_SQL_Running: Yes
+[root@db108 ~]# 
+
+
+3.3、备用master53的配置
+]#  vim /etc/my.cnf
+[mysqld]
+plugin-load = "rpl_semi_sync_master=semisync_master.so;rpl_semi_sync_slave=semisync_slave.so"
+rpl-semi-sync-master-enabled = 1
+rpl-semi-sync-slave-enabled = 1
+
+server_id=53
+log-bin=master53
+binlog-format="mixed"
+:wq
+
+[root@db109 ~]# systemctl  restart mysqld
+[root@db109 ~]# ls /var/lib/mysql/master53.*
+/var/lib/mysql/master53.000001  /var/lib/mysql/master53.index
+[root@db109 ~]# 
+
+[root@db109 ~]# mysql -uroot -p123456
+mysql> set global relay_log_purge=off;
+Query OK, 0 rows affected (0.14 sec)
+
+mysql> change master  to master_host="192.168.4.51",master_user="repluser",master_password="123456",master_log_file="master51.000001",master_log_pos=441;
+Query OK, 0 rows affected, 2 warnings (0.05 sec)
+
+mysql> start slave;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> 
+
+[root@db109 ~]# mysql -uroot -p123456 -e "show slave status\G" | grep -i yes
+mysql: [Warning] Using a password on the command line interface can be insecure.
+             Slave_IO_Running: Yes
+             Slave_SQL_Running: Yes
+[root@db109 ~]# 
+
+
+3.4、配置从服务器54
+[root@db111 ~]# vim /etc/my.cnf
+[mysqld]
+server_id=54
+:wq
+
+[root@db111 ~]# systemctl  restart mysqld
+[root@db111 ~]# mysql -uroot -p123456
+mysql> change master  to master_host="192.168.4.51",master_user="repluser",master_password="123456",master_log_file="master51.000001",master_log_pos=441;
+Query OK, 0 rows affected, 2 warnings (0.09 sec)
+
+mysql> start slave;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> quit;
+Bye
+[root@db111 ~]# 
+[root@db111 ~]# mysql -uroot -p123456 -e "show slave status\G" | grep -i yes
+mysql: [Warning] Using a password on the command line interface can be insecure.
+             Slave_IO_Running: Yes
+            Slave_SQL_Running: Yes
+[root@db111 ~]# 
+
+
+3.5、配置从服务器55
+[root@db111 ~]# vim /etc/my.cnf
+[mysqld]
+server_id=55
+:wq
+
+[root@db111 ~]# systemctl  restart mysqld
+[root@db111 ~]# mysql -uroot -p123456
+mysql> change master  to master_host="192.168.4.51",master_user="repluser",master_password="123456",master_log_file="master51.000001",master_log_pos=441;
+Query OK, 0 rows affected, 2 warnings (0.09 sec)
+
+mysql> start slave;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> quit;
+Bye
+[root@db111 ~]# 
+[root@db111 ~]# mysql -uroot -p123456 -e "show slave status\G" | grep -i yes
+mysql: [Warning] Using a password on the command line interface can be insecure.
+             Slave_IO_Running: Yes
+            Slave_SQL_Running: Yes
+[root@db111 ~]# 
+
+
+3.6、在客户端测试主从同步配置
+3.6.1  在主库51上添加访问数据的授权用户
+[root@db107 ~]# mysql -uroot -p123456
+mysql> grant all on  gamedb.* to admin1@"%" identified by "123456";
+
+3.6.2  在客户端主机连接主库51 建库表记录
+mysql> create database gamedb;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> create table  gamedb.t1 (id int);
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> insert into gamedb.t1 values(999);
+Query OK, 1 row affected (0.15 sec)
+
+mysql> insert into gamedb.t1 values(999);
+Query OK, 1 row affected (0.05 sec)
+
+mysql> select  * from gamedb.t1;
++------+select * from db.t1;
+| id   |
++------+
+|  999 |
+|  999 |
++------+
+2 rows in set (0.00 sec)
+
+mysql> 
+
+3.6.3  在客户端使用授权用户连接从库52-55,也能看到同样的库表及记录
+
+[root@host114 ~]# mysql -h从库IP地址 -uadmin -p123456
+mysql> select  * from gamedb.t1;
++------+
+| id   |
++------+
+|  999 |
+|  999 |
++------+
+
+
+#################################################################################
+
+配置集群
+配置数据库服务器(51-55) (--参考上节)
+安装mha_node软件
+yum -y install perl-DBD-mysql
+rpm -ivh mha4mysql-node-0.56-0.el6.noarch.rpm
+
+配置管理主机(56)
+yum -y install perl-DBD-mysql
+rpm -ivh mha4mysql-node-0.56-0.el6.noarch.rpm
+
+tar -zxvf mha4mysql-manager-0.56.tar.gz 
+cd mha4mysql-manager-0.56
+
+perl Makefile.PL                //perl编译,失败,缺少依赖包
+yum -y install perl-ExtUtils-* perl-CPAN-*
+                                //根据报错提示安装缺少的包
+
+perl Makefile.PL                //perl编译,成功
+make && make install            //安装
+
+cd mha4mysql-manager-0.56/bin/
+
+cp -r * /root/bin/              //拷贝mha的程序到bin下
+
+在52.53执行:
+grant replication slave on *.* to ljw@'%' identified by "123456";
+                               //授权
+
+在56操作:
+mkdir /etc/mha
+
+cd mha4mysql-manager-0.56/samples/conf/
+
+cp app1.cnf /etc/mha              //复制配置文件模板到服务目录
+
+vim /etc/mha/app1.cnf
+[server default]                  //管理主机默认配置
+manager_workdir=/etc/mha          //服务工作目录
+manager_log=/etc/mha/manager.log  #日志
+
+master_ip_failover_script=/etc/mha/master_ip_failover  #指定脚本路径
+
+ssh_user=root                     //连接用户
+ssh_port=22                       //连接端口
+
+repl_user=ljw                     //主从同步用户
+repl_password=123456              //主从同步密码
+
+user=root                         //监控数据库使用的用户
+password=123456                   //监控数据库使用的密码
+
+[server1]
+hostname=192.168.4.51             //数据库地址
+port=3306                         //默认端口号3306,可以忽略
+candidate_master=1                //candidate_master代表会竞选主库
+
+[server2]
+hostname=192.168.4.52
+candidate_master=1
+
+[server3]
+hostname=192.168.4.53
+candidate_master=1
+
+[server4]
+hostname=192.168.4.54
+no_master=1                       //no_master代表不竞选主库
+
+[server5]
+hostname=192.168.4.55
+no_master=1
+:wq
+
+cd mha-soft-student/
+   
+cp master_ip_failover /etc/mha    //把脚本拷贝到配置文件指定目录
+
+vim /etc/mha/master_ip_failover   //查看脚本
+
+
+在51-55上添加授权:（--不仅仅是备用master添加授权，还包括其他纯slave）
+
+grant all on *.* to root@'%' identified by "123456";
+                                  //添加56mha配置文件中监控数据的用户
+
+
+在56上执行：
+masterha_check_ssh --conf=/etc/mha/app1.cnf
+                                  //测试56主机的免密登录是否成功
+ 
+chmod +x /etc/mha/master_ip_failover
+                                  //给脚本执行权限
+
+masterha_check_repl --conf=/etc/mha/app1.cnf
+                                  //测试51-55的主从同步是否成功
+
+在主机51上操作:
+ifconfig eth0:1 192.168.4.100/24
+                                  //把vip地址手动部署到主机51上
+
+--remove_dead_master_conf         //删除挂掉的主机的配置文件信息
+
+
+--ignore_last_failover            //忽略主库的健康性检查
+                                    --取消不可以在8小时内连续切换主库机制
+
+
+在56上执行：
+masterha_manager --conf=/etc/mha/app1.cnf  --remove_dead_master_conf --ignore_last_failover
+                                  //启动mha服务
+[root@host56 mha-soft-student]# masterha_manager --conf=/etc/mha/app1.cnf  --remove_dead_master_conf --ignore_last_failover
+Tue Jul 24 12:37:52 2018 - [warning] Global configuration file /etc/masterha_default.cnf not found. Skipping.
+Tue Jul 24 12:37:52 2018 - [info] Reading application default configuration from /etc/mha/app1.cnf..
+Tue Jul 24 12:37:52 2018 - [info] Reading server configuration from /etc/mha/app1.cnf..
+
+
+masterha_check_status --conf=/etc/mha/app1.cnf
+                                  //查看状态
+
+[root@host56 ~]# masterha_check_status --conf=/etc/mha/app1.cnf
+app1 (pid:5786) is running(0:PING_OK), master:192.168.4.51
+
+
+
+测试高可用
+把当前主库51的数据库服务停止,客户端访问数据库连接不会断开,但查看主机名显示的是52主机的主机名;在52主机查看vip地址也可以查到,主库51的配置在管理主机56的配置文件中删除
+
+systemctl stop mysqld
+systemctl start mysqld
+change master to  master_host="192.168.4.52",master_user="ljw",master_password="123456",master_log_file="db52.000001",master_log_pos=154;
+                                    //把51主机配置为52的从库
+start slave;
+
+show slave status\G;
+
+
+在56配置文件中添加51的主机信息
+vim /etc/mha/app1.cnf
+[server1]
+candidate_master=1
+hostname=192.168.4.51               //把51主机的信息添加到56的主配置文件中
+
+masterha_manager --conf=/etc/mha/app1.cnf --remove_dead_master_conf --ignore_last_failover                //56主机启动mha服务
+
+
+################################################################################################################
+
+--mha高可用配置
+
+部署集群环境:
+一主多从  主从同步结构
+在做主库的主机上开启半同步复制 且设置不自动删除中继日志
+配置免密钥登录:56 -->(51-55)  51<-->55
+所有主机都要安装软件依赖包perl
+
+配置集群:
+1.配置数据库服务器:安装mha_node软件包
+2.配置管理主机:
+2.1安装软件包:mha_node(51-56)和 mha_manager(56)
+2.2创建管理命令
+2.3编写主配置文件app1.cnf（定义56主机本机的配置  指定数据库服务器）
+2.4根据配置文件的设置在数据库服务器上创建监控用户和在本机创建故障切换脚本并修改
+2.5测试主配置文件的免密服务（masterha_check_ssh --conf=/etc/mha/app1.cnf）和主从同步服务（masterha_check_repl --conf=/etc/mha/app1.cnf）
+2.6手动把规定的vip地址部署在主库上
+2.7启动管理服务（masterha_check_repl --conf=/etc/mha/app1.cnf）并查看状态（masterha_check_status --conf=/etc/mha/app1.cnf）
+
+3.测试集群
+3.1访问集群存储数据 （客户端连接VIP地址访问数据库服务）
+3.2测试高可用
+
+4.把挂掉的原主库添加到集群里
+4.1把挂掉的主机的数据库与当前的主库同步
+4.2把挂掉的主机设置为当前主库的从库
+4.3把挂掉主机的信息添加到管理主机的主配置文件作为备用主库
+
+
+
+
+#############################################################################
+
+mysql> create table t1 select name ,uid, shell from user limit 5;
+Query OK, 5 rows affected (0.33 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> create table t2 select name ,uid, homedir,gid  from user limit 6;
+Query OK, 6 rows affected (0.27 sec)
+Records: 6  Duplicates: 0  Warnings: 0
+
+mysql> drop table t1;
+Query OK, 0 rows affected (0.11 sec)
+
+mysql> create table t1 select name ,uid, shell from user limit 3;
+Query OK, 3 rows affected (0.23 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> show tables;
++--------------+
+| Tables_in_db |
++--------------+
+| t1           |
+| t2           |
+| user         |
+| v2           |
++--------------+
+4 rows in set (0.00 sec)
+
+mysql> select * from t1 left  join t2  on t1.name=t2.name and t1.uid=t2.uid;
++--------+------+---------------+--------+------+---------+------+
+| name   | uid  | shell         | name   | uid  | homedir | gid  |
++--------+------+---------------+--------+------+---------+------+
+| root   |    0 | /bin/bash     | root   |    0 | /root   |    0 |
+| bin    |    1 | /sbin/nologin | bin    |    1 | /bin    |    1 |
+| daemon |    2 | /sbin/nologin | daemon |    2 | /sbin   |    2 |
++--------+------+---------------+--------+------+---------+------+
+3 rows in set (0.00 sec)
+
+
+
+mysql> create  view  v3  as select  t1.name as aname, t2.name as  bname,t1.uid as auid,t2.uid as buid from t1 left join t2 on t1.uid=t2.uid;
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> show  tables;
++--------------+
+| Tables_in_db |
++--------------+
+| t1           |
+| t2           |
+| user         |
+| v2           |
+| v3           |
++--------------+
+5 rows in set (0.00 sec)
+
+mysql> select  * from v3;
++--------+--------+------+------+
+| aname  | bname  | auid | buid |
++--------+--------+------+------+
+| root   | root   |    0 |    0 |
+| bin    | bin    |    1 |    1 |
+| daemon | daemon |    2 |    2 |
++--------+--------+------+------+
+3 rows in set (0.00 sec)
+
+mysql> create  view  v4  as select  a.name as aname, b.name as  bname,a.uid as auid,b.uid as buid from t1 a left join t2 b on a.uid=b.uid;
+Query OK, 0 rows affected (0.05 sec)
+
+mysql> select  * from v4;
++--------+--------+------+------+
+| aname  | bname  | auid | buid |
++--------+--------+------+------+
+| root   | root   |    0 |    0 |
+| bin    | bin    |    1 |    1 |
+| daemon | daemon |    2 |    2 |
++--------+--------+------+------+
+3 rows in set (0.00 sec)
+
+
+
+--创建视图时，忽略已有的视图
+
+mysql> create or  replace  view  v3  as select uid,name from user;
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> select *  from v3;
++-------+---------------------+
+| uid   | name                |
++-------+---------------------+
+|     0 | root                |
+|     1 | bin                 |
+|     2 | daemon              |
+|     3 | adm                 |
+|     4 | lp                  |
+|     5 | sync                |
+|     6 | shutdown            |
+|     7 | halt                |
+|     8 | mail                |
+|    11 | operator            |
+|    12 | games               |
+|    14 | ftp                 |
+|    99 | nobody              |
+|   192 | systemd-network     |
+|    81 | dbus                |
+|   999 | polkitd             |
+|   998 | libstoragemgmt      |
+|    32 | rpc                 |
+|   997 | colord              |
+|   996 | saslauth            |
+|   173 | abrt                |
+|   172 | rtkit               |
+|    75 | radvd               |
+|   995 | chrony              |
+|    59 | tss                 |
+|   113 | usbmuxd             |
+|   994 | geoclue             |
+|   107 | qemu                |
+|    29 | rpcuser             |
+| 65534 | nfsnobody           |
+|   993 | setroubleshoot      |
+|   171 | pulse               |
+|    42 | gdm                 |
+|   992 | gnome-initial-setup |
+|    74 | sshd                |
+|    70 | avahi               |
+|    89 | postfix             |
+|    38 | ntp                 |
+|    72 | tcpdump             |
+|  1000 | lisi                |
+|    27 | mysql               |
++-------+---------------------+
+41 rows in set (0.00 sec)
+
+
+with check option
+local  仅检查视图的创建条件
+CASCADED  同时要满足基本的限制(默认)
+
+mysql> create table user2 select  id,name,password,homedir from user where uid <=40;
+Query OK, 16 rows affected (0.39 sec)
+Records: 16  Duplicates: 0  Warnings: 0
+
+mysql> select * from  user2;
++----+----------+----------+------------------+
+| id | name     | password | homedir          |
++----+----------+----------+------------------+
+|  1 | root     | x        | /root            |
+|  2 | bin      | x        | /bin             |
+|  3 | daemon   | x        | /sbin            |
+|  4 | adm      | x        | /var/adm         |
+|  5 | lp       | x        | /var/spool/lpd   |
+|  6 | sync     | x        | /sbin            |
+|  7 | shutdown | x        | /sbin            |
+|  8 | halt     | x        | /sbin            |
+|  9 | mail     | x        | /var/spool/mail  |
+| 10 | operator | x        | /root            |
+| 11 | games    | x        | /usr/games       |
+| 12 | ftp      | x        | /var/ftp         |
+| 18 | rpc      | x        | /var/lib/rpcbind |
+| 29 | rpcuser  | x        | /var/lib/nfs     |
+| 38 | ntp      | x        | /etc/ntp         |
+| 41 | mysql    | x        | /var/lib/mysql   |
++----+----------+----------+------------------+
+16 rows in set (0.00 sec)
+
+
+mysql> create  view v6 as select * from user2 where id <= 10 with check option;
+Query OK, 0 rows affected (0.07 sec)
+
+mysql> show  create view v6;
++------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------+----------------------+
+| View | Create View                                                                                                                                                                                                                                                                     | character_set_client | collation_connection |
++------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------+----------------------+
+| v6   | CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v6` AS select `user2`.`id` AS `id`,`user2`.`name` AS `name`,`user2`.`password` AS `password`,`user2`.`homedir` AS `homedir` from `user2` where (`user2`.`id` <= 10) WITH CASCADED CHECK OPTION | utf8                 | utf8_general_ci      |
++------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------+----------------------+
+1 row in set (0.00 sec)
+
+
+mysql> create view v7 as  select name,id ,password from user2 where id <=18;
+Query OK, 0 rows affected (0.07 sec)
+
+mysql> select *  from  v7;
++----------+----+----------+
+| name     | id | password |
++----------+----+----------+
+| root     |  1 | x        |
+| bin      |  2 | x        |
+| daemon   |  3 | x        |
+| adm      |  4 | x        |
+| lp       |  5 | x        |
+| sync     |  6 | x        |
+| shutdown |  7 | x        |
+| halt     |  8 | x        |
+| mail     |  9 | x        |
+| operator | 10 | x        |
+| games    | 11 | x        |
+| ftp      | 12 | x        |
+| rpc      | 18 | x        |
++----------+----+----------+
+13 rows in set (0.00 sec)
+
+mysql> create view v17 as select name,id,password from v7 where id>=10;
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> select *  from  v17;
++----------+----+----------+
+| name     | id | password |
++----------+----+----------+
+| operator | 10 | x        |
+| games    | 11 | x        |
+| ftp      | 12 | x        |
+| rpc      | 18 | x        |
++----------+----+----------+
+4 rows in set (0.00 sec)
+
+
+mysql> update v17  set id=15 where name='rpc';
+Query OK, 1 row affected (0.30 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+
+mysql> select *  from  v7;
++----------+----+----------+
+| name     | id | password |
++----------+----+----------+
+| root     |  1 | x        |
+| bin      |  2 | x        |
+| daemon   |  3 | x        |
+| adm      |  4 | x        |
+| lp       |  5 | x        |
+| sync     |  6 | x        |
+| shutdown |  7 | x        |
+| halt     |  8 | x        |
+| mail     |  9 | x        |
+| operator | 10 | x        |
+| games    | 11 | x        |
+| ftp      | 12 | x        |
+| rpc      | 15 | x        |
++----------+----+----------+
+13 rows in set (0.01 sec)
+
+
+mysql> select *  from  v17;
++----------+----+----------+
+| name     | id | password |
++----------+----+----------+
+| operator | 10 | x        |
+| games    | 11 | x        |
+| ftp      | 12 | x        |
+| rpc      | 15 | x        |
++----------+----+----------+
+4 rows in set (0.00 sec)
+
+-- with local check option;
+
+mysql> create view v18 as select name,id,password from v7 where id >=10 with local check option;
+Query OK, 0 rows affected (0.03 sec)
+
+
+
+mysql> update v18  set id=20 where name='rpc';
+Query OK, 1 row affected (0.04 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select *  from  v18;
++----------+----+----------+
+| name     | id | password |
++----------+----+----------+
+| operator | 10 | x        |
+| games    | 11 | x        |
+| ftp      | 12 | x        |
++----------+----+----------+
+3 rows in set (0.00 sec)
+
+mysql> select *  from  v7;
++----------+----+----------+
+| name     | id | password |
++----------+----+----------+
+| root     |  1 | x        |
+| bin      |  2 | x        |
+| daemon   |  3 | x        |
+| adm      |  4 | x        |
+| lp       |  5 | x        |
+| sync     |  6 | x        |
+| shutdown |  7 | x        |
+| halt     |  8 | x        |
+| mail     |  9 | x        |
+| operator | 10 | x        |
+| games    | 11 | x        |
+| ftp      | 12 | x        |
++----------+----+----------+
+12 rows in set (0.00 sec)
+
+mysql> select *  from  user2;
++----+----------+----------+------------------+
+| id | name     | password | homedir          |
++----+----------+----------+------------------+
+|  1 | root     | x        | /root            |
+|  2 | bin      | x        | /bin             |
+|  3 | daemon   | x        | /sbin            |
+|  4 | adm      | x        | /var/adm         |
+|  5 | lp       | x        | /var/spool/lpd   |
+|  6 | sync     | x        | /sbin            |
+|  7 | shutdown | x        | /sbin            |
+|  8 | halt     | x        | /sbin            |
+|  9 | mail     | x        | /var/spool/mail  |
+| 10 | operator | x        | /root            |
+| 11 | games    | x        | /usr/games       |
+| 12 | ftp      | x        | /var/ftp         |
+| 20 | rpc      | x        | /var/lib/rpcbind |
+| 29 | rpcuser  | x        | /var/lib/nfs     |
+| 38 | ntp      | x        | /etc/ntp         |
+| 41 | mysql    | x        | /var/lib/mysql   |
++----+----------+----------+------------------+
+16 rows in set (0.00 sec)
+
+
+
+
+
+mysql> delimiter //
+mysql> create procedure p1()
+    -> begin
+    -> select count(name) from db.user;
+    -> end
+    -> //
+Query OK, 0 rows affected (0.00 sec)
+mysql> delimiter ;
+
+
+mysql>select db,name,type,body  from mysql.proc;
+
+
+mysql>select db,name,type,body  from mysql.proc where name='p1'\G;
+
+调用procedure：
+
+mysql> call  p1;
++-------------+
+| count(name) |
++-------------+
+|          41 |
++-------------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+删除procedure
+
+mysql>drop procedure p1;
+
+#############################################################################
+
+mysql视图:
+基本使用:
+create view 视图名 as sql查询 ;       //创建视图
+create view t2 as select name,uid,shell from v1.t1;
+                                     //利用t1表的name,uid,shell字段数据建视图表
+视图表和基表互相影响,修改其中一个,另一个也会改变
+
+create view t3(vname,vuid,vshell) as select name,uid,shell from t1;
+                                     //利用t1表的name,uid,shell字段数据建视图表
+                                       并设置字段名为vname,vuid,vshell
+show table status;                   
+                                     //查看表状态,comment的值为view即为视图表
+
+show create view v1.t1\G;
+                                     //查看视图表的创建命令
+
+drop view t2;                        //删除视图表
+
+
+创建视图的完整格式:
+create table t2 select name,uid,shell from t1 limit 5;
+create table t3 select name,uid,homedir,gid from t1 limit 8;
+                                     //快速创建两张基表
+
+select a.name as aname,b.name as bname,a.uid as auid,b.uid as buid from t2 a left join t3 b on a.name=b.name and a.uid=b.uid;
+                             //以t2表和t3表中name,uid字段的数据创建一个视图表,
+                               并把字段名分别改为,aname,auid,bname,buid
+                               t2 a 与 t3 b为定义变量,调用a即为调用t2表,
+                               调用b即为调用t3表
++--------+--------+------+------+
+| aname  | bname  | auid | buid |
++--------+--------+------+------+
+| root   | root   |    0 |    0 |
+| bin    | bin    |    1 |    1 |
+| daemon | daemon |    2 |    2 |
+| adm    | adm    |    3 |    3 |
+| lp     | lp     |    4 |    4 |
++--------+--------+------+------+
+
+create or replace view t2 as select name,uid from t1;
+                         //以t1表的name,uid数据创建t2并覆盖原来的t2表
+
+create view t5 as select name,uid from t1 with local check option;
+                         //只检查视图自己的创建条件
+
+create view t6 as select * from t5 where uid<80 with cascaded check option;
+                         //同时满足视图和基表的条件(默认为cascaded)
+                              
+update t6 set uid=81 where name="root";
+                         //修改失败,uid=81不满足基表条件
+
+create view t8 as select name,id,passwd from t7 where id>=10 with local check option;                  //以t7表id>=10的数据创建t8表
+ 
+update t8 set id=200 where name="rpc";
+                         //修改name值为rpc的行id为200,满足t8的创建条件,可以修改
+
+##############################################################################
+第十二天下午:
+
+mysql存储过程:mysql服务里的脚本
+                                                                           
+delimiter //             //把命令结束符改成//
+
+create procedure a1() 
+begin 
+select count(name) from v1.t1; 
+select name,uid from v1.t1 where id<50; 
+end//                    //添加存储过程,a1为存储过程名
+
+delimiter ;              //把命令结束符改回;
+
+show procedure status\G;
+                         //查看已有的存储过程
+
+select db,name,type,body from mysql.proc where name="a1"\G;
+                         //查看指定的存储过程
+
+call a1;                 //调用存储过程
+
+drop procedure a1;       //删除指定存储过程
+
+系统环境变量:会话变量,全局变量
+
+show session variables;   //查看会话变量
+
+show global variables;    //查看全局变量
+
+用户变量:当前登录的用户定义的变量,只对当前用户生效,退出清空
+
+set @name="ljw";          //定义自定义变量
+ 
+select @name;             //调用自定义变量
+
+局部变量:只在存储过程中有效
+
+create procedure a1() begin declare a int default 20; declare b char (15); set b="ljw";select a;select b; end//
+                          //定义和调用局部变量
+
+select a,b                //同时调用多个局部变量中间用逗号隔开
+
+存储过程的参数类型:in(输入参数) out(输出参数) inout(输入/输出参数)
+计划 
+
+delimiter //
+
+create procedure a1(in a char(15))      //使用in定义参数
+begin select user,host from mysql.user where user=a; 
+end//                     //存储过程中加入参数,
+
+delimiter ;
+
+call a1("root");          //调用存储过程时也要加入参数
++------+-----------+
+| user | host      |
++------+-----------+
+| root | localhost |
++------+-----------+
+
+delimiter //
+
+create procedure a2(out a char(15))     //使用out定义参数
+begin 
+select name  into a from v1.t1 where id=10;
+select a; 
+end//
+
+delimiter ;
+
+call a2(@a);
++----------+
+| a        |
++----------+
+| operator |
++----------+
+
+delimiter //
+
+create procedure b1(out b int(15)) 
+begin 
+select count(shell) into b from v1.t1 where shell="/bin/bash";
+select b; 
+end//
+
+delimiter ;
+                                    //查看shell为/bin/bash的shell个数
+
+call b1(@a);
++------+
+| b    |
++------+
+|    2 |
++------+
+
+delimiter //
+
+create procedure a1(in bash char(100),in nologin char(120),
+out a int(2),out b int(2)) 
+begin 
+declare c int(2); 
+set c=0; 
+select count(shell) into a from db.t1 where shell=bash;         1
+select count(shell) into b from db.t1 where shell=nologin;      2
+set c=a+b; 
+select c; 
+end//
+                       //把1的查询结果给a,2的查询结果给b
+
+call a1("/bin/bash","/sbin/nologin",@q,@w);                         
++------+
+| c    |
++------+
+|   3  |
++------+
+select count(shell) into a from v1.t1 where shell=bash;
+
+
+############################################################################
+
+
 
 
 
