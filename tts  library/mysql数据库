@@ -1,0 +1,530 @@
+1.
+(单选题)在Linux系统中，使用RPM方式安装MySQL-5.6数据库时，随机生成的
+管理密码默认记录在（ ）文件内。
+ A./etc/my.cnf
+ B./etc/my.cf
+ C./root/.mysql_secret
+ D./var/lib/mysql/localhost.pid
+
+正确答案：C
+排除法进行选择：A选项为MySQL数据库的配置文件，B选项
+
+安装完数据库后不会生成此文件，D选项为数据库启动后的PID号，
+
+所以本题选择C选项.
+
+2.
+(单选题)在主从同步结构中，使用（ ）设置从服务器允许级联复制。
+ A.binlog-do-db
+ B.binlog-ignore-db
+ C.log-slave-updates
+ D.replicate-ignore-db
+
+正确答案：C
+从服务器的主配置文件添加“log-slave-updates”是设置在主服务器上同步的数据也要往本机的binlog中记录，这样就可以进行级联复制，所以本题选择C
+3.
+(单选题)Mysql数据导入时默认从那个目录搜索文件（ ）？
+ A./var/lib/mysql-files
+ B./var/log/
+ C./var/lib/mysql
+ D./var/lib/data
+
+正确答案：A
+Mysql数据导入时默认从” /var/lib/mysql-files” 所以
+
+本题选择A
+4.
+(单选题)（ ）可以设置MySQL服务重复使用线程的数量。
+ A.thread-cache-size
+ B.read-buffer-size
+ C.table-open-cache
+ D.key_reads
+
+正确答案：A
+thread_cache_size变量的意义：当客户端断开之后，服务器
+
+处理此客户的线程将会缓存起来以响应下一个客户而不是销毁(前提是缓
+
+存数未达上限)，所以本题选择A
+5.
+(单选题)启动MySQL Cluster集群系统的操作包括如下步骤：1）启动管理节点， 
+2）启动数据节点，3）启动SQL节点，正确的顺序应该是（ ）。
+ A.1——>2——>3
+ B.1——>3——>2
+ C.2——>1——>3
+ D.2——>3——>1
+
+正确答案：A
+启动集群，需严格按照以下顺序执行：管理节点 ->数据节点 –> SQL节点，所以本题选A
+6.
+(单选题)删除索引使用下列哪些选项（ ）？
+ A.drop index
+ B.drop table
+ C.drop database
+ D.drop user
+
+正确答案：A
+删除索引使用drop index命令，本题选择A
+7.
+(单选题)下列那个命令可以对慢查询日志做统计（ ）？
+ A.mysqldump
+ B.mysqladmin
+ C.mysqlbinlog
+ D.mysqldumpslow
+
+正确答案：D
+以上命令只有” mysqldumpslow”命令可以对慢查询日志做统
+
+计
+8.
+(单选题)下列哪个选项可以设置binlog日志文件的大小（ ）？
+ A.max_binlog_size
+ B.max_size_binlog
+ C.binlog_size
+ D.size_log
+
+正确答案：A
+max_binlog_size可以设置binlog日志文件的大小，本题选
+
+择A
+9.
+(单选题)存储表的授权信息，是（ ）。
+ A.mysql.user
+ B.mysql.db
+ C.mysql.tables_priv
+ D.mysql.columns_priv
+
+正确答案：C
+A是存储用户授权信息，B是存储库的授权信息，C是存储表的
+
+授权信息，D是存储字段的授权信息，所以本题选择C。
+10.
+(单选题)那个选项可以指定binlog日志的记录格式（ ）？
+ A.binlog_format
+ B.binlog-size
+ C.log-bin
+ D.log-format
+
+正确答案：A
+binlog_format可以指定binlog日志的记录格式，所以本题选
+
+择A选项
+11.
+(单选题)下列哪个选项既可以修改字段名又可以修改字段类型（ ）？
+ A.modify
+ B.change
+ C.alter
+ D.set
+
+正确答案：B
+Change命令既可以修改字段名又可以修改字段类型，本题选
+
+择B
+12.
+(单选题)binlog日志默认最大存储容量是多少（ ）？
+ A.200M
+ B.500M
+ C.250M
+ D.100M
+
+正确答案：B
+日志默认最大存储容量是500M，所以本题选择B选项
+13.
+(单选题)innodb存储引擎的表，表空间文件名叫什么（ ）？
+ A.表名.frm
+ B.表名.MYI
+ C.表名.MYD
+ D.表名.ibd
+
+正确答案：D
+innodb存储引擎的表，表空间文件名叫“表名.ibd”，本题选
+
+择D
+14.
+(单选题)（ ）记录,查询缓存空间不足的次数。
+ A.query_cache_limit
+ B.query_cache_min_res_unit
+ C.Qcache_lowmem_prunes
+ D.Qcache_hits
+
+正确答案：C
+Qcache_lowmem_prunes 表示多少条query因为
+
+内存不足而被清除出query_cache，所以本题选择C
+15.
+(单选题)对于使用MyISAM存储引擎的student表，其索引信息保存在（ ）文件内。
+ A.student.frm
+ B.student.MYI
+ C.student.MYD
+ D.student.MYE
+
+正确答案：B
+MyISAM存储引擎存储数据时会产生三个文件:
+
+任何存储引擎都不可或缺的存放表结构定义的*.frm文件，
+
+存放表数据的*.MYD文件，存放索引数据的*.MYI文件，所以本题选B 
+
+16.
+(单选题)（ ）可以启用慢查询日志。
+ A.log-error
+ B.general-log
+ C.slow-query-log
+ D.long-query-time
+
+正确答案：C
+slow_query_log=n :是否启用慢查询日志，1为启用，0为禁
+
+用 ,所以本题选择C
+17.
+(单选题)下列（ ）选项，在启动mysql服务时不加载授权表。
+ A.--skip-grant-tables
+ B.--jump-grant-tables
+ C.--grant-tables
+ D.--skip-grant-table
+
+正确答案：A
+在启动时跳过授权表使用--skip-grant-tables，所以本题
+
+选A
+18.
+(单选题)下列那个命令可以查看MySQL binlog日志文件的内容（ ）？
+ A.mysqldump
+ B.mysqladmin
+ C.mysqlbinlog
+ D.mysqldumpslow
+
+正确答案：C
+binlog日志为mysql程序自己书写的二进制日志文件，所以需要mysql数据库的专用命令去查看，mysqlbinlog就是查看二进制日志文件
+
+的命令，所以本题选择C
+19.
+(单选题)下列哪个选项是binlog日志文件默认容量（ ）？
+ A.200M
+ B.500M
+ C.250M
+ D.无限制
+
+正确答案：B
+binlog日志文件默认容量500M，本题选择B
+20.
+(单选题)下列哪个命令可以查看binlog日志文件内容（ ）？
+ A.mysqldump
+ B.mysqladmin
+ C.mysqldumpslow
+ D.mysqlbinlog
+
+正确答案：D
+mysqlbinlog命令可以查看binlog日志文件内容，本题选
+
+择D
+21.
+(单选题)在主从同步结构中，使用（ ）设置从服务器只可以同步某一个库。
+ A.binlog-do-db
+ B.binlog-ignore-db
+ C.log-slave-updates
+ D.replicate-ignore-db
+
+正确答案：A
+主配置文件添加“binlog-do-db=库名”是设置binlog日志只对
+
+某个库的操作做记录，而从服务器只可以同步主上binlog日志中记载的
+
+东西，所以本题选择A
+22.
+(单选题)授权的MySQL用户若要修改自己的登录口令，可以执行（ ）。
+ A.set password=password（新密码）；
+ B.set password for 用户名@'ip地址'=password（'新密码'）；
+ C.set password=password（'新密码'）；
+ D.set password for 用户名@'ip地址'=password（新密码）；
+
+正确答案：C
+更改MySQL数据库密码的语法正确是A,C选项，密码是属于字符
+
+类型的，所以需要加引号，所以本题选C。
+23.
+(单选题)授权用户默认对下列（ ）库，拥有完全权限。
+ A.mysql
+ B.所有新创建的库
+ C.test
+ D.information_schema
+
+正确答案：C
+ MySQL数据库中的test库只是一个测试数据库,没实际用途，
+
+所以能够登录数据库的用户对其都拥有完全权限。
+24.
+(单选题)不是mysql索引类型的是哪个选项（ ）？
+ A.hash
+ B.btree
+ C.b+tree
+ D.index
+
+正确答案：D
+Index不是索引类型，本题选择D
+25.
+(单选题)mysql-server-5.7 软件提供的数据库服务，默认存储引擎是哪个选项
+（ ）？
+ A.CSV
+ B.MYISAM
+ C.INNODB
+ D.MEMORY
+
+正确答案：C
+mysql-server-5.7 软件提供的数据库服务，默认存储引擎是INNODB，本题选择C
+26.
+(单选题)配置主从同步时，change master to 命令 使用下列哪些选项指定主库binlog文件名（ ）？
+ A.master_log_name
+ B.master_log_file
+ C.master_log_pos
+ D.master_log
+
+正确答案：B
+配置主从同步时使用master_log_file选项指定主库binlog文件名，本题选择B
+27.
+(单选题)下列哪些选项可以，设置mysql服务提交方式（ ）？
+ A.autocommit
+ B.commitauto
+ C.commit
+ D.auto_commit
+
+正确答案：A
+Autocommit选项可以设置mysql服务提交方式，本题选
+
+择A
+28.
+(单选题)下列哪个选项可以指定MySQL服务默认使用的存储引擎（ ）？
+ A.default-storage-engine
+ B.default-engine-storage
+ C.skip-grant-tables
+ D.log-bin
+
+正确答案：A
+default-storage-engine可以指定MySQL服务默认使用的存
+
+储引擎，本题选择A
+29.
+(单选题)下列那个命令可以对MySQL数据库数据做完全备份（ ）？
+ A.mysqldump
+ B.mysqladmin
+ C.mysqlbinlog
+ D.mysqldumpslow
+
+正确答案：A
+ 以上选项只有”mysqldump”命令可以北非数据库，
+
+所以本题选择A 选项。
+30.
+(单选题)执行MySQL操作 create table student （name varchar（3） 
+not null，age int（3）not null）; 以后，若要向student表内插
+入新的记录，下列（ ）操作是可行的。
+ A.insert student values（tom，22）;
+ B.insert into student（age） values（tom，22）;
+ C.insert into student values（“tom”，22）;
+ D.insert into student values（tom，十三）;
+
+正确答案：C
+A.B选项插入语法书写错误，D选项年龄字段不符合age字段的要求,所以本题选C.
+31.
+(多选题)以下数据库服务软件中，提供跨平台支持的包括（ ）。
+ A.Oracle
+ B.MySQL
+ C.SQL Server
+ D.DB2
+
+正确答案：ABD
+SQL Server只支持在Windows系统上使用，不支持跨平台使用，所以本题选择A,B,D
+32.
+(多选题)关于MySQL数据库名的命名规则，以下说法正确的是（ ）。
+ A.可以使用数字、字母、下划线，但不能是纯数字
+ B.不区分字母大小写，但要求具有唯一性
+ C.不可使用指令关键字、特殊字符
+ D.以上说法都不正确
+
+正确答案：AC
+MySQL数据库的命名规则：可以使用数字、字母、下划线，但不能是纯数字，区分大小写具有唯一性，不可使用指令关键字、特殊字符，所以本题选择A,C。
+33.
+(多选题)是MySQL日期时间类型的选项有哪些（ ）？
+ A.time0
+ B.datetime
+ C.timestamp
+ D.date
+
+正确答案：ABCD
+以上均为MySQL的日期时间的数据类型
+34.
+(多选题)请选择binlog日志记录格式的选项（ ）？
+ A.row
+ B.mixed
+ C.statement
+ D.line
+
+正确答案：ABC
+binlog有三种格式：Statement(基于SQL语句的复制)、Row
+
+(基于行的复制)以及Mixed(混合模式复制),所以本题选择A,B,C选
+35.
+(多选题)mysql索引类型有哪些（ ）？
+ A.index
+ B.primary key
+ C.foreign key
+ D.fulltext
+
+正确答案：ABCD
+A为普通索引，B为主键，C为外键，D选项为全文索引，目前只
+
+有MyISAM引擎支持只有 CHAR、VARCHAR ，TEXT 列上可以创建全文
+
+索引，所以本题选择A,B,C,D
+36.
+(多选题)不能修改数据库管理员登录密码的选项有（ ）。
+ A.mysqldump
+ B.mysqlbinlog
+ C.mysqlcheck
+ D.mysqladmin
+
+正确答案：ABC
+以上选项能够修改数据库密码的命令只有’mysqladmin’，所以
+
+选择A,B,C。
+37.
+(多选题)数据库管理员使用初始密码登录后，下列（ ）命令不能用来重置登录
+密码。
+ A.set password
+ B.mysqladmin
+ C.password
+ D.mysqldump
+
+正确答案：BCD
+数据库管理员使用初始密码登录后只能使用“set password”命令更改密码，所以选择B,C,D选项
+38.
+(多选题)下列哪些软件（ ）能够提供监控服务
+ A.Cacti
+ B.Nagios
+ C.Zabbix
+ D.nmap
+
+正确答案：ABC
+常用监控软件有：cacti、nagios、zabbix
+39.
+(多选题)关于MySQL-5.6数据库服务，以下说法正确的是（ ）。
+ A.MySQL服务默认监听3389端口
+ B.MySQL服务进程名叫mysqld
+ C.MySQL进程的默认所有者是root
+ D.MySQL服务主配置文件是/etc/my.cnf
+
+正确答案：BD
+MySQL默认监听的端口号是3306，进程的默认所有者为mysql，所以本题选择B,D。
+40.
+(多选题)mysql索引的算法有哪些（ ）？
+ A.hash
+ B.btree
+ C.b+tree
+ D.index
+
+正确答案：ABC
+Index是索引类型，不是算法，所以D选项错误，选择A,B,C,
+
+选项
+41.
+(多选题)关于MySQL的数据类型，以下说法正确的是（ ）。
+ A.DATE类型 占用4个字节，范围：0001-01-01 ~ 9999-12-31
+ B.YEAR类型 占用2个字节，范围：1901~2155
+ C.TIME类型 占用3个字节，格式：HH:MM:SS
+ D.当未给TIMESTAMP字段赋值时，自动以当前时间赋值，而DATETIME字段默认赋值为 1
+
+正确答案：AC
+YEAR类型 占用1个字节，范围：1901~2155, 当未
+
+TIMESTAMP字段赋值时，自动以当前系统时间赋值，而DATETIME字段
+
+默认赋值为 NULL，所以本题选择A,C。
+42.
+(多选题)是MySQL整型数值类型的选项有哪些（ ）？
+ A.int
+ B.tinyint
+ C.smallint
+ D.bigint
+
+正确答案：ABCD
+以上均为MySQL的整数数据类型
+43.
+(多选题)配置主从同步时，主库要做哪些配置（ ）？
+ A.启用binlog日志
+ B.用户授权
+ C.运行数据库服务
+ D.查看正在使用的binlog日志
+
+正确答案：ABCD
+配置主从同步时，以上选项的配置主库都需要做，本题选择A,B,C,D
+44.
+(多选题)使用MySQL数据库的（ ）函数，可以获取当前系统完整的日期与时间。
+ A.now()
+ B.sysdate()
+ C.time()
+ D.date()
+
+正确答案：AB
+NOW()取的是语句开始执行的时间，SYSDATE()取的是动态的实时时间。所以本题选择A,B
+45.
+(多选题)下列选项中，不是保存数据库管理员登录初始密码的有（ ）。
+ A./etc/my.cnf
+ B./root/.mysql_sec
+ C./etc/my.conf
+ D./root/mysql_secret
+
+正确答案：ABCD
+MySQL数据库默认把管理员登录初始密码保存在/root/.mysql_secret文件中，所以以上选项都不对，
+
+选择A,B,C,D
+46.
+(多选题)是MySQL数值类型的选项有哪些（ ）？
+ A.float
+ B.double
+ C.int
+ D.tinyint
+
+正确答案：ABCD
+以上均为MySQL的数据类型
+47.
+(多选题)在MySQL数据库中建表时，字段前加（ ）关键字可以使字段不能存储负数。
+ A.UNSIGNED
+ B.ZEROFILL
+ C.Unsigned
+ D.desc
+
+正确答案：AC
+使用unsigned修饰时，对应字段只保存正数，不区分大小写。
+
+所以本题选择啊A,C。
+48.
+(多选题)MySQL数据库的体系结构包括以下（ ）组件。
+ A.分析器
+ B.优化器
+ C.管理工具
+ D.连接池
+
+正确答案：ABCD
+Mysql是由连接池，解析器，优化器，管理工具，存储引擎组成的。所以选择A,B,C,D
+49.
+(多选题)MySQL数据库支持的锁粒度包括（ ）。
+ A.表级锁
+ B.行级锁
+ C.页级锁
+ D.读锁
+
+正确答案：ABC
+MySQL数据库支持的锁粒度包括:行级锁、表级锁、页级锁,所以
+
+选择A,B,C
+50.
+(多选题)管理MySQL数据库时，若要查询student表中年龄（age）最小的前5名
+同学的信息，以下（ ）操作是可行的。
+ A.select * from student order by age limit 5;
+ B.select * from student order by age limit (1,5);
+ C.select * from student order by age asc limit 0,5;
+ D.select * from student order by age desc limit 5;
+
+正确答案：AC
+B选项是显示第二行到第六行，D选项是显示年龄最大的前五个，所以本题选择A,C
+
