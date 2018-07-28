@@ -99,10 +99,49 @@ age int,                     //第三个字段名为age,只能为整数
 tel char(11)                 //第四个字段名为tel,最多11个字符
 );
 
+###############################################################################
+
+设置管理数据库管理员root密码:操作系统管理员有权限修改
+
+修改密码:
+vim /etc/my.cnf                       //修改配置文件
+set global validate_password_policy=0 //修改密码策略,只验证密码长度
+set global validate_password_length=6 //修改密码策略,密码长度最短为6
+:wq                                   //保存修改
+
+mysqladmin -hlocalhost -uroot -p password "新密码"
+                                      //命令行修改密码
+
+恢复数据库管理员root登录密码:
+systemctl stop mysqld                 //停用mysql
+
+vim /etc/my.cnf                       //修改配置
+skip_grant_tables                     //跳过授权
+:wq                                   //保存修改
+
+systemctl start mysqld                //启用mysql
+
+]#mysql
+
+mysql> update mysql.user set authentication_string=password("123456") where user="root" and host="localhost";     
+                                     //authentication_string为登录密码字段
+                                     //password()是mysql自带加密算法
+flush privileges;                    //刷新修改
+
+systemctl stop mysqld                //停用mysql
+
+vim /etc/my.cnf                      //修改配置文件
+#skip_grant_tables                   //注释跳过授权
+:wq                                  //保存修改
+
+systemctl start mysqld               //启用mysql
+
+mysql -uroot -p123456                //用新密码登录
 
 
 
-###########################################################
+
+###################################################################################
 
 1.临时和永久设置密码验证策略为只验证长度的命令分别是什么?
 2.MySQL的主配置文件,数据库目录,端口号,进程名,传输协议,进程所有者,进程所属组分别是啥?
@@ -135,7 +174,7 @@ tel char(11)                 //第四个字段名为tel,最多11个字符
     Update 表名  set  字段=值;                        //修改表记录  
     Delete  from   表名;                                //删除表记录
 
-###########################################################
+#####################################################################################
 
 3.mysql> show databases;
 +--------------------+
@@ -5192,9 +5231,766 @@ select count(shell) into a from v1.t1 where shell=bash;
 
 ############################################################################
 
+2018年 07月 26日 星期四 10:36:50 CST
+
+——————————————————————————————————-————————
+delimiter //
+create  procedure showlines (in  number int(2))
+begin
+select id,name ,password from db.user  limit number;
+end
+//
+delimiter ;
+call showlines(1);
+——————————————————————————————————————————
+
++----+------+----------+
+| id | name | password |
++----+------+----------+
+|  1 | root | x        |
++----+------+----------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+--或者书写格式：
+
+mysql> delimiter //  create  procedure showlines1 (in  number int(2)) begin select id,name ,password from db.user  limit number;end //
+mysql>  delimiter ;
+mysql> call showlines(1);
++----+------+----------+
+| id | name | password |
++----+------+----------+
+|  1 | root | x        |
++----+------+----------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+
+——————————————————————————————————————————-
+delimiter //
+create  procedure showlines2 (in  number int(2))
+begin
+if number is null then 
+  select id,name ,password from db.user  limit 1;
+else
+  select id,name ,password from db.user  limit number;
+end if;
+end
+//
+delimiter ;
+call showlines2(1);
+——————————————————————————————————————————
+
+mysql> delimiter //
+mysql> create  procedure showlines2 (in  number int(2))
+    -> begin
+    -> if number is null then 
+    ->   select id,name ,password from db.user  limit 1;
+    -> else
+    ->   select id,name ,password from db.user  limit number;
+    -> end if;
+    -> end
+    -> //
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> delimiter ;
+
+mysql> set  @a=5;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> call showlines2(@a);
++----+--------+----------+
+| id | name   | password |
++----+--------+----------+
+|  1 | root   | x        |
+|  2 | bin    | x        |
+|  3 | daemon | x        |
+|  4 | adm    | x        |
+|  5 | lp     | x        |
++----+--------+----------+
+5 rows in set (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> call showlines2(@b);              //@b变量不存在
++----+------+----------+
+| id | name | password |
++----+------+----------+
+|  1 | root | x        |
++----+------+----------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+
+###############################################################################
+
+循环结构
+
+--while循环
+___________________________________________________________________
+
+delimiter //
+create procedure prinum (in  number  int(2))
+begin  
+declare x int(2) default 1;
+while x <= number do
+   select x;
+   set x = x+1;
+end  while;
+end  //
+delimiter ; 
+____________________________________________________________________
 
 
 
+mysql> delimiter //
+mysql> create procedure prinum (in  number  int(2))
+    -> begin  
+    -> declare x int(2) default 1;
+    -> while x <= number do
+    ->    select x;
+    ->    set x = x+1;
+    -> end  while;
+    -> end  //
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> delimiter ; 
+
+mysql> call prinum(5);
++------+
+| x    |
++------+
+|    1 |
++------+
+1 row in set (0.00 sec)
+
++------+
+| x    |
++------+
+|    2 |
++------+
+1 row in set (0.00 sec)
+
++------+
+| x    |
++------+
+|    3 |
++------+
+1 row in set (0.00 sec)
+
++------+
+| x    |
++------+
+|    4 |
++------+
+1 row in set (0.00 sec)
+
++------+
+| x    |
++------+
+|    5 |
++------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+___________________________________________________________________
+
+delimiter //
+create procedure odd1()
+begin  
+declare number int(2);
+declare x int(2) default 1;
+declare useruid int(2);
+select count(*)  into  number  from db.user;
+while  x <= number  do
+   select uid into useruid from db.user where id = x;
+   if useruid%2 = 0 then
+     select name,uid from user where id = x;
+   end if;
+   set x =x+1;
+end  while;
+end  //
+delimiter ; 
+
+call odd(10);
+
+
+__________________________________________________________________
+
+delimiter //
+create procedure odd31(number int(2))
+begin  
+declare x int(2) default 1;
+declare useruid int(2);
+while  x <= number  do
+   select uid into useruid from db.user where id = x;
+   if useruid%2 = 0 then
+     select id,name,uid from user where id = x;
+   end if;
+   set x =x+1;
+end  while;
+end  //
+delimiter ; 
+
+mysql> call odd31(10);
+
++----+------+------+
+| id | name | uid  |
++----+------+------+
+|  1 | root |    0 |
++----+------+------+
+1 row in set (0.00 sec)
+
++----+--------+------+
+| id | name   | uid  |
++----+--------+------+
+|  3 | daemon |    2 |
++----+--------+------+
+1 row in set (0.00 sec)
+
++----+------+------+
+| id | name | uid  |
++----+------+------+
+|  5 | lp   |    4 |
++----+------+------+
+1 row in set (0.00 sec)
+
++----+----------+------+
+| id | name     | uid  |
++----+----------+------+
+|  7 | shutdown |    6 |
++----+----------+------+
+1 row in set (0.00 sec)
+
++----+------+------+
+| id | name | uid  |
++----+------+------+
+|  9 | mail |    8 |
++----+------+------+
+1 row in set (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+___________________________________________________________________
+
+
+--loop循环
+
+loop 
+
+执行的sql命令
+ ...
+end loop;
+
+
+
+delimiter //
+create procedure loop1()
+begin
+ declare x int(2) default 1;
+ loop 
+  select x;
+  set x = x+ 1;
+ end  loop;
+end  //
+delimiter ;
+call  loop1;
+
+死循环
+
+
+--repeat 
+
+repeat 
+
+执行的命令;
+...
+until 条件
+end repeat;
+
+
+
+delimiter //
+create procedure repeat1()
+begin
+ declare x int(2) default 1;
+ repeat
+  select x;
+  set x = x + 1;
+  until x=5
+ end  repeat;
+end  //
+delimiter ;
+
+mysql> call repeat1;
++------+
+| x    |
++------+
+|    1 |
++------+
+1 row in set (0.01 sec)
+
++------+
+| x    |
++------+
+|    2 |
++------+
+1 row in set (0.01 sec)
+
++------+
+| x    |
++------+
+|    3 |
++------+
+1 row in set (0.01 sec)
+
++------+
+| x    |
++------+
+|    4 |
++------+
+1 row in set (0.01 sec)
+
+Query OK, 0 rows affected (0.01 sec)
+
+----------------------------------------------------------------------
+
+
+LEAVE 表签名； 结束循环  与shell中break用法一样
+ 
+   LEAVE 标签名;    // 跳出循环
+ ITERATE 标签名;    // 放弃本次循环,执行下一次循环
+
+delimiter //
+create procedure loop3()
+begin
+ declare x int(2) default 1;
+ lable1:loop
+  select x;
+  set x = x + 1;
+  if x=5 then
+  LEAVE lable1;
+  end if;
+ end  loop;
+end  //
+delimiter ;
+
+mysql> call loop3;
++------+
+| x    |
++------+
+|    1 |
++------+
+1 row in set (0.00 sec)
+
++------+
+| x    |
++------+
+|    2 |
++------+
+1 row in set (0.00 sec)
+
++------+
+| x    |
++------+
+|    3 |
++------+
+1 row in set (0.00 sec)
+
++------+
+| x    |
++------+
+|    4 |
++------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+
+
+
+
+输出1-20之间含有数字5或者是数字5的倍数的数
+
+delimiter //
+create procedure pro()
+begin
+     declare x int(2) default 1;
+     label1:while x <= 20 do
+       if x%5 = 0 or x regexp 5 then 
+          select x;
+       else
+          set x = x + 1;
+          ITERATE label1;
+       end if;
+       set x = x+1;
+     end  while;
+end  //
+delimiter ;
+
+call pro;
+
++------+
+| x    |
++------+
+|    5 |
++------+
+1 row in set (0.00 sec)
+
++------+
+| x    |
++------+
+|   10 |
++------+
+1 row in set (0.00 sec)
+
++------+
+| x    |
++------+
+|   15 |
++------+
+1 row in set (0.00 sec)
+
++------+
+| x    |
++------+
+|   20 |
++------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+#################################################################################
+
+
+
+
+create table employee(ID int(2) primary key auto_increment, name char(15), pay float(7,2),sex enum("boy","girl"),sharding_id  int(11) );
+
+
+
+insert into employee(name ,pay ,sex,sharding_id) values("bob",2000,"boy",10010),("lucy",8000,"girl",10000),("jerry",2100,"boy",10000),("tom",3000,"boy",10000),("dom",3000,"boy",10010);
+
+
+
+
+
+
+##################################################################################
+
+2018年 07月 27日 星期五 11:33:38 CST
+
+Nosql_day_01
+搭建Redis数据库服务器
+部署网站架构LAMP支持Redis数据库服务
+
+
+Redis介绍：分布式内存存储服务器并支持数据的持久化和多种数据类型。
+中文官网： www.redis.cn
+
+
+1. 装包
+[root@host51 hao]# rpm  -q   gcc  gcc-c++
+[root@host51 hao]# yum   -y  install   gcc  gcc-c++
+[root@host51 hao]# tar -xf redis-4.0.8.tar.gz 
+[root@host51 hao]# cd redis-4.0.8/
+[root@host51 redis-4.0.8]# ls
+00-RELEASENOTES  COPYING  Makefile   redis.conf       runtest-sentinel  tests
+BUGS             deps     MANIFESTO  runtest          sentinel.conf     utils
+CONTRIBUTING     INSTALL  README.md  runtest-cluster  src
+[root@host51 redis-4.0.8] make  &&  make  install
+[root@host51 redis-4.0.8]# cd utils/
+[root@host51 utils]# ./install_server.sh
+Welcome to the redis service installer
+This script will help you easily set up a running redis server
+
+Please select the redis port for this instance: [6379] 
+Selecting default: 6379
+Please select the redis config file name [/etc/redis/6379.conf] 
+Selected default - /etc/redis/6379.conf
+Please select the redis log file name [/var/log/redis_6379.log] 
+Selected default - /var/log/redis_6379.log
+Please select the data directory for this instance [/var/lib/redis/6379] 
+Selected default - /var/lib/redis/6379
+Please select the redis executable path [/usr/local/bin/redis-server] 
+Selected config:
+Port           : 6379
+Config file    : /etc/redis/6379.conf
+Log file       : /var/log/redis_6379.log
+Data dir       : /var/lib/redis/6379
+Executable     : /usr/local/bin/redis-server
+Cli Executable : /usr/local/bin/redis-cli
+Is this ok? Then press ENTER to go on or Ctrl-C to abort.
+Copied /tmp/6379.conf => /etc/init.d/redis_6379
+Installing service...
+Successfully added to chkconfig!
+Successfully added to runlevels 345!
+Starting Redis server...
+Installation successful!
+[root@host51 utils]# ss -antup |  grep  6379
+tcp    LISTEN     0      128    127.0.0.1:6379                  *:*                   users:(("redis-server",pid=7313,fd=6))
+
+
+
+2. 修改配置文件（/etc/redis/6327.conf）
+不编辑 按照默认配置运行 
+
+
+
+
+3. 启动服务  做完初始化配置后，自动启动服务
+
+[root@host51 utils]# ss -antup |  grep  6379
+tcp    LISTEN     0      128    127.0.0.1:6379                  *:*                   users:(("redis-server",pid=7313,fd=6))
+
+
+4. 查看服务信息
+
+[root@host51 utils]# ss -antup |  grep 6379
+
+[root@host51 utils]# ps  -C  redis-server
+  PID TTY          TIME CMD
+ 7313 ?        00:00:00 redis-server
+
+[root@host51 utils]# /etc/init.d/redis_6379  status
+Redis is running (7313)
+
+[root@host51 utils]# /etc/init.d/redis_6379  status|start|stop
+
+[root@host51 utils]# /etc/init.d/redis_6379 stop  //--必须关掉，再修改端口号
+
+
+
+5. 询问服务
+
+[root@host51 utils]# redis-cli
+127.0.0.1:6379> exit
+
+修改服务使用的ip地址和端口号
+
+vim /etc/redis/6379.conf
+  70 bind 127.0.0.1 --> 70 bind 192.168.4.51
+  93 port 6351
+  
+[root@host51 ~]# /etc/init.d/redis_6379  start
+
+[root@host51 ~]# redis-cli  -h  192.168.4.51 -p 6351
+192.168.4.51:6351> 
+
+怎么使其他主机连接51的方法
+
+
+[root@host51 ~]# scp  -r  /usr/local/bin/redis-cli   192.168.4.50:/usr/local/bin/
+[root@host50 ~]# redis-cli  -h  192.168.4.51 -p 6351
+192.168.4.51:6351> 
+
+
+修改服务器使用的ip地址和端口号停止服务的方法
+
+方法一：
+
+[root@host51 ~]# redis-cli  -h  192.168.4.51 -p  6351 shutdown
+
+
+方法二：vim  /etc/init.d/redis_6379  修改脚本的配置
+
+43 $CLIEXEC -h 192.168.4.51  -p 6351  shutdown
+
+
+
+
+
+[root@host51 ~]# redis-cli  -h  192.168.4.51 -p 6351
+192.168.4.51:6351> 
+
+192.168.4.51:6351> select 2  //切换2号库
+OK
+192.168.4.51:6351[2]> select 0
+OK
+192.168.4.51:6351> key  *
+(error) ERR unknown command 'key'
+192.168.4.51:6351> keys  *
+1) "name"
+2) "age"
+192.168.4.51:6351> keys  a?
+(empty list or set)
+192.168.4.51:6351> keys  a??
+1) "age"
+192.168.4.51:6351> EXISTS  name
+(integer) 1
+192.168.4.51:6351> ttL name
+(integer) -1                    //-1 表示永不过期  -2 表示过期
+192.168.4.51:6351> type  age
+string
+192.168.4.51:6351> type  name
+string
+192.168.4.51:6351> EXPIRE age  10   //10秒后过期
+(integer) 1
+192.168.4.51:6351> keys  *
+1) "name"
+
+>flushall  清除所有库所有值
+>flushdb   清除当前库所有值
+>sett keyname keyvalue    // 存储
+>Select 数据库编号 0-15    // 切换库
+>get keyname              // 获取
+>Keys *                   // 打印所以变量
+>Exits keyname            // 测试是否存在
+> ttl keyname             // 查看生存时间
+> type keyname            // 查看类型
+>move keyname dbname      // 移动变量
+>expire keyname 10        // 设置有效时间
+> del keyname             // 删除变量
+> flushall                // 删除所有变量
+> save                    // 保存变量
+> shutdown                // 关闭服务
+
+ vim  /etc/redis/6379.conf
+
+  12 # 1k => 1000 bytes
+  13 # 1kb => 1024 bytes
+  14 # 1m => 1000000 bytes
+  15 # 1mb => 1024*1024 bytes
+  16 # 1g => 1000000000 bytes
+  17 # 1gb => 1024*1024*1024 bytes
+
+ 501:requirepass 123456
+
+[root@host51 ~]# /etc/init.d/redis_6379  stop
+Stopping ...
+Redis stopped
+[root@host51 ~]# /etc/init.d/redis_6379  start
+Starting Redis server...
+[root@host51 ~]# ss -antup |  grep 6351
+tcp    LISTEN     0      128    192.168.4.51:6351                  *:*                   users:(("redis-server",pid=2445,fd=6))
+tcp    FIN-WAIT-2 0      0      192.168.4.51:6351               192.168.4.50:41486              
+tcp    TIME-WAIT  0      0      192.168.4.51:6351               192.168.4.51:35088              
+[root@host51 ~]# redis-cli  -h  192.168.4.51 -p 6351
+192.168.4.51:6351> set  name 55
+(error) NOAUTH Authentication required.
+192.168.4.51:6351> auth  123456
+OK
+
+或者
+[root@host51 ~]# redis-cli  -h  192.168.4.51 -p 6351 -a 123456
+192.168.4.51:6351> set  name  66
+OK
+192.168.4.51:6351> 
+
+
+################################################################################
+
+
+
+[root@host50 html]# vim  index.html
+
+<html>
+ <form action="reg.php" method="post">
+ <h1> reg login user info :</h1>下列选项中，不是保存数据库管理员登录初始密码的有（ ）。
+ <h3>LoginName: </h3><input type="text" name="name" size="20" maxlength="255"/>
+ <br />
+ <br />
+ <h3>LoginPass: </h3><input type="text" name="password" size="20" maxlength="255"/>
+ <br />
+ <br />
+ <h3><input type="submit" name="submit" value="SUBMIT"/> </h3></p>
+ </form>
+</html>
+
+
+
+vim  reg.php
+
+<?php
+$servername = "localhost";
+$username = "root";
+$password = "123qqq...A";
+$dbname = "bbsdb";
+
+$conn = new mysqli($servername, $username, $password,$dbname);
+if ($conn -> connect_error){
+   die("link fail:". $conn->connect_error );
+}else{echo "link mysql ok"; echo "         ";}
+
+$username=$_POST['name'];
+$userpassword=$_POST['password'];
+
+$sql="insert into userinfo(name ,password) values('$username','$userpassword')";
+if($conn ->query($sql)){echo "insert data ok";}
+$conn->close();
+?>
+
+
+#####################################################################
+
+2018年 07月 28日 星期六 10:34:18 CST
+
+--启动redis服务
+--php支持redis服务51 LNMP
+
+1.装包
+
+1.1 装php 和 nginx
+
+yum  -y  install   gcc  gcc-c++  pcre-devel  zlib-devel
+yum  -y  install php   php-mysql
+rpm  -ivh  php-devel-5.4.16-42.el7.x86_64.rpm
+tar  -xf  nginx-1.12.2.tar.gz
+cd nginx-1.12.2/
+./configure  --user=nginx
+useradd nginx
+make  &&  make install
+systemctl  restart php-fpm
+systemctl  enable   php-fpm
+ln -s   /usr/local/nginx/sbin/nginx   /sbin/
+nginx
+ss -antulp  |grep 80
+
+1.2 装redis 
+
+tar  -xf  php-redis-2.2.4
+phpize    //查看服务  报错  缺少依赖包
+rpm -ivh php-devel-5.4.16-42.el7.x86_64.rpm
+yum -y  install autoconf   automake 
+rpm  -ivh  php-devel-5.4.16-42.el7.x86_64.rpm
+phpize
+./configure  --with-php-config=/usr/bin/php-config
+make && make install 
+
+
+ls /usr/lib64/php/modules
+redis.so
+
+
+2.修改php程序的配置文件，调用模块
+vim /etc/php.ini
+728 extension_dir = "/usr/lib64/php/modules/"
+730 extension = "redis.so"
+:x
+
+
+systemctl   restart php-fpm.service
+php -m  | grep -i  redis
+redis
+
+3.编写php脚本（连接 redis服务存储数据）
+vim  /usr/local/nginx/html/redis.php
+
+<?php
+$redis = new redis();
+$redis->connect('192.168.4.51',"6351");
+$redis->auth('123456');
+$redis->set('school','tearena');
+echo $redis->get('school');
+?>
+
+4.测试配置
+4.1 访问51网站服务器的redis.php网页文件
+4.2 主机的redis服务查看存储的数据
+redis-cli -h 192.168.4.51 -p 6351 -a 123456
 
 
 
