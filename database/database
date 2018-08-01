@@ -1018,7 +1018,7 @@ select *  from user into outfile "/mydata/t2.txt" fields terminated by "#";
 select *  from user into outfile "/mydata/t2.txt" fields terminated by "#" lines terminated by "!!!!!!";
 
 
-mysql> select *  from user into outfile "/mydata/t1.txt";
+mysql> select *  from user into outfile "/mydata/t1.txt";outfile
 Query OK, 42 rows affected (0.00 sec)
 
 mysql> system  cat  /mydata/t1.txt
@@ -4278,7 +4278,7 @@ perl-Parallel-ForkManager-1.18-2.el7.noarch.rpm
 所有主机都要安装软件依赖包perl
 
 配置集群:
-1.配置数据库服务器:安装mha_node软件包
+1.配置数据库服务器:安装mha_node软件包mha
 2.配置管理主机:
 2.1安装软件包:mha_node(51-56)和 mha_manager(56)
 2.2创建管理命令
@@ -4482,19 +4482,19 @@ mysql: [Warning] Using a password on the command line interface can be insecure.
 3.6、在客户端测试主从同步配置
 3.6.1  在主库51上添加访问数据的授权用户
 [root@db107 ~]# mysql -uroot -p123456
-mysql> grant all on  gamedb.* to admin1@"%" identified by "123456";
+mysql> grant all on  db.* to admin@"%" identified by "123456";
 
 3.6.2  在客户端主机连接主库51 建库表记录
-mysql> create database gamedb;
+mysql> create database db;
 Query OK, 1 row affected (0.01 sec)
 
-mysql> create table  gamedb.t1 (id int);
+mysql> create table  db.t1 (id int);
 Query OK, 0 rows affected (0.04 sec)
 
-mysql> insert into gamedb.t1 values(999);
+mysql> insert into db.t1 values(999);
 Query OK, 1 row affected (0.15 sec)
 
-mysql> insert into gamedb.t1 values(999);
+mysql> insert into db.t1 values(999);
 Query OK, 1 row affected (0.05 sec)
 
 mysql> select  * from gamedb.t1;
@@ -4523,6 +4523,18 @@ mysql> select  * from gamedb.t1;
 #################################################################################
 
 配置集群
+yum  -y install  perl*    //51-56都需要安装 
+
+perl-Config-Tiny-2.14-7.el7.noarch.rpm
+perl-Email-Date-Format-1.002-15.el7.noarch.rpm
+perl-Log-Dispatch-2.41-1.el7.1.noarch.rpm
+perl-Mail-Sender-0.8.23-1.el7.noarch.rpm
+perl-Mail-Sendmail-0.79-21.el7.art.noarch.rpm
+perl-MIME-Lite-3.030-1.el7.noarch.rpm
+perl-MIME-Types-1.38-2.el7.noarch.rpm
+perl-Parallel-ForkManager-1.18-2.el7.noarch.rpm
+
+
 配置数据库服务器(51-55) (--参考上节)
 安装mha_node软件
 yum -y install perl-DBD-mysql
@@ -4780,7 +4792,7 @@ mysql> select  * from v4;
 
 
 
---创建视图时，忽略已有的视图
+--创建视图时，忽略已有的视图aA_D;qFN8gT,
 
 mysql> create or  replace  view  v3  as select uid,name from user;
 Query OK, 0 rows affected (0.04 sec)
@@ -4798,7 +4810,7 @@ mysql> select *  from v3;
 |     6 | shutdown            |
 |     7 | halt                |
 |     8 | mail                |
-|    11 | operator            |
+|    11 | operator            |aA_D;qFN8gT,
 |    12 | games               |
 |    14 | ftp                 |
 |    99 | nobody              |
@@ -5352,7 +5364,7 @@ mysql> create procedure prinum (in  number  int(2))
     -> declare x int(2) default 1;
     -> while x <= number do
     ->    select x;
-    ->    set x = x+1;
+    ->    set x = x+1;aA_D;qFN8gT,
     -> end  while;
     -> end  //
 Query OK, 0 rows affected (0.00 sec)
@@ -5388,7 +5400,7 @@ mysql> call prinum(5);
 +------+
 1 row in set (0.00 sec)
 
-+------+
++------+aA_D;qFN8gT,
 | x    |
 +------+
 |    5 |
@@ -5499,7 +5511,7 @@ end  //
 delimiter ;
 call  loop1;
 
-死循环
+死循环aA_D;qFN8gT,
 
 
 --repeat 
@@ -5574,7 +5586,7 @@ begin
   if x=5 then
   LEAVE lable1;
   end if;
- end  loop;
+ end  loop;aA_D;qFN8gT,
 end  //
 delimiter ;
 
@@ -5711,7 +5723,7 @@ Please select the redis port for this instance: [6379]
 Selecting default: 6379
 Please select the redis config file name [/etc/redis/6379.conf] 
 Selected default - /etc/redis/6379.conf
-Please select the redis log file name [/var/log/redis_6379.log] 
+Please select the redis log file name [/var/log/redis_/etc/init.d/redis_63796379.log] 
 Selected default - /var/log/redis_6379.log
 Please select the data directory for this instance [/var/lib/redis/6379] 
 Selected default - /var/lib/redis/6379
@@ -5991,6 +6003,1016 @@ echo $redis->get('school');
 4.1 访问51网站服务器的redis.php网页文件
 4.2 主机的redis服务查看存储的数据
 redis-cli -h 192.168.4.51 -p 6351 -a 123456
+92.168.4.51:6351> set  name 2
+(error) CLUSTERDOWN Hash slot not served
+
+##############################################################################
+
+2018年 07月 30日 星期一 09:27:43 CST (51-56 都要装redis)
+
+
+[root@host51 ~]# redis-cli  -h 192.168.4.51 -p  6351
+192.168.4.51:6351> CLUSTER INFO
+cluster_state:fail           
+cluster_slots_assigned:0
+cluster_slots_ok:0
+cluster_slots_pfail:0
+cluster_slots_fail:0
+cluster_known_nodes:1
+cluster_size:0
+cluster_current_epoch:0
+cluster_my_epoch:0
+cluster_stats_messages_sent:0
+cluster_stats_messages_received:0
+192.168.4.51:6351> 
+
+[root@host51 ~]# yum  -y  install ruby  rubygems 
+
+[root@host51 redis-cluster]# ls
+redis-3.2.1.gem  ruby-devel-2.0.0.648-30.el7.x86_64.rpm
+
+[root@host51 redis-cluster]# rpm  -ivh  ruby-devel-2.0.0.648-30.el7.x86_64.rpm 
+
+[root@host51 redis-cluster]# gem  install redis-3.2.1.gem
+Successfully installed redis-3.2.1
+Parsing documentation for redis-3.2.1
+Installing ri documentation for redis-3.2.1
+1 gem installed
+
+
+
+--创建脚本
+
+cd redis-4.0.8/src/
+
+mkdir /root/bin
+
+cp  redis-trib.rb  /root/bin
+
+
+
+--创建集群
+
+[root@host51 bin]# redis-trib.rb  create --replicas 1  
+192.168.4.51:6351   192.168.4.52:6352   192.168.4.53:6353  
+192.168.4.54:6354   192.168.4.55:6355   192.168.4.56:6356
+
+>>> Creating cluster
+>>> Performing hash slots allocation on 6 nodes...
+Using 3 masters:
+192.168.4.51:6351
+192.168.4.52:6352
+192.168.4.53:6353
+Adding replica 192.168.4.55:6355 to 192.168.4.51:6351
+Adding replica 192.168.4.56:6356 to 192.168.4.52:6352
+Adding replica 192.168.4.54:6354 to 192.168.4.53:6353
+M: 0c54c9b4fbafc65873c4175287d402749bcdd81c 192.168.4.51:6351
+   slots:0-5460 (5461 slots) master
+M: 58e8f7c5c349a324002a687831708885d799e6fc 192.168.4.52:6352
+   slots:5461-10922 (5462 slots) master
+M: ddd7fb352c96096e73240fb61a6558d5653748ad 192.168.4.53:6353
+   slots:10923-16383 (5461 slots) master
+S: 6e0a9ba82d3efc00f23d1e82368d982dbb25ed73 192.168.4.54:6354
+   replicates ddd7fb352c96096e73240fb61a6558d5653748ad
+S: 6779b8c3d09ce0eaa1c9c3b4dd6bb190b03f8037 192.168.4.55:6355
+   replicates 0c54c9b4fbafc65873c4175287d402749bcdd81c
+S: 2f0e0b3501dd8c853f27659e043a270f5e975429 192.168.4.56:6356
+   replicates 58e8f7c5c349a324002a687831708885d799e6fc
+Can I set the above configuration? (type 'yes' to accept): yes
+
+
+>>> Nodes configuration updated
+>>> Assign a different config epoch to each node
+>>> Sending CLUSTER MEET messages to join the cluster
+Waiting for the cluster to join..
+>>> Performing Cluster Check (using node 192.168.4.51:6351)
+M: 0c54c9b4fbafc65873c4175287d402749bcdd81c 192.168.4.51:6351
+   slots:0-5460 (5461 slots) master
+   1 additional replica(s)
+M: 58e8f7c5c349a324002a687831708885d799e6fc 192.168.4.52:6352
+   slots:5461-10922 (5462 slots) master
+   1 additional replica(s)
+S: 2f0e0b3501dd8c853f27659e043a270f5e975429 192.168.4.56:6356
+   slots: (0 slots) slave
+   replicates 58e8f7c5c349a324002a687831708885d799e6fc
+M: ddd7fb352c96096e73240fb61a6558d5653748ad 192.168.4.53:6353
+   slots:10923-16383 (5461 slots) master
+   1 additional replica(s)
+S: 6e0a9ba82d3efc00f23d1e82368d982dbb25ed73 192.168.4.54:6354
+   slots: (0 slots) slave
+   replicates ddd7fb352c96096e73240fb61a6558d5653748ad
+S: 6779b8c3d09ce0eaa1c9c3b4dd6bb190b03f8037 192.168.4.55:6355
+   slots: (0 slots) slave
+   replicates 0c54c9b4fbafc65873c4175287d402749bcdd81c
+[OK] All nodes agree about slots configuration.
+>>> Check for open slots...
+>>> Check slots coverage...
+[OK] All 16384 slots covered.
+
+
+如果创建nodes失败  执行
+
+[root@host51 bin]# redis-cli   -h  192.168.4.51  -p 6351
+192.168.4.51:6351> CLUSTER nodes
+
+查看未连接的节点，然后重置
+
+[root@host51 bin]# redis-cli   -h  192.168.4.51  -p 6351
+192.168.4.51:6351> CLUSTER reset
+
+
+
+查看集群信息
+
+192.168.4.51:6351> CLUSTER INFO
+cluster_state:ok
+cluster_slots_assigned:16384
+cluster_slots_ok:16384
+cluster_slots_pfail:0
+cluster_slots_fail:0
+cluster_known_nodes:6
+cluster_size:3
+cluster_current_epoch:6
+cluster_my_epoch:1
+cluster_stats_messages_ping_sent:2823
+cluster_stats_messages_pong_sent:2873
+cluster_stats_messages_sent:5696
+cluster_stats_messages_ping_received:2868
+cluster_stats_messages_pong_received:2823
+cluster_stats_messages_meet_received:5
+cluster_stats_messages_received:5696
+
+192.168.4.51:6351> CLUSTER NODES
+58e8f7c5c349a324002a687831708885d799e6fc 192.168.4.52:6352@16352 master - 0 1532918112795 2 connected 5461-10922
+2f0e0b3501dd8c853f27659e043a270f5e975429 192.168.4.56:6356@16356 slave 58e8f7c5c349a324002a687831708885d799e6fc 0 1532918112595 6 connected
+ddd7fb352c96096e73240fb61a6558d5653748ad 192.168.4.53:6353@16353 master - 0 1532918112595 3 connected 10923-16383
+6e0a9ba82d3efc00f23d1e82368d982dbb25ed73 192.168.4.54:6354@16354 slave ddd7fb352c96096e73240fb61a6558d5653748ad 0 1532918111000 4 connected
+6779b8c3d09ce0eaa1c9c3b4dd6bb190b03f8037 192.168.4.55:6355@16355 slave 0c54c9b4fbafc65873c4175287d402749bcdd81c 0 1532918112595 5 connected
+0c54c9b4fbafc65873c4175287d402749bcdd81c 192.168.4.51:6351@16351 myself,master - 0 1532918111000 1 connected 0-5460
+
+
+在客户端连接集群存储数据（连接master库的ip地址）
+
+[root@host50 ~]# redis-cli -c -h 192.168.4.51  -p6351
+192.168.4.51:6351> set  anme 2
+-> Redirected to slot [11897] located at 192.168.4.53:6353
+OK
+192.168.4.53:6353> set  name 5
+-> Redirected to slot [5798] located at 192.168.4.52:6352
+OK
+
+集群工作原理
+
+
+存储数据的工作原理：
+key 和 crc16 算法   把计算后得到的数字和16384做求模运算 
+
+读取数据的工作原理：
+key 和 crc16 算法   把计算后得到的数字和16384做求模运算
+
+
+测试集群高可用
+
+
+
+
+
+
+添加masetr主机：
+
+
+[root@host51 ~]# redis-trib.rb  add-node 192.168.4.47:6347 192.168.4.51:6351
+
+
+[root@host51 ~]# redis-trib.rb  check 192.168.4.51:6351
+>>> Performing Cluster Check (using node 192.168.4.51:6351)
+M: 0c54c9b4fbafc65873c4175287d402749bcdd81c 192.168.4.51:6351
+   slots:0-5460 (5461 slots) master
+   1 additional replica(s)
+M: 58e8f7c5c349a324002a687831708885d799e6fc 192.168.4.52:6352
+   slots:5461-10922 (5462 slots) master
+   1 additional replica(s)
+M: b8c8d4c8e55f70514370b0f6b6319a9fd8bd25cb 192.168.4.47:6347
+   slots: (0 slots) master
+   0 additional replica(s)
+S: 2f0e0b3501dd8c853f27659e043a270f5e975429 192.168.4.56:6356
+   slots: (0 slots) slave
+   replicates 58e8f7c5c349a324002a687831708885d799e6fc
+M: ddd7fb352c96096e73240fb61a6558d5653748ad 192.168.4.53:6353
+   slots:10923-16383 (5461 slots) master
+   1 additional replica(s)
+S: 6e0a9ba82d3efc00f23d1e82368d982dbb25ed73 192.168.4.54:6354
+   slots: (0 slots) slave
+   replicates ddd7fb352c96096e73240fb61a6558d5653748ad
+S: 6779b8c3d09ce0eaa1c9c3b4dd6bb190b03f8037 192.168.4.55:6355
+   slots: (0 slots) slave
+   replicates 0c54c9b4fbafc65873c4175287d402749bcdd81c
+[OK] All nodes agree about slots configuration.
+>>> Check for open slots...
+>>> Check slots coverage...
+[OK] All 16384 slots covered.
+
+
+
+[root@host51 ~]# redis-trib.rb  reshard 192.168.4.51:6351
+
+
+[root@host51 bin]# redis-trib.rb  add-node  --slave 192.168.4.48:6348 192.168.4.51:6351
+
+
+[root@host51 ~]# redis-trib.rb  check 192.168.4.51:6351
+>>> Performing Cluster Check (using node 192.168.4.51:6351)
+M: 0c54c9b4fbafc65873c4175287d402749bcdd81c 192.168.4.51:6351
+   slots:1365-5460 (4096 slots) master
+   1 additional replica(s)
+S: 6017e8c6681a83ac1a5ffd63e1e7aee379570dcb 192.168.4.48:6348
+   slots: (0 slots) slave
+   replicates b8c8d4c8e55f70514370b0f6b6319a9fd8bd25cb
+M: 58e8f7c5c349a324002a687831708885d799e6fc 192.168.4.52:6352
+   slots:6827-10922 (4096 slots) master
+   1 additional replica(s)
+M: b8c8d4c8e55f70514370b0f6b6319a9fd8bd25cb 192.168.4.47:6347
+   slots:0-1364,5461-6826,10923-12287 (4096 slots) master
+   1 additional replica(s)
+S: 2f0e0b3501dd8c853f27659e043a270f5e975429 192.168.4.56:6356
+   slots: (0 slots) slave
+   replicates 58e8f7c5c349a324002a687831708885d799e6fc
+M: ddd7fb352c96096e73240fb61a6558d5653748ad 192.168.4.53:6353
+   slots:12288-16383 (4096 slots) master
+   1 additional replica(s)
+S: 6e0a9ba82d3efc00f23d1e82368d982dbb25ed73 192.168.4.54:6354
+   slots: (0 slots) slave
+   replicates ddd7fb352c96096e73240fb61a6558d5653748ad
+S: 6779b8c3d09ce0eaa1c9c3b4dd6bb190b03f8037 192.168.4.55:6355
+   slots: (0 slots) slave
+   replicates 0c54c9b4fbafc65873c4175287d402749bcdd81c
+[OK] All nodes agree about slots configuration.
+>>> Check for open slots...
+>>> Check slots coverage...
+[OK] All 16384 slots covered.
+
+
+
+添加从库时指定主库master  192.168.4.50 --> 192.168.4.52 slave
+
+
+[root@host51 bin]# redis-trib.rb  add-node  --slave --master-id  0c54c9b4fbafc65873c4175287d402749bcdd81c   192.168.4.100:6310  192.168.4.51:6351
+
+
+[root@host51 ~]# redis-trib.rb   check  192.168.4.51:6351
+>>> Performing Cluster Check (using node 192.168.4.51:6351)
+M: 0c54c9b4fbafc65873c4175287d402749bcdd81c 192.168.4.51:6351
+   slots:1365-5460 (4096 slots) master
+   2 additional replica(s)
+S: 2aaec3eac9a596e6004703bab8155a2339e93fe2 192.168.4.100:6310
+   slots: (0 slots) slave
+   replicates 0c54c9b4fbafc65873c4175287d402749bcdd81c
+S: 2f0e0b3501dd8c853f27659e043a270f5e975429 192.168.4.56:6356
+   slots: (0 slots) slave
+   replicates 58e8f7c5c349a324002a687831708885d799e6fc
+S: 6779b8c3d09ce0eaa1c9c3b4dd6bb190b03f8037 192.168.4.55:6355
+   slots: (0 slots) slave
+   replicates 0c54c9b4fbafc65873c4175287d402749bcdd81c
+S: 6017e8c6681a83ac1a5ffd63e1e7aee379570dcb 192.168.4.48:6348
+   slots: (0 slots) slave
+   replicates b8c8d4c8e55f70514370b0f6b6319a9fd8bd25cb
+M: 58e8f7c5c349a324002a687831708885d799e6fc 192.168.4.52:6352
+   slots:6827-10922 (4096 slots) master
+   1 additional replica(s)
+M: b8c8d4c8e55f70514370b0f6b6319a9fd8bd25cb 192.168.4.47:6347
+   slots:0-1364,5461-6826,10923-12287 (4096 slots) master
+   1 additional replica(s)
+M: ddd7fb352c96096e73240fb61a6558d5653748ad 192.168.4.53:6353
+   slots:12288-16383 (4096 slots) master
+   1 additional replica(s)
+S: 6e0a9ba82d3efc00f23d1e82368d982dbb25ed73 192.168.4.54:6354
+   slots: (0 slots) slave
+   replicates ddd7fb352c96096e73240fb61a6558d5653748ad
+[OK] All nodes agree about slots configuration.
+>>> Check for open slots...
+>>> Check slots coverage...
+[OK] All 16384 slots covered.
+
+
+
+删除从库  从库id：0c54c9b4fbafc65873c4175287d402749bcdd81c　
+
+[root@host51 bin]# redis-trib.rb  del-node  192.168.4.56:6351  0c54c9b4fbafc65873c4175287d402749bcdd81c　　　　　　　　　   
+
+
+删除主库master 
+
+[root@host51 bin]# redis-trib.rb   reshard   192.168.4.51:6351
+
+[root@host51 ~]# redis-trib.rb  check 192.168.4.51:6351
+>>> Performing Cluster Check (using node 192.168.4.51:6351)
+M: 0c54c9b4fbafc65873c4175287d402749bcdd81c 192.168.4.51:6351
+   slots:1365-5460 (4096 slots) master
+   1 additional replica(s)
+S: 2f0e0b3501dd8c853f27659e043a270f5e975429 192.168.4.56:6356
+   slots: (0 slots) slave
+   replicates b8c8d4c8e55f70514370b0f6b6319a9fd8bd25cb
+S: 6779b8c3d09ce0eaa1c9c3b4dd6bb190b03f8037 192.168.4.55:6355
+   slots: (0 slots) slave
+   replicates 0c54c9b4fbafc65873c4175287d402749bcdd81c
+S: 6017e8c6681a83ac1a5ffd63e1e7aee379570dcb 192.168.4.48:6348
+   slots: (0 slots) slave
+   replicates b8c8d4c8e55f70514370b0f6b6319a9fd8bd25cb
+M: 58e8f7c5c349a324002a687831708885d799e6fc 192.168.4.52:6352
+   slots: (0 slots) master
+   0 additional replica(s)
+M: b8c8d4c8e55f70514370b0f6b6319a9fd8bd25cb 192.168.4.47:6347
+   slots:0-1364,5461-12287 (8192 slots) master
+   2 additional replica(s)
+M: ddd7fb352c96096e73240fb61a6558d5653748ad 192.168.4.53:6353
+   slots:12288-16383 (4096 slots) master
+   1 additional replica(s)
+S: 6e0a9ba82d3efc00f23d1e82368d982dbb25ed73 192.168.4.54:6354
+   slots: (0 slots) slave
+   replicates ddd7fb352c96096e73240fb61a6558d5653748ad
+[OK] All nodes agree about slots configuration.
+>>> Check for open slots...
+>>> Check slots coverage...
+[OK] All 16384 slots covered.
+
+
+删除主库   --主库master的id 58e8f7c5c349a324002a687831708885d799e6fc
+
+[root@host51 bin]# redis-trib.rb  del-node  192.168.4.51:6351  58e8f7c5c349a324002a687831708885d799e6fc
+
+
+添加修复后的主库master 
+
+
+###############################################################################################
+
+
+redischucking复制（类似mysql服务的主从同步）
+
+一主一从（把52设置为51的从）
+[root@host51 ~]# redis-cli   -h  192.168.4.51 -p 6351
+192.168.4.51:6351> keys  * 
+(empty list or set)
+192.168.4.51:6351> set  name 5
+OK
+192.168.4.51:6351> set  age 6
+OK
+
+192.168.4.51:6351> INFO replication
+# Replication
+role:master
+connected_slaves:1
+slave0:ip=192.168.4.52,port=6352,state=online,offset=602,lag=1
+master_replid:46eabe86c75e353f039473d363eb1bbc841b4c24
+master_replid2:0000000000000000000000000000000000000000
+master_repl_offset:602
+second_repl_offset:-1
+repl_backlog_active:1
+repl_backlog_size:1048576
+repl_backlog_first_byte_offset:1
+repl_backlog_histlen:602
+
+
+
+
+
+
+[root@host52 ~]# redis-cli  -h  192.168.4.52  -p 6352
+192.168.4.52:6352> salveof  192.168.4.51  6351
+(error) ERR unknown command 'salveof'
+192.168.4.52:6352> slaveof  192.168.4.51  6351
+OK
+192.168.4.52:6352> keys  * 
+1) "age"
+2) "name"
+192.168.4.52:6352> get  age
+"6"
+192.168.4.52:6352> get  name
+"5"
+
+
+192.168.4.52:6352> INFO replication
+# Replication
+role:slave
+master_host:192.168.4.51
+master_port:6351
+master_link_status:up
+master_last_io_seconds_ago:8
+master_sync_in_progress:0
+slave_repl_offset:616
+slave_priority:100
+slave_read_only:1
+connected_slaves:0
+master_replid:46eabe86c75e353f039473d363eb1bbc841b4c24
+master_replid2:0000000000000000000000000000000000000000
+master_repl_offset:616
+second_repl_offset:-1
+repl_backlog_active:1
+repl_backlog_size:1048576
+repl_backlog_first_byte_offset:1
+repl_backlog_histlen:616
+
+
+
+一主多从
+
+[root@host53 ~]# redis-cli   -h  192.168.4.53  -p 6353
+192.168.4.53:6353> INFO replication
+# Replication
+role:master
+connected_slaves:0
+master_replid:2bf648656abc1b018250ea86483abc338f8c0c41
+master_replid2:0000000000000000000000000000000000000000
+master_repl_offset:0
+second_repl_offset:-1
+repl_backlog_active:0
+repl_backlog_size:1048576
+repl_backlog_first_byte_offset:0
+repl_backlog_histlen:0
+192.168.4.53:6353> slaveof  192.168.4.51  6351
+OK
+192.168.4.53:6353> info  replication
+# Replication
+role:slave
+master_host:192.168.4.51
+master_port:6351
+master_link_status:up
+master_last_io_seconds_ago:9
+master_sync_in_progress:0
+slave_repl_offset:742
+slave_priority:100
+slave_read_only:1
+connected_slaves:0
+master_replid:46eabe86c75e353f039473d363eb1bbc841b4c24
+master_replid2:0000000000000000000000000000000000000000
+master_repl_offset:742
+second_repl_offset:-1
+repl_backlog_active:1
+repl_backlog_size:1048576
+repl_backlog_first_byte_offset:743
+repl_backlog_histlen:0
+192.168.4.53:6353> keys *
+1) "age"
+2) "name"
+
+
+[root@host51 ~]# redis-cli   -h  192.168.4.51 -p 6351
+
+192.168.4.51:6351> INFO replication
+# Replication
+role:master
+connected_slaves:1
+slave0:ip=192.168.4.52,port=6352,state=online,offset=602,lag=1
+master_replid:46eabe86c75e353f039473d363eb1bbc841b4c24
+master_replid2:0000000000000000000000000000000000000000
+master_repl_offset:602
+second_repl_offset:-1
+repl_backlog_active:1
+repl_backlog_size:1048576
+repl_backlog_first_byte_offset:1
+repl_backlog_histlen:602
+192.168.4.51:6351> INFO replication
+# Replication
+role:master
+connected_slaves:2
+slave0:ip=192.168.4.52,port=6352,state=online,offset=798,lag=0
+slave1:ip=192.168.4.53,port=6353,state=online,offset=798,lag=1
+master_replid:46eabe86c75e353f039473d363eb1bbc841b4c24
+master_replid2:0000000000000000000000000000000000000000
+master_repl_offset:798
+second_repl_offset:-1
+repl_backlog_active:1
+repl_backlog_size:1048576
+repl_backlog_first_byte_offset:1
+repl_backlog_histlen:798
+
+
+
+主从从
+把53手动切换成主库  -- slaveof  no  one
+192.168.4.53:6353> slaveof  no  one 
+OK
+
+192.168.4.53:6353> slaveof  192.168.4.52 6352       // slaveof  主库ip  主库端口号
+OK
+
+52是51的从库，53是52的从库
+192.168.4.52:6352> set  hao 9
+(error) READONLY You can not write against a read only slave.
+
+
+配额命令行配置，马上生效 不需要重启服务（一旦重启服务失效）
+
+
+
+修改配置文件，永久有效，但需哟啊重启服务才能生效。
+
+[root@host53 ~]# /etc/init.d/redis_6379  stop
+
+vim  /etc/redis/6379.conf
+...
+
+282 slaveof 192.168.4.52 6352
+
+...
+
+:x
+
+[root@host53 ~]# /etc/init.d/redis_6379  restart
+
+主库设置了连接密码，从库
+
+
+[root@host51 ~]# vim  /etc/redis/6379.conf 
+
+501 requirepass 123456
+
+
+[root@host52 ~]# vim  /etc/redis/6379.conf
+
+282 slaveof 192.168.4.51 6351
+289 masterauth 123456
+
+##################################################################################################
+
+--主从同步的哨兵模式(主从从)
+
+--从库：
+
+[root@host52 ~]# vim /etc/sentinel.conf   //哨兵程序
+sentinel  monitor  redis51  192.168.4.51  6351  1
+sentinel  auth-pass  redis51  123456
+:x
+
+[root@host52 ~]# redis-sentinel /etc/sentinel.conf
+
+
+--51宕机
+
+[root@host51 ~]# redis-cli   -h  192.168.4.51 -p 6351
+192.168.4.51:6351> shutdown
+
+
+--52变成了主库
+
+[root@host52 ~]# redis-cli  -p 6352  -h 192.168.4.52
+192.168.4.52:6352> info  replication
+# Replication
+role:master
+connected_slaves:1
+slave0:ip=192.168.4.53,port=6353,state=online,offset=26928,lag=0
+master_replid:5db321c285d1189944a05a48ac78a41fcd82874e
+master_replid2:4899fb1dfb7fcda46bc4f8754abeceef9ba926ea
+master_repl_offset:26928
+second_repl_offset:13530
+repl_backlog_active:1
+repl_backlog_size:1048576
+repl_backlog_first_byte_offset:155
+repl_backlog_histlen:26774
+     
+
+--开启51
+
+[root@host51 ~]# /etc/init.d/redis_6379    start
+
+
+--查看51
+
+[root@host51 ~]# redis-cli   -h  192.168.4.51 -p 6351
+192.168.4.51:6351> auth 123456
+OK
+192.168.4.51:6351> info  replication
+# Replication
+role:slave
+master_host:192.168.4.52
+master_port:6352
+master_link_status:up
+master_last_io_seconds_ago:1
+master_sync_in_progress:0
+slave_repl_offset:71193
+slave_priority:100
+slave_read_only:1
+connected_slaves:0
+master_replid:5db321c285d1189944a05a48ac78a41fcd82874e
+master_replid2:0000000000000000000000000000000000000000
+master_repl_offset:71193
+second_repl_offset:-1
+repl_backlog_active:1
+repl_backlog_size:1048576
+repl_backlog_first_byte_offset:70329
+repl_backlog_histlen:865
+192.168.4.51:6351> 
+
+
+
+--查看52,51和53都变成了从库
+
+[root@host52 ~]# redis-cli  -p 6352  -h 192.168.4.52
+192.168.4.52:6352> info  replication
+# Replication
+role:master
+connected_slaves:2
+slave0:ip=192.168.4.53,port=6353,state=online,offset=107829,lag=0
+slave1:ip=192.168.4.51,port=6351,state=online,offset=107815,lag=0
+master_replid:5db321c285d1189944a05a48ac78a41fcd82874e
+master_replid2:4899fb1dfb7fcda46bc4f8754abeceef9ba926ea
+master_repl_offset:107829
+second_repl_offset:13530
+repl_backlog_active:1
+repl_backlog_size:1048576
+repl_backlog_first_byte_offset:155
+repl_backlog_histlen:107675
+
+
+
+_________________________________________________________________________
+
+
+
+
+[root@host52 6379]# redis-cli   -h  192.168.4.52  -p 6352
+192.168.4.52:6352> keys  *
+1) "name"
+2) "age"
+3) "h"
+4) "sex"
+
+[root@host52 ~]# /etc/init.d/redis_6379   stop
+Stopping ...
+Redis stopped
+
+[root@host52 ~]# cd  /var/lib/redis/6379/
+[root@host52 6379]# ls
+dump.rdb
+[root@host52 6379]# rm  -rf  dump.rdb 
+[root@host52 6379]# /etc/init.d/redis_6379   restart 
+/var/run/redis_6379.pid does not exist, process is not running
+Starting Redis server...
+[root@host52 6379]# redis-cli  -h  192.168.4.52  -p 6352
+192.168.4.52:6352> keys *
+(empty list or set)
+
+
+
+redis服务持久化方式介绍
+redis关于RDB（Reids DataBase）文件的配置
+
+
+vim  /etc/redis/6379.conf
+
+
+217 #   save ""               //去掉注释，禁用RDB
+254 dbfilename "dump.rdb"
+
+
+
+数据从内存保存到硬盘的频率 
+– save 900 1                 // 900 秒内且有 1 次修改存盘
+– save 300 10                // 300 秒内且有 10 次修改存盘
+– save 60 10000              // 60 秒内且有 10000 修改存盘
+
+
+
+
+AOF
+
+[root@host51 6379]# /etc/init.d/redis_6379  stop
+
+[root@host51 6379]# vim   /etc/redis/6379.conf
+
+
+ 672 appendonly yes
+
+ 676 appendfilename "appendonly.aof"
+
+
+
+
+RDB和AOF同时启用--> AOF优先
+
+
+/etc/init.d/redis_6379  stop
+
+vim  appendonly.aof
+随意修改配置文件
+
+/etc/init.d/redis_6379  start
+ss -antulp | grep redis-server
+
+redis-check-aof  --fix   appendonly.aof
+/etc/init.d/redis_6379  start
+ rm  -rf /var/run/redis_6379.pid exists
+/etc/init.d/redis_6379  start
+
+
+
+
+AOF 文件记录,写操作的三种方式：
+
+vim   /etc/redis/6379.conf
+– appendfsync always      // 有新的写操作立即记录,性能差,完整性好。
+– appendfsync everysec    // 每秒记录一次,宕机时会丢失 1 秒的数据
+– appendfsync no          // 从不记录
+
+
+
+String 字符串
+[root@host51 ~]# redis-cli -h 192.168.4.51 -p 6351
+192.168.4.51:6351> set first  12345674896
+OK
+192.168.4.51:6351> get first
+"12345674896"
+192.168.4.51:6351> setrange  first  4  ****
+(integer) 11
+192.168.4.51:6351> get first
+"1234****896"
+
+######################################################################################
+
+2018年 08月 01日 星期三 09:25:33 CST
+
+List 列表:
+
+--Redis 的 list 是一个字符队列
+--先进后出
+--一个 key 可以有多个值
+
+
+--lpush key value [value...]
+
+– 将一个或多个值 value 插入到列表 key 的表头
+– Key 不存在,则创建 key
+
+lpush list a b c //list1 值依次为 c b a
+等同于 lpush list a; lpush list b; lpush list c
+
+--lrange key start stop 
+  
+ - 从开始位置读取 key 的值到 stop 结束
+>lrange list 0 2     // 从 0 位开始,读到 2 位为止
+>lrange list 0 -1    // 从开始读到结束为止
+>lrange list 0 -2    // 从开始读到倒数第 2 位值
+
+--lindex key index
+
+– 返回列表中第 index 个值
+
+如 lindex key 0 ; lindex key 2; lindex key -2
+
+
+--lset key index value
+
+– 将 key 中 index 位置的值修改为 value
+>lset list 3 test    // 将 list 中第 3 个值修改为 test
+
+
+--lpop key
+– 移除并返回列表头元素数据, key 不存在则返回 nil
+
+>lpop list   // 删除表头元素,可以多次执行
+
+--llen key
+– 返回列表 key 的长度
+
+--lpush key value [value...]
+– 将 value 插入到 key 的表头
+
+--rpush key value [value...]
+– 将 value 插入到 key 的末尾
+>rpush list3 a b c           //list3 值为 a b c
+>rpush list3 d               // 末尾插入 d
+
+--rpop key
+– 删除并返回 key 末尾的值
+– >rpush list3 a b c        //list3 值为 a b c
+   >rpush list3 d            // 末尾插入 d
+
+
+192.168.4.51:6351> lpush  website   a  m  d  r  g h j
+(integer) 7
+192.168.4.51:6351> type  website
+list
+192.168.4.51:6351> lrange  website 0 -1
+1) "j"
+2) "h"
+3) "g"
+4) "r"
+5) "d"
+6) "m"
+7) "a"
+192.168.4.51:6351> lrange  website 0 3
+1) "j"
+2) "h"
+3) "g"
+4) "r"
+192.168.4.51:6351> lrange  website 0 -2
+1) "j"
+2) "h"
+3) "g"
+4) "r"
+5) "d"
+6) "m"
+192.168.4.51:6351> lrange  website -2 -1
+1) "m"
+2) "a"
+192.168.4.51:6351> llen  website
+(integer) 7
+192.168.4.51:6351> index  website  0
+(error) ERR unknown command 'index'
+192.168.4.51:6351> lindex  website  0
+"j"
+192.168.4.51:6351> lpop website
+"j"
+192.168.4.51:6351> llen website
+(integer) 6
+192.168.4.51:6351> lindex  website 2
+"r"
+192.168.4.51:6351> lrange  website 0 -1
+1) "h"
+2) "g"
+3) "r"
+4) "d"
+5) "m"
+6) "a"
+192.168.4.51:6351> lindex  website -2
+"m"
+192.168.4.51:6351> lindex  website 2
+"r"
+192.168.4.51:6351> lindex  website  -1
+"a"
+192.168.4.51:6351> lset website 1 88
+OK
+192.168.4.51:6351> lrange  website 0 -1
+1) "h"
+2) "88"
+3) "r"
+4) "d"
+5) "m"
+6) "a"
+192.168.4.51:6351> lset website  2  hhhhhhh
+OK
+192.168.4.51:6351> lrange  website 0 -1
+1) "h"
+2) "88"
+3) "hhhhhhh"
+4) "d"
+5) "m"
+6) "a"
+192.168.4.51:6351> rpush  website  l p  s  a
+(integer) 10
+192.168.4.51:6351> lrange  website 0 -1
+ 1) "h"
+ 2) "88"
+ 3) "hhhhhhh"
+ 4) "d"
+ 5) "m"
+ 6) "a"
+ 7) "l"
+ 8) "p"
+ 9) "s"
+10) "a"
+192.168.4.51:6351> lpush  website  7  8  9
+(integer) 13
+192.168.4.51:6351> lrange  website 0 -1
+ 1) "9"
+ 2) "8"
+ 3) "7"
+ 4) "h"
+ 5) "88"
+ 6) "hhhhhhh"
+ 7) "d"
+ 8) "m"
+ 9) "a"
+10) "l"
+11) "p"
+12) "s"
+13) "a"
+192.168.4.51:6351> rpop  website
+"a"
+
+
+
+--Hash 表
+
+
+• Redis hash 是一个 string 类型的 field 和 value 的映射表
+• 一个 key 可对应多个 field ,一个 field 对应一个 value
+• 将一个对象存储为 hash 类型,较于每个字段都存储成string 类型更能节省内存
+
+
+
+
+
+--hset key field value
+– 将 hash 表中 field 值设置为 value
+>hset site google 'www.g.cn'
+>hset site baidu 'www.baidu.com'
+
+--hget key filed
+– 获取 hash 表中 field 的值
+>hget site google
+
+
+--hmset key field value [field value...]
+– 同时给 hash 表中的多个 field 赋值
+>hmset site google www.g.cn baidu www.baidu.com
+
+
+--hmget key field [field...]
+– 返回 hash 表中多个 field 的值
+>hmget site google baidu
+
+--hkeys key
+– 返回 hash 表中所有 field 名称
+>hmset site google www.g.cn baidu www.baidu.com
+>hkeys site
+
+--hgetall key
+– 返回 hash 表中所有 field 的值
+
+-- hvals key
+– 返回 hash 表中所有 filed 的值
+>hvals key
+
+--hdel key field [field...]
+– 删除 hash 表中多个 field 的值,不存在则忽略
+>hdel site google baidu
+
+
+#######################################################################################
+
+MongoDB
+
+--[root@host51 ~]# mkdir  -p /usr/local/mongodb
+--[root@host51 ~]# cd /hao
+--[root@host51 hao]# tar  xf  mongodb-linux-x86_64-rhel70-3.6.3.tgz 
+--[root@host51 hao]# cd mongodb-linux-x86_64-rhel70-3.6.3/
+--[root@host51 mongodb-linux-x86_64-rhel70-3.6.3]# ls
+bin  GNU-AGPL-3.0  MPL-2  README  THIRD-PARTY-NOTICES
+--[root@host51 mongodb-linux-x86_64-rhel70-3.6.3]# cp  -r  bin/   /usr/local/mongodb
+--[root@host51 mongodb-linux-x86_64-rhel70-3.6.3]# cd /usr/local/mongodb
+--[root@host51 mongodb]# ls
+bin
+--[root@host51 mongodb]#  mkdir -p  etc   log  data/db
+--[root@host51 mongodb]# ls
+bin  data  etc  log
+--[root@host51 mongodb]# vim  /etc/profile
+export  PATH=/usr/local/mongodb/bin:$PATH
+:x
+--[root@host51 mongodb]# source  /etc/profile
+--[root@host51 mongodb]# echo $PATH
+/usr/local/mongodb/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin
+[root@host51 mongodb]# 
+
+
+手动创建服务主配置文件
+--[root@host51 mongodb]# vim  /usr/local/mongodb/etc/mongodb.conf
+
+logpath=/usr/local/mongodb/log/mongodb.log
+logappend=true
+dbpath=/usr/local/mongodb/data/db
+fork=true
+
+:x
+
+启动服务
+--[root@host51 mongodb]# mongod  -f  /usr/local/mongodb/etc/mongodb.conf 
+about to fork child process, waiting until server is ready for connections.
+forked process: 3169
+child process started successfully, parent exiting
+
+查看进程
+--[root@host51 mongodb]# ps  -C  mongod
+  PID TTY          TIME CMD
+ 3169 ?        00:00:00 mongod
+
+查看端口
+--[root@host51 mongodb]# ss   -utlpn | grep mongod
+tcp    LISTEN     0      128    127.0.0.1:27017                 *:*                   users:(("mongod",pid=3169,fd=11))
+
+连接服务
+--[root@host51 mongodb]# mongo
+
+关闭服务
+--[root@host51 mongodb]# mongod  -f  /usr/local/mongodb/etc/mongodb.conf  shutdown
+
+
+vim  /etc/bashrc
+
+alias start='mongod  -f  /usr/local/mongodb/etc/mongodb.conf'
+alias stop='mongod  -f  /usr/local/mongodb/etc/mongodb.conf  --shutdown'
+
+:x
+
+启动服务
+--[root@host51 mongodb]# start
+
+关闭服务
+--[root@host51 mongodb]# stop
+
+
+
+
 
 
 
