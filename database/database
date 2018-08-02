@@ -8054,17 +8054,256 @@ rs1:PRIMARY>
 { "_id" : ObjectId("5b6182053cc3595a80b1969c"), "name" : "games", "password" : "x", "uid" : 12, "gid" : 100, "comment" : "games", "homedir" : "/usr/games", "shell" : "/sbin/nologin" }
 { "_id" : ObjectId("5b6182053cc3595a80b1969d"), "name" : "ftp", "password" : "x", "uid" : 14, "gid" : 50, "comment" : "FTP User", "homedir" : "/var/ftp", "shell" : "/sbin/nologin" }
 { "_id" : ObjectId("5b6182053cc3595a80b196a3"), "name" : "rpc", "password" : "x", "uid" : 32, "gid" : 32, "comment" : "Rpcbind Daemon", "homedir" : "/var/lib/rpcbind", "shell" : "/sbin/nologin" }
-{ "_id" : ObjectId("5b6182053cc3595a80b196ae"), "name" : "rpcuser", "password" : "x", "uid" : 29, "gid" : 29, "comment" : "RPC Service User", "homedir" : "/var/lib/nfs", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b196ae"), "name" : "rrs1:PRIMARY> db.coluser.save({name:null,uid:null})
+WriteResult({ "nInserted" : 1 })
+rs1:PRIMARY> db.coluser.find({name:null})
+{ "_id" : ObjectId("5b62b45e9cc7da33c4a1ebf8"), "name" : null, "uid" : null }
+rs1:PRIMARY> db.coluser.find({name:NULL})
+2018-08-02T15:36:09.261+0800 E QUERY    [thread1] ReferenceError: NULL is not defined :
+@(shell):1:18
+rs1:PRIMARY> 
+pcuser", "password" : "x", "uid" : 29, "gid" : 29, "comment" : "RPC Service User", "homedir" : "/var/lib/nfs", "shell" : "/sbin/nologin" }
 { "_id" : ObjectId("5b6182053cc3595a80b196b2"), "name" : "gdm", "password" : "x", "uid" : 42, "gid" : 42, "comment" : "", "homedir" : "/var/lib/gdm", "shell" : "/sbin/nologin" }
 { "_id" : ObjectId("5b6182053cc3595a80b196b7"), "name" : "ntp", "password" : "x", "uid" : 38, "gid" : 38, "comment" : "", "homedir" : "/etc/ntp", "shell" : "/sbin/nologin" }
+rs1:PRIMARY> 
+
+
+--匹配 null , 也可以匹配没有的字段
+– > db.user.save({name:null,uid:null})
+– > db.user.find({name:null})
+{ "_id" : ObjectId("5afd0ddbd42772e7e458fc7
+5"), "name" : null, "uid" : null }
+
+
+
+--rs1:PRIMARY> db.coluser.save({name:null,uid:null})
+WriteResult({ "nInserted" : 1 })
+rs1:PRIMARY> db.coluser.find({name:null})
+{ "_id" : ObjectId("5b62b45e9cc7da33c4a1ebf8"), "name" : null, "uid" : null }
+rs1:PRIMARY> db.coluser.find({name:NULL})
+2018-08-02T15:36:09.261+0800 E QUERY    [thread1] ReferenceError: NULL is not defined :
+@(shell):1:18
+rs1:PRIMARY> 
+
+
+
+
+--rs1:PRIMARY> db.c1.find()
+{ "_id" : "abc", "name" : "tom" }
+{ "_id" : "abcd", "name" : "bob" }
+{ "_id" : "abce", "name" : "tom" }
+{ "_id" : "abcf", "name" : "tom" }
+{ "_id" : ObjectId("5b62a3b39cc7da33c4a1ebf4"), "name" : "xiaoqu", "age" : 56 }
+{ "_id" : ObjectId("5b62a3b39cc7da33c4a1ebf5"), "anem" : "laoshi", "email" : "yaya@tedu.cn" }
+
+
+--rs1:PRIMARY> db.c1.update({},{$set:{name:'hao'}},true,false)
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+rs1:PRIMARY> db.c1.find()
+{ "_id" : "abc", "name" : "hao" }
+{ "_id" : "abcd", "name" : "bob" }
+{ "_id" : "abce", "name" : "tom" }
+{ "_id" : "abcf", "name" : "tom" }
+{ "_id" : ObjectId("5b62a3b39cc7da33c4a1ebf4"), "name" : "xiaoqu", "age" : 56 }
+{ "_id" : ObjectId("5b62a3b39cc7da33c4a1ebf5"), "anem" : "laoshi", "email" : "yaya@tedu.cn" }
+
+--rs1:PRIMARY> db.c1.update({},{$set:{name:'hao'}},false,true)                 // 全替换false需要置于true前面
+WriteResult({ "nMatched" : 6, "nUpserted" : 0, "nModified" : 5 })
+
+
+--rs1:PRIMARY> db.c1.find()
+{ "_id" : "abc", "name" : "hao" }
+{ "_id" : "abcd", "name" : "hao" }
+{ "_id" : "abce", "name" : "hao" }
+{ "_id" : "abcf", "name" : "hao" }
+{ "_id" : ObjectId("5b62a3b39cc7da33c4a1ebf4"), "name" : "hao", "age" : 56 }
+{ "_id" : ObjectId("5b62a3b39cc7da33c4a1ebf5"), "anem" : "laoshi", "email" : "yaya@tedu.cn", "name" : "hao" }
+rs1:PRIMARY> 
+
+
+--$set 条件匹配时,修改指定字段的值
+– db.user.update({ 条件 },$set: { 修改的字段 })
+– db.user3.update({name:"bin"},{$set:{password:"A"}}
+
+--$unset 删除与条件匹配文档的字段
+– db. 集合名 .update({ 条件 },{$unset:{key:values}})
+– db.user3.update({name:"bin"},{$unset:{passwor
+d:"A"}})
+
+s1:PRIMARY> db.coluser.find({name:'root'},{_id:0})
+{ "name" : "root", "password" : "x", "uid" : 0, "gid" : 0, "comment" : "root", "homedir" : "/root", "shell" : "/bin/bash" }
+rs1:PRIMARY> db.coluser.update({name:'root'},{$unset:{password:'x'}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+rs1:PRIMARY> db.coluser.find({name:'root'},{_id:0})
+{ "name" : "root", "uid" : 0, "gid" : 0, "comment" : "root", "homedir" : "/root", "shell" : "/bin/bash" }
+rs1:PRIMARY> 
+
+
+
+-- $push 向数组中添加新元素
+– db. 集合名 .update({ 条件 },{$push:{ 数组名 :“ 值” }})
+– db.user.insert({name:"bob",likes:
+["a","b","c","d","e","f"]})
+– db.user.update({name:“bob”},{$push:{likes:“w"}})
+
+
+-- $addToSet 避免重复添加
+– db. 集合名 .update({ 条件 },{$addToSet:{ 数组名 :”
+值” }}) db.user.update({name:"bob"},{$addToSet:{likes:
+“f"}})
+
+
+
+rs1:PRIMARY> db.coluser.save({name:'lucy',like:['a','o','u','y','g','e','t']})
+WriteResult({ "nInserted" : 1 })
+rs1:PRIMARY> db.coluser.find({name:'lucy'},{_id:0})
+{ "name" : "lucy", "like" : [ "a", "o", "u", "y", "g", "e", "t" ] }
+rs1:PRIMARY> 
+
+--rs1:PRIMARY> db.coluser.update({name:'lucy'},{$push:{like:'y'}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+--rs1:PRIMARY> db.coluser.find({name:'lucy'},{_id:0})
+{ "name" : "lucy", "like" : [ "a", "o", "u", "y", "g", "e", "t", "y", "y" ] }
+--rs1:PRIMARY> db.coluser.update({name:'lucy'},{$push:{like:'y'}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+--rs1:PRIMARY> db.coluser.find({name:'lucy'},{_id:0})
+{ "name" : "lucy", "like" : [ "a", "o", "u", "y", "g", "e", "t", "y", "y", "y" ] }
+--rs1:PRIMARY> db.coluser.update({name:'lucy'},{$addToSet:{like:'y'}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 0 })
+--rs1:PRIMARY> db.coluser.find({name:'lucy'},{_id:0})
+{ "name" : "lucy", "like" : [ "a", "o", "u", "y", "g", "e", "t", "y", "y", "y" ] }
+
+
+
+
+--rs1:PRIMARY> db.coluser.find({name:'lucy'},{_id:0})
+{ "name" : "lucy", "like" : [ "a", "o", "u", "y", "g", "e", "t", "y", "y", "y", "F" ] }
+--rs1:PRIMARY> db.coluser.update({name:'lucy'},{$addToSet:{like:'F'}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 0 })
+--rs1:PRIMARY> db.coluser.find({name:'lucy'},{_id:0})
+{ "name" : "lucy", "like" : [ "a", "o", "u", "y", "g", "e", "t", "y", "y", "y", "F" ] }
+--rs1:PRIMARY> db.coluser.update({name:'lucy'},{$addToSet:{like:'F'}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 0 })
+--rs1:PRIMARY> db.coluser.find({name:'lucy'},{_id:0})
+{ "name" : "lucy", "like" : [ "a", "o", "u", "y", "g", "e", "t", "y", "y", "y", "F" ] }
+rs1:PRIMARY> 
+
+
+
+
+--$pop 从数组头部删除一个元素
+– db. 集合名 .update({ 条件 },{$pop:{ 数组名 : 数字 }})
+– db.user.update({name:"bob"},{$pop:{likes:1}})
+– db.user.update({name:"bob"},{$pop:{likes:-1}})
+   1 删除数组尾部元素    -1 删除数组头部元素
+
+
+
+--$pull 删除数组指定元素
+– db. 集合名 .update({ 条件 },{$pull:{ 数组名 : 值 }})
+– db.user.update({name:"bob"},{$pull:{likes:"b"}})
+
+
+
+rs1:PRIMARY> db.coluser.find({name:'lucy'},{_id:0})
+{ "name" : "lucy", "like" : [ "a", "o", "u", "y", "g", "e", "t", "y", "y", "y", "F" ] }
+
+rs1:PRIMARY> db.coluser.update({name:'lucy'},{$pop:{like:1}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+
+rs1:PRIMARY> db.coluser.find({name:'lucy'},{_id:0})
+{ "name" : "lucy", "like" : [ "a", "o", "u", "y", "g", "e", "t", "y", "y", "y" ] }
+
+rs1:PRIMARY> db.coluser.update({name:'lucy'},{$pop:{like:1}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+
+rs1:PRIMARY> db.coluser.find({name:'lucy'},{_id:0})
+{ "name" : "lucy", "like" : [ "a", "o", "u", "y", "g", "e", "t", "y", "y" ] }
+
+rs1:PRIMARY> db.coluser.update({name:'lucy'},{$pop:{like:-1}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+
+rs1:PRIMARY> db.coluser.find({name:'lucy'},{_id:0})
+{ "name" : "lucy", "like" : [ "o", "u", "y", "g", "e", "t", "y", "y" ] }
+
+rs1:PRIMARY> db.coluser.update({name:'lucy'},{$pop:{like:-1}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+
+rs1:PRIMARY> db.coluser.find({name:'lucy'},{_id:0})
+{ "name" : "lucy", "like" : [ "u", "y", "g", "e", "t", "y", "y" ] }
+rs1:PRIMARY> 
+
+
+
+
+rs1:PRIMARY> db.coluser.find({name:'lucy'},{_id:0})
+{ "name" : "lucy", "like" : [ "u", "y", "g", "e", "t", "y", "y" ] }
+
+rs1:PRIMARY> db.coluser.update({name:'lucy'},{$pull:{like:'e'}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+
+rs1:PRIMARY> db.coluser.find({name:'lucy'},{_id:0})
+{ "name" : "lucy", "like" : [ "u", "y", "g", "t", "y", "y" ] }
+
+rs1:PRIMARY> db.coluser.update({name:'lucy'},{$pull:{like:'g'}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+
+rs1:PRIMARY> db.coluser.find({name:'lucy'},{_id:0})
+{ "name" : "lucy", "like" : [ "u", "y", "t", "y", "y" ] }
+
+rs1:PRIMARY> db.coluser.update({name:'lucy'},{$pull:{like:'y'}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+
+rs1:PRIMARY> db.coluser.find({name:'lucy'},{_id:0})
+{ "name" : "lucy", "like" : [ "u", "t" ] }
 rs1:PRIMARY> 
 
 
 
 
 
+-- $drop 删除集合的同时删除索引
+– db. 集合名 .drop( )
+– db.user.drop( )
+
+-- remove() 删除文档时不删除索引
+– db. 集合名 .remove({})                 // 删除所有文档
+– db. 集合名 .remove({ 条件 })           // 删除与条件匹配的文档
+– db.user.remove({uid:{$lte:10}})
+– db.user.remove({})
 
 
+
+rs1:PRIMARY> show  dbs
+admin   0.000GB
+config  0.000GB
+db101   0.000GB
+local   0.000GB
+test    0.000GB
+userdb  0.000GB
+you     0.000GB
+rs1:PRIMARY> use  db101
+switched to db db101
+rs1:PRIMARY> show tables
+c1
+c2
+c3
+rs1:PRIMARY> db.c1.find()
+{ "_id" : ObjectId("5b627134b753b570da208bbf"), "name" : "boy", "sex" : "girl" }
+rs1:PRIMARY> db.c2.find()
+{ "_id" : ObjectId("5b62743cb753b570da208bc0"), "name1" : "boy", "se1x" : "girl" }
+rs1:PRIMARY> db.c3.find()
+{ "_id" : ObjectId("5b627a60c1418f8776822a7f"), "uid" : 565, "gid" : 696 }
+rs1:PRIMARY> db.c3.remove({uid:565})
+WriteResult({ "nRemoved" : 1 })
+rs1:PRIMARY> db.c3.find()
+rs1:PRIMARY> db.c2.remove({name1:'boy'})
+WriteResult({ "nRemoved" : 1 })
+rs1:PRIMARY> db.c2.find()
+rs1:PRIMARY> db.c1.remove({sex:'girl'})
+WriteResult({ "nRemoved" : 1 })
+rs1:PRIMARY> db.c1.find()
+rs1:PRIMARY> 
 
 
 
