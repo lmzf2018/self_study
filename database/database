@@ -6994,7 +6994,7 @@ tcp    LISTEN     0      128    127.0.0.1:27017                 *:*             
 --[root@host51 mongodb]# mongo
 
 关闭服务
---[root@host51 mongodb]# mongod  -f  /usr/local/mongodb/etc/mongodb.conf  shutdown
+--[root@host51 mongodb]# mongod  -f  /usr/local/mongodb/etc/mongodb.conf  --shutdown
 
 
 vim  /etc/bashrc
@@ -7010,9 +7010,1054 @@ alias stop='mongod  -f  /usr/local/mongodb/etc/mongodb.conf  --shutdown'
 关闭服务
 --[root@host51 mongodb]# stop
 
+______________________________________________________________________________________
+
+--[root@host51 mongodb]# stop
+
+--[root@host51 mongodb]# vim  /usr/local/mongodb/etc/mongodb.conf
+ ...
+
+bind_ip=192.168.4.51
+port=27051
+:x
+
+--[root@host51 mongodb]# start
+[root@host51 ~]# mongo  --host 192.168.4.51 --port 27051
+
+______________________________________________________________________________
+
+
+[root@host51 ~]# mongo  --host 192.168.4.51 --port 27051
+> show  dbs
+admin   0.000GB
+config  0.000GB
+local   0.000GB
+> 
+
+
+> use hao--[root@host51 mongodb]# mongod  -f  /usr/local/mongodb/etc/mongodb.conf  --shutdown
+switched to db hao
+> db
+hao mongod  -f  /usr/local/mongodb/etc/mongodb.conf
+> show tables
+> db.hao.save({'name':'ok','sex':'boy'})
+WriteResult({ "nInserted" : 1 })
+> show tables
+hao
+> db.hao.find()
+{ "_id" : ObjectId("5b612fc1205e7c64654a9ee5"), "name" : "ok", "sex" : "boy" }
+ 
+> db.hao.findOne()
+{
+	"_id" : ObjectId("5b612fc1205e7c64654a9ee5"),
+	"name" : "ok",
+	"sex" : "boy"
+}
 
 
 
+
+> db.hao.save({name:'jack',school:danei,single:false})
+2018-08-01T14:25:23.573+0800 E QUERY    [thread1] ReferenceError: danei is not defined :
+@(shell):1:26
+> db.hao.save({name:'jack',school:'danei',single:false})
+WriteResult({ "nInserted" : 1 })
+> db.hao.save({name:'jdck',school:'dawai',single:ture,pay:null})
+2018-08-01T14:26:17.150+0800 E QUERY    [thread1] ReferenceError: ture is not defined :
+@(shell):1:41
+> db.hao.save({name:'jdck',school:'dawai',single:true,pay:null})
+WriteResult({ "nInserted" : 1 })
+> db.hao.find()
+{ "_id" : ObjectId("5b61526d205e7c64654a9eeb"), "name" : "jack", "school" : "danei", "single" : false }
+{ "_id" : ObjectId("5b615291205e7c64654a9eec"), "name" : "jdck", "school" : "dawai", "single" : true, "pay" : null }
+> db.count()
+2018-08-01T14:26:46.212+0800 E QUERY    [thread1] TypeError: db.count is not a function :
+@(shell):1:1
+> db.hao.count()
+2
+> db.hao.save({name:'利好',school:'达中',single:true,pay:null})
+WriteResult({ "nInserted" : 1 })
+> db.hao.count()
+3
+> db.hao.find()
+{ "_id" : ObjectId("5b61526d205e7c64654a9eeb"), "name" : "jack", "school" : "danei", "single" : false }
+{ "_id" : ObjectId("5b615291205e7c64654a9eec"), "name" : "jdck", "school" : "dawai", "single" : true, "pay" : null }
+{ "_id" : ObjectId("5b6152d1205e7c64654a9eed"), "name" : "利好", "school" : "达中", "single" : true, "pay" : null }
+> 
+> db.hao.save({name:'zhangsan',like:['game','eat','climbing']})
+WriteResult({ "nInserted" : 1 })
+> db.hao.save({name:'tom',xf:NumberInt(3)})
+WriteResult({ "nInserted" : 1 })
+> db.hao.save({name:'tom',xf:NumberLong(1918)})
+WriteResult({ "nInserted" : 1 })
+> db.hao.save({name:'tom',xf:NumberInt(198.56)})
+WriteResult({ "nInserted" : 1 })
+> db.hao.find()
+{ "_id" : ObjectId("5b61526d205e7c64654a9eeb"), "name" : "jack", "school" : "danei", "single" : false }
+{ "_id" : ObjectId("5b615291205e7c64654a9eec"), "name" : "jdck", "school" : "dawai", "single" : true, "pay" : null }
+{ "_id" : ObjectId("5b6152d1205e7c64654a9eed"), "name" : "利好", "school" : "达中", "single" : true, "pay" : null }
+{ "_id" : ObjectId("5b615538205e7c64654a9eee"), "name" : "zhangsan", "like" : [ "game", "eat", "climbing" ] }
+{ "_id" : ObjectId("5b615588205e7c64654a9eef"), "name" : "tom", "xf" : 3 }
+{ "_id" : ObjectId("5b61559b205e7c64654a9ef0"), "name" : "tom", "xf" : NumberLong(1918) }
+{ "_id" : ObjectId("5b6155a3205e7c64654a9ef1"), "name" : "tom", "xf" : 198 }
+
+> db.hao.save(
+... {
+... lanme:'php',
+... code:function(){/* <?php  echo "hello world"; ?> */},
+... like:10000000000000000
+... }
+... )
+WriteResult({ "nInserted" : 1 })
+>
+
+> db.hao.save({tarena:{addresses:'beijing',tel:123456789,person:'hansy'}})
+WriteResult({ "nInserted" : 1 })
+> db.hao.save({ywzd:{writer:'dmy',pay:68,version:'v2'}})
+WriteResult({ "nInserted" : 1 })
+> 
+
+#######################################################################################
+
+
+2018年 08月 02日 星期四 11:05:25 CST
+
+
+配置 Replica Sets 副本集
+
+--配置
+
+--[root@host51 mongodb]# mongod  -f  /usr/local/mongodb/etc/mongodb.conf  --shutdown
+
+vim  /usr/local/mongodb/etc/mongodb.conf
+dbpath=/usr/localmongodb/data/db
+fork=true
+bind_ip=192.168.4.51
+replSet=rs1
+
+--[root@host51 mongodb]# start 
+
+
+
+--[root@host52 mongodb]# mongod  -f  /usr/local/mongodb/etc/mongodb.conf  --shutdown
+
+vim  /usr/local/mongodb/etc/mongodb.conf
+dbpath=/usr/localmongodb/data/db
+fork=true
+bind_ip=192.168.4.52
+replSet=rs1
+
+--[root@host52 mongodb]# start 
+
+
+
+
+--[root@host53 mongodb]# mongod  -f  /usr/local/mongodb/etc/mongodb.conf  --shutdown
+
+vim  /usr/local/mongodb/etc/mongodb.conf
+dbpath=/usr/localmongodb/data/db
+fork=true
+bind_ip=192.168.4.53
+replSet=rs1
+
+--[root@host51 mongodb]# start 
+
+
+
+--初始化（任意一台主机，我选51）
+
+[root@host51 ~]# mongo  --host 192.168.4.5mongo  --host  192.168.4.51  --port 270511  --port  27051
+--> config = {
+... _id:"rs1",
+... members:[
+... {_id:0,host:"192.168.4.51:27051"},
+... {_id:1,host:"192.168.4.52:27052"},
+... {_id:2,host:"192.168.4.53:27053"}
+... ]
+... };
+{
+	"_id" : "rs1",
+	"members" : [
+		{
+			"_id" : 0,
+			"host" : "192.168.4.51:27051"
+		},
+		{
+			"_id" : 1,
+			"host" : "192.168.4.52:27052"
+		},
+		{
+			"_id" : 2,
+			"host" : "192.168.4.53:27053"
+		}
+	]
+}
+
+--> rs.initiate(config)
+{
+	"ok" : 1,
+	"operationTime" : Timestamp(1533176863, 1),
+	"$clusterTime" : {
+		"clusterTime" : Timestamp(1533176863, 1),
+		"signature" : {
+			"hash" : BinData(0,"AAAAAAAAAAAAAAAAAAAAAAAAAAA="),
+			"keyId" : NumberLong(0)
+		}
+	}
+}
+--rs1:SECONDARY> rs.status( )
+{
+	"set" : "rs1",
+	"date" : ISODate("2018-08-02T02:28:16.509Z"),
+	"myState" : 1,
+	"term" : NumberLong(1),
+	"heartbeatIntervalMillis" : NumberLong(2000),
+	"optimes" : {
+		"lastCommittedOpTime" : {
+			"ts" : Timestamp(1533176895, 1),
+			"t" : NumberLong(1)
+		},
+		"readConcernMajorityOpTime" : {
+			"ts" : Timestamp(1533176895, 1),
+			"t" : NumberLong(1)
+		},
+		"appliedOpTime" : {
+			"ts" : Timestamp(1533176895, 1),
+			"t" : NumberLong(1)
+		},
+		"durableOpTime" : {
+			"ts" : Timestamp(1533176895, 1),
+			"t" : NumberLong(1)
+		}
+	},
+	"members" : [
+		{
+			"_id" : 0,
+			"name" : "192.168.4.51:27051",
+			"health" : 1,
+			"state" : 1,
+			"stateStr" : "PRIMARY",
+			"uptime" : 270,
+			"optime" : {
+				"ts" : Timestamp(1533176895, 1),
+				"t" : NumberLong(1)2018年 08月 02日 星期四 11:05:25 CST
+			},
+			"optimeDate" : ISODate("2018-08-02T02:28:15Z"),
+			"infoMessage" : "could not find member to sync from",
+			"electionTime" : Timestamp(1533176874, 1),
+			"electionDate" : ISODate("2018-08-02T02:27:54Z"),
+			"configVersion" : 1,
+			"self" : true
+		},
+		{
+			"_id" : 1,
+			"name" : "192.168.4.52:27052",
+			"health" : 1,
+			"state" : 2,
+			"stateStr" : "SECONDARY",
+			"uptime" : 33,
+			"optime" : {
+				"ts" : Timestamp(1533176895, 1),
+				"t" : NumberLong(1)
+			},
+			"optimeDurable" : {
+				"ts" : Timestamp(1533176895, 1),
+				"t" : NumberLong(1)
+			},
+			"optimeDate" : ISODate("2018-08-02T02:28:15Z"),
+			"optimeDurableDate" : ISODate("2018-08-02T02:28:15Z"),
+			"lastHeartbeat" : ISODate("2018-08-02T02:28:16.204Z"),
+			"lastHeartbeatRecv" : ISODate("2018-08-02T02:28:15.439Z"),
+			"pingMs" : NumberLong(0),
+			"syncingTo" : "192.168.4.51:27051",
+			"configVersion" : 1
+		},
+		{
+			"_id" : 2,
+			"name" : "192.168.4.53:27053",
+			"health" : 1,
+			"state" : 2,
+			"stateStr" : "SECONDARY",
+			"uptime" : 33,
+			"optime" : {
+				"ts" : Timestamp(1533176895, 1),
+				"t" : NumberLong(1)
+			},
+			"optimeDurable" : {
+				"ts" : Timestamp(1533176895, 1),
+				"t" : NumberLong(1)
+			},
+			"optimeDate" : ISODate("2018-08-02T02:28:15Z"),
+			"optimeDurableDate" : ISODate("2018-08-02T02:28:15Z"),
+			"lastHeartbeat" : ISODate("2018-08-02T02:28:16.201Z"),
+			"lastHeartbeatRecvmongo  --host  192.168.4.51  --port 27051" : ISODate("2018-08-02T02:28:15.660Z"),
+			"pingMs" : NumberLong(0),2018年 08月 02日 星期四 11:05:25 CST
+			"syncingTo" : "192.168.4.51:27051",
+			"configVersion" : 1
+		}
+	],
+	"ok" : 1,
+	"operationTime" : Timestamp(1533176895, 1),
+	"$clusterTime" : {
+		"clusterTime" : Timestamp(1533176895, 1),
+		"signature" : {
+			"hash" : BinData(0,"AAAAAAAAAAAAAAAAAAAAAAAAAAA="),
+			"keyId" : NumberLong(0)
+		}
+	}
+}
+--rs1:PRIMARY> rs .isMaster( )
+{
+	"hosts" : [
+		"192.168.4.51:27051",
+		"192.168.4.52:27052",
+		"192.168.4.53:27053"
+	],
+	"setName" : "rs1",
+	"setVersion" : 1,
+	"ismaster" : true,
+	"secondary" : false,
+	"primary" : "192.168.4.51:27051",
+	"me" : "192.168.4.51:27051",mongo  --host  192.168.4.51  --port 27051
+	"electionId" : ObjectId("7fffffff0000000000000001"),
+	"lastWrite" : {
+		"opTime" : {
+			"ts" : Timestamp(1533176905, 1),
+			"t" : NumberLong(1)
+		},
+		"lastWriteDate" : ISODate("2018-08-02T02:28:25Z"),
+		"majorityOpTime" : {
+			"ts" : Timestamp(1533176905, 1),
+			"t" : NumberLong(1)
+		},
+		"majorityWriteDate" : ISODate("2018-08-02T02:28:25Z")
+	},
+	"maxBsonObjectSize" : 16777216,
+	"maxMessageSizeBytes" : 48000000,
+	"maxWriteBatchSize" : 100000,
+	"localTime" : ISODate("2018-08-02T02:28:33.533Z"),
+	"logicalSessionTimeoutMinutes" : 30,
+	"minWireVersion" : 0,
+	"maxWireVersion" : 6,
+	"readOnly" : false,
+	"ok" : 1,
+	"operationTime" : Timestamp(1533176905, 1),
+	"$clusterTime" : {
+		"clusterTime" : Timestamp(1533176905, 1),
+		"signature" : {
+			"hash" : BinData(0,"AAAAAAAAAAAAAAAAAAAAAAAAAAA="),
+			"keyId" : NumberLong(0)
+		}
+	}
+}
+--rs1:PRIMARY> 
+
+
+--测试验证
+[root@host51 ~]# mongo  --host 192.168.4.51  --port  27051
+rs1:PRIMARY> show  dbs
+admin   0.000GB
+config  0.000GB
+local   0.000GB
+userdb  0.000GB
+you     0.000GB
+rs1:PRIMARY> use  db101
+switched to db db101
+rs1:PRIMARY> db
+db101
+rs1:PRIMARY> db.c1.save({name:'boy',sex:'girl'})
+WriteResult({ "nInserted" : 1 })
+
+
+
+--在52.53上
+[root@host52 ~]#  mongo  --port  27052  --host   192.168.4.52
+--rs1:SECONDARY> db.getMongo( ).setSlaveOk( )    // db.getMongo( ).setSlaveOk( ) 允许从库查看数据
+rs1:SECONDARY> show dbs
+admin   0.000GB
+config  0.000GB
+db101   0.000GB
+local   0.000GB
+userdb  0.000GB
+you     0.000GB
+rs1:SECONDARY> use  db101
+switched to db db101
+rs1:SECONDARY> show  tables
+c1
+
+
+[root@host53 ~]# mongo  --host  192.168.4.53  --port  27053
+--rs1:SECONDARY> db.getMongo( ).setSlaveOk( )
+rs1:SECONDARY> show tables;
+rs1:SECONDARY> show dbs
+admin   0.000GB
+config  0.000GB
+db101   0.000GB
+local   0.000GB
+userdb  0.000GB
+you     0.000GB
+rs1:SECONDARY> use db101
+switched to db db101
+rs1:SECONDARY> show tables
+c1
+rs1:SECONDARY> db.c1.find()
+{ "_id" : ObjectId("5b627134b753b570da208bbf"), "name" : "boy", "sex" : "girl" }
+
+
+关掉51
+
+--[root@host51 ~]# stop
+
+
+
+
+--[root@host52 ~]#  mongo  --port  27052  --host   192.168.4.52
+rs1:SECONDARY> rs .isMaster( )
+{
+	"hosts" : [
+		"192.168.4.51:27051",
+		"192.168.4.52:27052",
+		"192.168.4.53:27053"
+	],
+	"setName" : "rs1",
+	"setVersion" : 1,
+	"ismaster" : false,
+	"secondary" : true,
+	"primary" : "192.168.4.53:27053",     -- // 53变成了主库
+	"me" : "192.168.4.52:27052",
+	"lastWrite" : {
+		"opTime" : {
+			"ts" : Timestamp(1533180208, 1),
+			"t" : NumberLong(2)
+		},
+		"lastWriteDate" : ISODate("2018-08-02T03:23:28Z"),
+		"majorityOpTime" : {
+			"ts" : Timestamp(1533180208, 1),
+			"t" : NumberLong(2)
+		},
+		"majorityWriteDate" : ISODate("2018-08-02T03:23:28Z")
+	},
+	"maxBsonObjectSize" : 16777216,
+	"maxMessageSizeBytes" : 48000000,
+	"maxWriteBatchSize" : 100000,
+	"localTime" : ISODate("2018-08-02T03:23:35.122Z"),
+	"logicalSessionTimeoutMinutes" : 30,
+	"minWireVersion" : 0,
+	"maxWireVersion" : 6,
+	"readOnly" : false,
+	"ok" : 1,
+	"operationTime" : Timestamp(1533180208, 1),
+	"$clusterTime" : {
+		"clusterTime" : Timestamp(1533180208, 1),
+		"signature" : {
+			"hash" : BinData(0,"AAAAAAAAAAAAAAAAAAAAAAAAAAA="),
+			"keyId" : NumberLong(0)
+		}
+	}
+}
+
+
+
+--[root@host53 ~]#  mongo  --port  27053  --host   192.168.4.53
+rs1:SECONDARY> rs .isMaster( )
+{
+	"hosts" : [
+		"192.168.4.51:27051",
+		"192.168.4.52:27052",
+		"192.168.4.53:27053"
+	],
+	"setName" : "rs1",
+	"setVersion" : 1,
+	"ismaster" : true,
+	"secondary" : false,
+	"primary" : "192.168.4.53:27053",
+	"me" : "192.168.4.53:27053",
+	"electionId" : ObjectId("7fffffff0000000000000002"),
+	"lastWrite" : {
+		"opTime" : {
+			"ts" : Timestamp(1533180228, 1),
+			"t" : NumberLong(2)
+		},
+		"lastWriteDate" : ISODate("2018-08-02T03:23:48Z"),
+		"majorityOpTime" : {
+			"ts" : Timestamp(1533180228, 1),
+			"t" : NumberLong(2)
+		},
+		"majorityWriteDate" : ISODate("2018-08-02T03:23:48Z")
+	},
+	"maxBsonObjectSize" : 16777216,
+	"maxMessageSizeBytes" : 48000000,
+	"maxWriteBatchSize" : 100000,
+	"localTime" : ISODate("2018-08-02T03:23:49.614Z"),
+	"logicalSessionTimeoutMinutes" : 30,
+	"minWireVersion" : 0,
+	"maxWireVersion" : 6,
+	"readOnly" : false,
+	"ok" : 1,
+	"operationTime" : Timestamp(1533180228, 1),
+	"$clusterTime" : {
+		"clusterTime" : Timestamp(1533180228, 1),
+		"signature" : {
+			"hash" : BinData(0,"AAAAAAAAAAAAAAAAAAAAAAAAAAA="),
+			"keyId" : NumberLong(0)
+		}
+	}
+}
+
+
+--修复好51,开启51
+
+[root@host51 ~]# start
+
+
+--[root@host53 ~]#  mongo  --port  27053  --host   192.168.4.53
+
+rs1:SECONDARY> rs .isMaster( )
+{
+	"hosts" : [
+		"192.168.4.51:27051",
+		"192.168.4.52:27052",
+		"192.168.4.53:27053"
+	],
+	"setName" : "rs1",
+	"setVersion" : 1,
+	"ismaster" : true,
+	"secondary" : false,
+	"primary" : "192.168.4.53:27053",
+	"me" : "192.168.4.53:27053",
+	"electionId" : ObjectId("7fffffff0000000000000002"),
+	"lastWrite" : {
+		"opTime" : {
+			"ts" : Timestamp(1533180228, 1),
+			"t" : NumberLong(2)
+		},
+		"lastWriteDate" : ISODate("2018-08-02T03:23:48Z"),
+		"majorityOpTime" : {
+			"ts" : Timestamp(1533180228, 1),
+			"t" : NumberLong(2)
+		},
+		"majorityWriteDate" : ISODate("2018-08-02T03:23:48Z")
+	},
+	"maxBsonObjectSize" : 16777216,
+	"maxMessageSizeBytes" : 48000000,
+	"maxWriteBatchSize" : 100000,
+	"localTime" : ISODate("2018-08-02T03:23:49.614Z"),
+	"logicalSessionTimeoutMinutes" : 30,
+	"minWireVersion" : 0,
+	"maxWireVersion" : 6,
+	"readOnly" : false,
+	"ok" : 1,
+	"operationTime" : Timestamp(1533180228, 1),
+	"$clusterTime" : {
+		"clusterTime" : Timestamp(1533180228, 1),
+		"signature" : {
+			"hash" : BinData(0,"AAAAAAAAAAAAAAAAAAAAAAAAAAA="),
+			"keyId" : NumberLong(0)
+		}
+	}
+}
+rs1:PRIMARY> 
+rs1:PRIMARY> show  dbs
+admin   0.000GB
+config  0.000GB
+db101   0.000GB
+local   0.000GB
+userdb  0.000GB
+you     0.000GB
+rs1:PRIMARY> use  db101
+switched to db db101
+rs1:PRIMARY> db.c3.save({uid:565,gid:696})
+WriteResult({ "nInserted" : 1 })
+
+
+--[root@host52 ~]#  mongo  --port  27052  --host   192.168.4.52
+
+rs1:SECONDARY> rs .isMaster( )
+{
+	"hosts" : [
+		"192.168.4.51:27051",
+		"192.168.4.52:27052",
+		"192.168.4.53:27053"
+	],
+	"setName" : "rs1",
+	"setVersion" : 1,
+	"ismaster" : false,
+	"secondary" : true,
+	"primary" : "192.168.4.53:27053",
+	"me" : "192.168.4.52:27052",
+	"lastWrite" : {
+		"opTime" : {
+			"ts" : Timestamp(1533180208, 1),
+			"t" : NumberLong(2)
+		},
+		"lastWriteDate" : ISODate("2018-08-02T03:23:28Z"),
+		"majorityOpTime" : {
+			"ts" : Timestamp(1533180208, 1),
+			"t" : NumberLong(2)
+		},
+		"majorityWriteDate" : ISODate("2018-08-02T03:23:28Z")
+	},
+	"maxBsonObjectSize" : 16777216,
+	"maxMessageSizeBytes" : 48000000,
+	"maxWriteBatchSize" : 100000,
+	"localTime" : ISODate("2018-08-02T03:23:35.122Z"),
+	"logicalSessionTimeoutMinutes" : 30,
+	"minWireVersion" : 0,
+	"maxWireVersion" : 6,
+	"readOnly" : false,
+	"ok" : 1,
+	"operationTime" : Timestamp(1533180208, 1),
+	"$clusterTime" : {
+		"clusterTime" : Timestamp(1533180208, 1),
+		"signature" : {
+			"hash" : BinData(0,"AAAAAAAAAAAAAAAAAAAAAAAAAAA="),
+			"keyId" : NumberLong(0)
+		}
+	}
+}
+rs1:SECONDARY> 
+rs1:SECONDARY> db
+db101
+rs1:SECONDARY> show tables
+c1
+c2
+c3
+rs1:SECONDARY> db.c3.find()
+{ "_id" : ObjectId("5b627a60c1418f8776822a7f"), "uid" : 565, "gid" : 696 }
+
+
+
+[root@host51 ~]# mongo  --host 192.168.4.51  --port  27051
+
+rs1:SECONDARY> db
+test
+rs1:SECONDARY> show dbs
+2018-08-02T11:29:55.854+0800 E QUERY    [thread1] Error: listDatabases failed:{
+	"operationTime" : Timestamp(1533180588, 1),
+	"ok" : 0,
+	"errmsg" : "not master and slaveOk=false",
+	"code" : 13435,
+	"codeName" : "NotMasterNoSlaveOk",
+	"$clusterTime" : {
+		"clusterTime" : Timestamp(1533180588, 1),
+		"signature" : {
+			"hash" : BinData(0,"AAAAAAAAAAAAAAAAAAAAAAAAAAA="),
+			"keyId" : NumberLong(0)
+		}
+	}
+} :
+_getErrorWithCode@src/mongo/shell/utils.js:25:13rs1:PRIMARY> db.c1.save({_id:"abc",name:'bob'})
+WriteResult({ "nMatched" : 0, "nUpserted" : 1, "nModified" : 0, "_id" : "abc" })
+rs1:PRIMARY> db.c1.find()
+{ "_id" : "abc", "name" : "bob" }
+rs1:PRIMARY> db.c1.save({_id:"abcd",name:'bob'})
+WriteResult({ "nMatched" : 0, "nUpserted" : 1, "nModified" : 0, "_id" : "abcd" })
+rs1:PRIMARY> db.c1.find()
+{ "_id" : "abc", "name" : "bob" }
+{ "_id" : "abcd", "name" : "bob" }
+rs1:PRIMARY> db.c1.save({_id:"abc",name:'tom'})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+rs1:PRIMARY> db.c1.find()
+{ "_id" : "abc", "name" : "tom" }
+{ "_id" : "abcd", "name" : "bob" }
+rs1:PRIMARY> db.c1.save({_id:"abce",name:'tom'})
+WriteResult({ "nMatched" : 0, "nUpserted" : 1, "nModified" : 0, "_id" : "abce" })
+rs1:PRIMARY> db.c1.find()
+{ "_id" : "abc", "name" : "tom" }
+{ "_id" : "abcd", "name" : "bob" }
+{ "_id" : "abce", "name" : "tom" }
+rs1:PRIMARY> db.c1.insert({_id:'abc',name:'tom'})
+WriteResult({
+	"nInserted" : 0,
+	"writeError" : {
+		"code" : 11000,
+		"errmsg" : "E11000 duplicate key error collection: userdb.c1 index: _id_ dup key: { : \"abc\" }"
+	}
+})
+rs1:PRIMARY> db.c1.insert({_id:'abcf',name:'tom'})
+WriteResult({ "nInserted" : 1 })
+rs1:PRIMARY> db.c1.find()
+{ "_id" : "abc", "name" : "tom" }
+{ "_id" : "abcd", "name" : "bob" }
+{ "_id" : "abce", "name" : "tom" }
+{ "_id" : "abcf", "name" : "tom" }
+rs1:PRIMARY> db.c1.insert({_id:'abcf',name:'toma'})
+WriteResult({
+	"nInserted" : 0,
+	"writeError" : {
+		"code" : 11000,
+		"errmsg" : "E11000 duplicate key error collection: userdb.c1 index: _id_ dup key: { : \"abcf\" }"
+	}
+})
+rs1:PRIMARY> db.c1.find()
+{ "_id" : "abc", "name" : "tom" }
+{ "_id" : "abcd", "name" : "bob" }
+{ "_id" : "abce", "name" : "tom" }
+{ "_id" : "abcf", "name" : "tom" }
+
+Mongo.prototype.getDBs@src/mongo/shell/mongo.js:65:1
+shellHelper.show@src/mongo/shell/utils.js:816:19
+shellHelper@src/mongo/shell/utils.js:706:15
+@(shellhelp2):1:1
+rs1:SECONDARY> db.getMongo( ).setSlaveOk( )     --//此步必不可少，否则查不出来数据库信息
+rs1:SECONDARY> show  dbs
+admin   0.000GB
+config  0.000GB
+db101   0.000GB
+local   0.000GB
+userdb  0.000GB
+you     0.000GB
+rs1:SECONDARY> use db101
+switched to db db101
+rs1:SECONDARY> db.c3.find()
+{ "_id" : ObjectId("5b627a60c1418f8776822a7f"), "uid" : 565, "gid" : 696 }
+
+
+##########################################################################################
+
+插入文档
+
+save( )
+• 格式
+– db. 集合名 .save({ key:“ 值”, key:” 值” })
+
+• 注意
+– 集合不存在时创建集合,后插入记录
+– _id 字段值 已存在时 修改文档字段值
+– _id 字段值 不已存在时 插入文档
+
+
+insert()
+• 格式
+– db. 集合名 .insert({key:“ 值”, key:” 值” })
+
+• 注意
+– 集合不存在时创建集合,后插入记录
+– _id 字段值 已存在时放弃插入
+– _id 字段值 不已存在时 插入文档
+
+
+insert()插入多条记录
+db. 集合名 .insertMany(
+[
+{name:"xiaojiu“,age:19} ,
+{name:"laoshi“,email:”yaya@tedu.cn”}
+]
+)
+
+
+
+
+rs1:PRIMARY> db.c1.save({_id:"abc",name:'bob'})
+WriteResult({ "nMatched" : 0, "nUpserted" : 1, "nModified" : 0, "_id" : "abc" })
+rs1:PRIMARY> db.c1.find()
+{ "_id" : "abc", "name" : "bob" }
+rs1:PRIMARY> db.c1.save({_id:"abcd",name:'bob'})
+WriteResult({ "nMatched" : 0, "nUpserted" : 1, "nModified" : 0, "_id" : "abcd" })
+rs1:PRIMARY> db.c1.find()
+{ "_id" : "abc", "name" : "bob" }
+{ "_id" : "abcd", "name" : "bob" }
+rs1:PRIMARY> db.c1.save({_id:"abc",name:'tom'})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+rs1:PRIMARY> db.c1.find()
+{ "_id" : "abc", "name" : "tom" }
+{ "_id" : "abcd", "name" : "bob" }
+rs1:PRIMARY> db.c1.save({_id:"abce",name:'tom'})
+WriteResult({ "nMatched" : 0, "nUpserted" : 1, "nModified" : 0, "_id" : "abce" })
+rs1:PRIMARY> db.c1.find()
+{ "_id" : "abc", "name" : "tom" }
+{ "_id" : "abcd", "name" : "bob" }
+{ "_id" : "abce", "name" : "tom" }
+rs1:PRIMARY> db.c1.insert({_id:'abc',name:'tom'})
+WriteResult({
+	"nInserted" : 0,
+	"writeError" : {
+		"code" : 11000,
+		"errmsg" : "E11000 duplicate key error collection: userdb.c1 index: _id_ dup key: { : \"abc\" }"
+	}
+})
+rs1:PRIMARY> db.c1.insert({_id:'abcf',name:'tom'})
+WriteResult({ "nInserted" : 1 })
+rs1:PRIMARY> db.c1.find()
+{ "_id" : "abc", "name" : "tom" }
+{ "_id" : "abcd", "name" : "bob" }
+{ "_id" : "abce", "name" : "tom" }
+{ "_id" : "abcf", "name" : "tom" }
+rs1:PRIMARY> db.c1.insert({_id:'abcf',name:'toma'})
+WriteResult({
+	"nInserted" : 0,
+	"writeError" : {
+		"code" : 11000,
+		"errmsg" : "E11000 duplicate key error collection: userdb.c1 index: _id_ dup key: { : \"abcf\" }"
+	}
+})
+rs1:PRIMARY> db.c1.find()
+{ "_id" : "abc", "name" : "tom" }
+{ "_id" : "abcd", "name" : "bob" }
+{ "_id" : "abce", "name" : "tom" }
+{ "_id" : "abcf", "name" : "tom" }
+
+
+
+
+--rs1:PRIMARY> db.c2.insert( [ {name:'xiaoqu',age:56}, {anem:'laoshi',email:'yaya@tedu.cn'}] )
+BulkWriteResult({
+	"writeErrors" : [ ],
+	"writeConcernErrors" : [ ],
+	"nInserted" : 2,
+	"nUpserted" : 0,
+	"nMatched" : 0,
+	"nModified" : 0,
+	"nRemoved" : 0,
+	"upserted" : [ ]
+})
+rs1:PRIMARY> 
+--rs1:PRIMARY> db.c2.find()         //默认一次显示20行
+{ "_id" : ObjectId("5b62a3d79cc7da33c4a1ebf6"), "name" : "xiaoqu", "age" : 56 }
+{ "_id" : ObjectId("5b62a3d79cc7da33c4a1ebf7"), "anem" : "laoshi", "email" : "yaya@tedu.cn" }
+rs1:PRIMARY> 
+
+
+--rs1:PRIMARY> db.coluser.find()
+{ "_id" : ObjectId("5b61747f4f82a7a973fb935e"), "name" : "yay", "password" : "45", "uid" : "5", "gid" : "6", "comment" : "my tecaher", "homedir" : "/home/dir", "shell" : "/bin/bash" }
+{ "_id" : ObjectId("5b61798dcb5073d0d51c31b9"), "name" : "yay", "password" : "45", "uid" : "5", "gid" : "6", "comment" : "my tecaher", "homedir" : "/home/dir", "shell" : "/bin/bash" }
+{ "_id" : ObjectId("5b6182053cc3595a80b19690"), "name" : "yay", "password" : 45, "uid" : 5, "gid" : 6, "comment" : "my tecaher", "homedir" : "/home/dir", "shell" : "/bin/bash" }
+{ "_id" : ObjectId("5b6182053cc3595a80b19691"), "name" : "yay", "password" : 45, "uid" : 5, "gid" : 6, "comment" : "my tecaher", "homedir" : "/home/dir", "shell" : "/bin/bash" }
+{ "_id" : ObjectId("5b6182053cc3595a80b19692"), "name" : "root", "password" : "x", "uid" : 0, "gid" : 0, "comment" : "root", "homedir" : "/root", "shell" : "/bin/bash" }
+{ "_id" : ObjectId("5b6182053cc3595a80b19693"), "name" : "bin", "password" : "x", "uid" : 1, "gid" : 1, "comment" : "bin", "homedir" : "/bin", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b19694"), "name" : "daemon", "password" : "x", "uid" : 2, "gid" : 2, "comment" : "daemon", "homedir" : "/sbin", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b19695"), "name" : "adm", "password" : "x", "uid" : 3, "gid" : 4, "comment" : "adm", "homedir" : "/var/adm", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b19696"), "name" : "lp", "password" : "x", "uid" : 4, "gid" : 7, "comment" : "lp", "homedir" : "/var/spool/lpd", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b19697"), "name" : "sync", "password" : "x", "uid" : 5, "gid" : 0, "comment" : "sync", "homedir" : "/sbin", "shell" : "/bin/sync" }
+{ "_id" : ObjectId("5b6182053cc3595a80b19698"), "name" : "shutdown", "password" : "x", "uid" : 6, "gid" : 0, "comment" : "shutdown", "homedir" : "/sbin", "shell" : "/sbin/shutdown" }
+{ "_id" : ObjectId("5b6182053cc3595a80b19699"), "name" : "halt", "password" : "x", "uid" : 7, "gid" : 0, "comment" : "halt", "homedir" : "/sbin", "shell" : "/sbin/halt" }
+{ "_id" : ObjectId("5b6182053cc3595a80b1969a"), "name" : "mail", "password" : "x", "uid" : 8, "gid" : 12, "comment" : "mail", "homedir" : "/var/spool/mail", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b1969b"), "name" : "operator", "password" : "x", "uid" : 11, "gid" : 0, "comment" : "operator", "homedir" : "/root", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b1969c"), "name" : "games", "password" : "x", "uid" : 12, "gid" : 100, "comment" : "games", "homedir" : "/usr/games", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b1969d"), "name" : "ftp", "password" : "x", "uid" : 14, "gid" : 50, "comment" : "FTP User", "homedir" : "/var/ftp", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b1969e"), "name" : "nobody", "password" : "x", "uid" : 99, "gid" : 99, "comment" : "Nobody", "homedir" : "/", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b1969f"), "name" : "systemd-network", "password" : "x", "uid" : 192, "gid" : 192, "comment" : "systemd Network Management", "homedir" : "/", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b196a0"), "name" : "dbus", "password" : "x", "uid" : 81, "gid" : 81, "comment" : "System message bus", "homedir" : "/", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b196a1"), "name" : "polkitd", "password" : "x", "uid" : 999, "gid" : 998, "comment" : "User for polkitd", "homedir" : "/", "shell" : "/sbin/nologin" }
+Type "it" for more
+--rs1:PRIMARY> db.coluser.find({},{_id:0,name:1,shell:1})
+{ "name" : "yay", "shell" : "/bin/bash" }
+{ "name" : "yay", "shell" : "/bin/bash" }
+{ "name" : "yay", "shell" : "/bin/bash" }
+{ "name" : "yay", "shell" : "/bin/bash" }
+{ "name" : "root", "shell" : "/bin/bash" }
+{ "name" : "bin", "shell" : "/sbin/nologin" }
+{ "name" : "daemon", "shell" : "/sbin/nologin" }
+{ "name" : "adm", "shell" : "/sbin/nologin" }
+{ "name" : "lp", "shell" : "/sbin/nologin" }
+{ "name" : "sync", "shell" : "/bin/sync" }
+{ "name" : "shutdown", "shell" : "/sbin/shutdown" }
+{ "name" : "halt", "shell" : "/sbin/halt" }
+{ "name" : "mail", "shell" : "/sbin/nologin" }
+{ "name" : "operator", "shell" : "/sbin/nologin" }
+{ "name" : "games", "shell" : "/sbin/nologin" }
+{ "name" : "ftp", "shell" : "/sbin/nologin" }
+{ "name" : "nobody", "shell" : "/sbin/nologin" }
+{ "name" : "systemd-network", "shell" : "/sbin/nologin" }
+{ "name" : "dbus", "shell" : "/sbin/nologin" }
+{ "name" : "polkitd", "shell" : "/sbin/nologin" }
+Type "it" for more
+--rs1:PRIMARY> db.coluser.find({_id:0,name:1,shell:1})
+--rs1:PRIMARY> db.coluser.find({name:1,shell:1})
+--rs1:PRIMARY> db.coluser.find({},{name:1,shell:1})
+{ "_id" : ObjectId("5b61747f4f82a7a973fb935e"), "name" : "yay", "shell" : "/bin/bash" }
+{ "_id" : ObjectId("5b61798dcb5073d0d51c31b9"), "name" : "yay", "shell" : "/bin/bash" }
+{ "_id" : ObjectId("5b6182053cc3595a80b19690"), "name" : "yay", "shell" : "/bin/bash" }
+{ "_id" : ObjectId("5b6182053cc3595a80b19691"), "name" : "yay", "shell" : "/bin/bash" }
+{ "_id" : ObjectId("5b6182053cc3595a80b19692"), "name" : "root", "shell" : "/bin/bash" }
+{ "_id" : ObjectId("5b6182053cc3595a80b19693"), "name" : "bin", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b19694"), "name" : "daemon", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b19695"), "name" : "adm", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b19696"), "name" : "lp", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b19697"), "name" : "sync", "shell" : "/bin/sync" }
+{ "_id" : ObjectId("5b6182053cc3595a80b19698"), "name" : "shutdown", "shell" : "/sbin/shutdown" }
+{ "_id" : ObjectId("5b6182053cc3595a80b19699"), "name" : "halt", "shell" : "/sbin/halt" }
+{ "_id" : ObjectId("5b6182053cc3595a80b1969a"), "name" : "mail", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b1969b"), "name" : "operator", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b1969c"), "name" : "games", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b1969d"), "name" : "ftp", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b1969e"), "name" : "nobody", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b1969f"), "name" : "systemd-network", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b196a0"), "name" : "dbus", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b196a1"), "name" : "polkitd", "shell" : "/sbin/nologin" }
+Type "it" for more
+--rs1:PRIMARY> db.coluser.find({shell:'/bin/bash'})
+{ "_id" : ObjectId("5b61747f4f82a7a973fb935e"), "name" : "yay", "password" : "45", "uid" : "5", "gid" : "6", "comment" : "my tecaher", "homedir" : "/home/dir", "shell" : "/bin/bash" }
+{ "_id" : ObjectId("5b61798dcb5073d0d51c31b9"), "name" : "yay", "password" : "45", "uid" : "5", "gid" : "6", "comment" : "my tecaher", "homedir" : "/home/dir", "shell" : "/bin/bash" }
+{ "_id" : ObjectId("5b6182053cc3595a80b19690"), "name" : "yay", "password" : 45, "uid" : 5, "gid" : 6, "comment" : "my tecaher", "homedir" : "/home/dir", "shell" : "/bin/bash" }
+{ "_id" : ObjectId("5b6182053cc3595a80b19691"), "name" : "yay", "password" : 45, "uid" : 5, "gid" : 6, "comment" : "my tecaher", "homedir" : "/home/dir", "shell" : "/bin/bash" }
+{ "_id" : ObjectId("5b6182053cc3595a80b19692"), "name" : "root", "password" : "x", "uid" : 0, "gid" : 0, "comment" : "root", "homedir" : "/root", "shell" : "/bin/bash" }
+{ "_id" : ObjectId("5b6182053cc3595a80b196b9"), "name" : "lisi", "password" : "x", "uid" : 1000, "gid" : 1000, "comment" : "lisi", "homedir" : "/home/lisi", "shell" : "/bin/bash" }
+
+
+
+
+
+
+
+limit( 数字 ) // 显示前几行
+> db. 集合名 .find().limit(3)
+
+--rs1:PRIMARY> db.coluser.find().limit(2)
+{ "_id" : ObjectId("5b61747f4f82a7a973fb935e"), "name" : "yay", "password" : "45", "uid" : "5", "gid" : "6", "comment" : "my tecaher", "homedir" : "/home/dir", "shell" : "/bin/bash" }
+{ "_id" : ObjectId("5b61798dcb5073d0d51c31b9"), "name" : "yay", "password" : "45", "uid" : "5", "gid" : "6", "comment" : "my tecaher", "homedir" : "/home/dir", "shell" : "/bin/bash" }
+
+
+skip( 数字 )
+// 跳过前几行
+
+--rs1:PRIMARY> db.coluser.find()
+{ "_id" : ObjectId("5b61747f4f82a7a973fb935e"), "name" : "yay", "password" : "45", "uid" : "5", "gid" : "6", "comment" : "my tecaher", "homedir" : "/home/dir", "shell" : "/bin/bash" }
+{ "_id" : ObjectId("5b61798dcb5073d0d51c31b9"), "name" : "yay", "password" : "45", "uid" : "5", "gid" : "6", "comment" : "my tecaher", "homedir" : "/home/dir", "shell" : "/bin/bash" }
+{ "_id" : ObjectId("5b6182053cc3595a80b19690"), "name" : "yay", "password" : 45, "uid" : 5, "gid" : 6, "comment" : "my tecaher", "homedir" : "/home/dir", "shell" : "/bin/bash" }
+{ "_id" : ObjectId("5b6182053cc3595a80b19691"), "name" : "yay", "password" : 45, "uid" : 5, "gid" : 6, "comment" : "my tecaher", "homedir" : "/home/dir", "shell" : "/bin/bash" }
+{ "_id" : ObjectId("5b6182053cc3595a80b19692"), "name" : "root", "password" : "x", "uid" : 0, "gid" : 0, "comment" : "root", "homedir" : "/root", "shell" : "/bin/bash" }
+{ "_id" : ObjectId("5b6182053cc3595a80b19693"), "name" : "bin", "password" : "x", "uid" : 1, "gid" : 1, "comment" : "bin", "homedir" : "/bin", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b19694"), "name" : "daemon", "password" : "x", "uid" : 2, "gid" : 2, "comment" : "daemon", "homedir" : "/sbin", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b19695"), "name" : "adm", "password" : "x", "uid" : 3, "gid" : 4, "comment" : "adm", "homedir" : "/var/adm", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b19696"), "name" : "lp", "password" : "x", "uid" : 4, "gid" : 7, "comment" : "lp", "homedir" : "/var/spool/lpd", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b19697"), "name" : "sync", "password" : "x", "uid" : 5, "gid" : 0, "comment" : "sync", "homedir" : "/sbin", "shell" : "/bin/sync" }
+{ "_id" : ObjectId("5b6182053cc3595a80b19698"), "name" : "shutdown", "password" : "x", "uid" : 6, "gid" : 0, "comment" : "shutdown", "homedir" : "/sbin", "shell" : "/sbin/shutdown" }
+{ "_id" : ObjectId("5b6182053cc3595a80b19699"), "name" : "halt", "password" : "x", "uid" : 7, "gid" : 0, "comment" : "halt", "homedir" : "/sbin", "shell" : "/sbin/halt" }
+{ "_id" : ObjectId("5b6182053cc3595a80b1969a"), "name" : "mail", "password" : "x", "uid" : 8, "gid" : 12, "comment" : "mail", "homedir" : "/var/spool/mail", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b1969b"), "name" : "operator", "password" : "x", "uid" : 11, "gid" : 0, "comment" : "operator", "homedir" : "/root", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b1969c"), "name" : "games", "password" : "x", "uid" : 12, "gid" : 100, "comment" : "games", "homedir" : "/usr/games", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b1969d"), "name" : "ftp", "password" : "x", "uid" : 14, "gid" : 50, "comment" : "FTP User", "homedir" : "/var/ftp", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b1969e"), "name" : "nobody", "password" : "x", "uid" : 99, "gid" : 99, "comment" : "Nobody", "homedir" : "/", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b1969f"), "name" : "systemd-network", "password" : "x", "uid" : 192, "gid" : 192, "comment" : "systemd Network Management", "homedir" : "/", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b196a0"), "name" : "dbus", "password" : "x", "uid" : 81, "gid" : 81, "comment" : "System message bus", "homedir" : "/", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b196a1"), "name" : "polkitd", "password" : "x", "uid" : 999, "gid" : 998, "comment" : "User for polkitd", "homedir" : "/", "shell" : "/sbin/nologin" }
+Type "it" for more
+
+
+--– > db. 集合名 .find().skip(2)
+
+rs1:PRIMARY> db.coluser.find().skip(5)
+{ "_id" : ObjectId("5b6182053cc3595a80b19693"), "name" : "bin", "password" : "x", "uid" : 1, "gid" : 1, "comment" : "bin", "homedir" : "/bin", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b19694"), "name" : "daemon", "password" : "x", "uid" : 2, "gid" : 2, "comment" : "daemon", "homedir" : "/sbin", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b19695"), "name" : "adm", "password" : "x", "uid" : 3, "gid" : 4, "comment" : "adm", "homedir" : "/var/adm", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b19696"), "name" : "lp", "password" : "x", "uid" : 4, "gid" : 7, "comment" : "lp", "homedir" : "/var/spool/lpd", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b19697"), "name" : "sync", "password" : "x", "uid" : 5, "gid" : 0, "comment" : "sync", "homedir" : "/sbin", "shell" : "/bin/sync" }
+{ "_id" : ObjectId("5b6182053cc3595a80b19698"), "name" : "shutdown", "password" : "x", "uid" : 6, "gid" : 0, "comment" : "shutdown", "homedir" : "/sbin", "shell" : "/sbin/shutdown" }
+{ "_id" : ObjectId("5b6182053cc3595a80b19699"), "name" : "halt", "password" : "x", "uid" : 7, "gid" : 0, "comment" : "halt", "homedir" : "/sbin", "shell" : "/sbin/halt" }
+{ "_id" : ObjectId("5b6182053cc3595a80b1969a"), "name" : "mail", "password" : "x", "uid" : 8, "gid" : 12, "comment" : "mail", "homedir" : "/var/spool/mail", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b1969b"), "name" : "operator", "password" : "x", "uid" : 11, "gid" : 0, "comment" : "operator", "homedir" : "/root", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b1969c"), "name" : "games", "password" : "x", "uid" : 12, "gid" : 100, "comment" : "games", "homedir" : "/usr/games", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b1969d"), "name" : "ftp", "password" : "x", "uid" : 14, "gid" : 50, "comment" : "FTP User", "homedir" : "/var/ftp", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b1969e"), "name" : "nobody", "password" : "x", "uid" : 99, "gid" : 99, "comment" : "Nobody", "homedir" : "/", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b1969f"), "name" : "systemd-network", "password" : "x", "uid" : 192, "gid" : 192, "comment" : "systemd Network Management", "homedir" : "/", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b196a0"), "name" : "dbus", "password" : "x", "uid" : 81, "gid" : 81, "comment" : "System message bus", "homedir" : "/", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b196a1"), "name" : "polkitd", "password" : "x", "uid" : 999, "gid" : 998, "comment" : "User for polkitd", "homedir" : "/", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b196a2"), "name" : "libstoragemgmt", "password" : "x", "uid" : 998, "gid" : 996, "comment" : "daemon account for libstoragemgmt", "homedir" : "/var/run/lsm", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b196a3"), "name" : "rpc", "password" : "x", "uid" : 32, "gid" : 32, "comment" : "Rpcbind Daemon", "homedir" : "/var/lib/rpcbind", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b196a4"), "name" : "colord", "password" : "x", "uid" : 997, "gid" : 995, "comment" : "User for colord", "homedir" : "/var/lib/colord", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b196a5"), "name" : "saslauth", "password" : "x", "uid" : 996, "gid" : 76, "comment" : "Saslauthd user", "homedir" : "/run/saslauthd", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b196a6"), "name" : "abrt", "password" : "x", "uid" : 173, "gid" : 173, "comment" : "", "homedir" : "/etc/abrt", "shell" : "/sbin/nologin" }
+Type "it" for more
+
+
+
+rs1:PRIMARY> db.coluser.find({},{_id:0,name:1,uid:1}).sort({uid:1})
+{ "name" : "root", "uid" : 0 }
+{ "name" : "bin", "uid" : 1 }
+{ "name" : "daemon", "uid" : 2 }
+{ "name" : "adm", "uid" : 3 }
+{ "name" : "lp", "uid" : 4 }
+{ "name" : "yay", "uid" : 5 }
+{ "name" : "yay", "uid" : 5 }
+{ "name" : "sync", "uid" : 5 }
+{ "name" : "shutdown", "uid" : 6 }
+{ "name" : "halt", "uid" : 7 }
+{ "name" : "mail", "uid" : 8 }
+{ "name" : "operator", "uid" : 11 }
+{ "name" : "games", "uid" : 12 }
+{ "name" : "ftp", "uid" : 14 }
+{ "name" : "rpcuser", "uid" : 29 }
+{ "name" : "rpc", "uid" : 32 }
+{ "name" : "ntp", "uid" : 38 }
+{ "name" : "gdm", "uid" : 42 }
+{ "name" : "tss", "uid" : 59 }
+{ "name" : "avahi", "uid" : 70 }
+Type "it" for more
+
+
+--范围比较
+– $in 在...里
+– $nin 不在...里
+– $or 或
+– > db.user.find({uid:{$in:[1,6,9]}})
+– > db.user.find({uid:{$nin:[1,6,9]}})
+– > db.user.find({$or: [{name:"root"},{uid:1} ]})
+
+                  
+--rs1:PRIMARY> db.coluser.find({uid:{$in:[1,6,9]}})                     //$in 在...里
+{ "_id" : ObjectId("5b6182053cc3595a80b19693"), "name" : "bin", "password" : "x", "uid" : 1, "gid" : 1, "comment" : "bin", "homedir" : "/bin", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b19698"), "name" : "shutdown", "password" : "x", "uid" : 6, "gid" : 0, "comment" : "shutdown", "homedir" : "/sbin", "shell" : "/sbin/shutdown" }
+rs1:PRIMARY> 
+
+ 
+--rs1:PRIMARY> db.coluser.find({uid:{$nin:[1,6,9]}})                    //$nin 不在...里
+{ "_id" : ObjectId("5b61747f4f82a7a973fb935e"), "name" : "yay", "password" : "45", "uid" : "5", "gid" : "6", "comment" : "my tecaher", "homedir" : "/home/dir", "shell" : "/bin/bash" }
+{ "_id" : ObjectId("5b61798dcb5073d0d51c31b9"), "name" : "yay", "password" : "45", "uid" : "5", "gid" : "6", "comment" : "my tecaher", "homedir" : "/home/dir", "shell" : "/bin/bash" }
+{ "_id" : ObjectId("5b6182053cc3595a80b19690"), "name" : "yay", "password" : 45, "uid" : 5, "gid" : 6, "comment" : "my tecaher", "homedir" : "/home/dir", "shell" : "/bin/bash" }
+{ "_id" : ObjectId("5b6182053cc3595a80b19691"), "name" : "yay", "password" : 45, "uid" : 5, "gid" : 6, "comment" : "my tecaher", "homedir" : "/home/dir", "shell" : "/bin/bash" }
+{ "_id" : ObjectId("5b6182053cc3595a80b19692"), "name" : "root", "password" : "x", "uid" : 0, "gid" : 0, "comment" : "root", "homedir" : "/root", "shell" : "/bin/bash" }
+{ "_id" : ObjectId("5b6182053cc3595a80b19694"), "name" : "daemon", "password" : "x", "uid" : 2, "gid" : 2, "comment" : "daemon", "homedir" : "/sbin", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b19695"), "name" : "adm", "password" : "x", "uid" : 3, "gid" : 4, "comment" : "adm", "homedir" : "/var/adm", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b19696"), "name" : "lp", "password" : "x", "uid" : 4, "gid" : 7, "comment" : "lp", "homedir" : "/var/spool/lpd", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b19697"), "name" : "sync", "password" : "x", "uid" : 5, "gid" : 0, "comment" : "sync", "homedir" : "/sbin", "shell" : "/bin/sync" }
+{ "_id" : ObjectId("5b6182053cc3595a80b19699"), "name" : "halt", "password" : "x", "uid" : 7, "gid" : 0, "comment" : "halt", "homedir" : "/sbin", "shell" : "/sbin/halt" }
+{ "_id" : ObjectId("5b6182053cc3595a80b1969a"), "name" : "mail", "password" : "x", "uid" : 8, "gid" : 12, "comment" : "mail", "homedir" : "/var/spool/mail", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b1969b"), "name" : "operator", "password" : "x", "uid" : 11, "gid" : 0, "comment" : "operator", "homedir" : "/root", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b1969c"), "name" : "games", "password" : "x", "uid" : 12, "gid" : 100, "comment" : "games", "homedir" : "/usr/games", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b1969d"), "name" : "ftp", "password" : "x", "uid" : 14, "gid" : 50, "comment" : "FTP User", "homedir" : "/var/ftp", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b1969e"), "name" : "nobody", "password" : "x", "uid" : 99, "gid" : 99, "comment" : "Nobody", "homedir" : "/", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b1969f"), "name" : "systemd-network", "password" : "x", "uid" : 192, "gid" : 192, "comment" : "systemd Network Management", "homedir" : "/", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b196a0"), "name" : "dbus", "password" : "x", "uid" : 81, "gid" : 81, "comment" : "System message bus", "homedir" : "/", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b196a1"), "name" : "polkitd", "password" : "x", "uid" : 999, "gid" : 998, "comment" : "User for polkitd", "homedir" : "/", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b196a2"), "name" : "libstoragemgmt", "password" : "x", "uid" : 998, "gid" : 996, "comment" : "daemon account for libstoragemgmt", "homedir" : "/var/run/lsm", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b196a3"), "name" : "rpc", "password" : "x", "uid" : 32, "gid" : 32, "comment" : "Rpcbind Daemon", "homedir" : "/var/lib/rpcbind", "shell" : "/sbin/nologin" }
+Type "it" for more
+  
+--rs1:PRIMARY> db.coluser.find({$or:[{name:"root"},{uid:1}]})                  //$or 或
+{ "_id" : ObjectId("5b6182053cc3595a80b19692"), "name" : "root", "password" : "x", "uid" : 0, "gid" : 0, "comment" : "root", "homedir" : "/root", "shell" : "/bin/bash" }
+{ "_id" : ObjectId("5b6182053cc3595a80b19693"), "name" : "bin", "password" : "x", "uid" : 1, "gid" : 1, "comment" : "bin", "homedir" : "/bin", "shell" : "/sbin/nologin" }
+rs1:PRIMARY> 
+
+
+--正则匹配
+– > db.user.find({name: /^a/ })
+• 数值比较
+– $lt $lte $gt $gte $ne
+< <= > >= !=
+– db.user.find( { uid: { $gte:10,$lte:40} } , {_id:0,name
+:1,uid:1})
+– db.user.find({uid:{$lte:5,}})
+
+
+
+--rs1:PRIMARY> db.coluser.find({name:/^a/})
+{ "_id" : ObjectId("5b6182053cc3595a80b19695"), "name" : "adm", "password" : "x", "uid" : 3, "gid" : 4, "comment" : "adm", "homedir" : "/var/adm", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b196a6"), "name" : "abrt", "password" : "x", "uid" : 173, "gid" : 173, "comment" : "", "homedir" : "/etc/abrt", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b196b5"), "name" : "avahi", "password" : "x", "uid" : 70, "gid" : 70, "comment" : "Avahi mDNS/DNS-SD Stack", "homedir" : "/var/run/avahi-daemon", "shell" : "/sbin/nologin" }
+
+
+
+
+--rs1:PRIMARY> db.coluser.find({uid:{$gte:10,$lte:50}})
+{ "_id" : ObjectId("5b6182053cc3595a80b1969b"), "name" : "operator", "password" : "x", "uid" : 11, "gid" : 0, "comment" : "operator", "homedir" : "/root", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b1969c"), "name" : "games", "password" : "x", "uid" : 12, "gid" : 100, "comment" : "games", "homedir" : "/usr/games", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b1969d"), "name" : "ftp", "password" : "x", "uid" : 14, "gid" : 50, "comment" : "FTP User", "homedir" : "/var/ftp", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b196a3"), "name" : "rpc", "password" : "x", "uid" : 32, "gid" : 32, "comment" : "Rpcbind Daemon", "homedir" : "/var/lib/rpcbind", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b196ae"), "name" : "rpcuser", "password" : "x", "uid" : 29, "gid" : 29, "comment" : "RPC Service User", "homedir" : "/var/lib/nfs", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b196b2"), "name" : "gdm", "password" : "x", "uid" : 42, "gid" : 42, "comment" : "", "homedir" : "/var/lib/gdm", "shell" : "/sbin/nologin" }
+{ "_id" : ObjectId("5b6182053cc3595a80b196b7"), "name" : "ntp", "password" : "x", "uid" : 38, "gid" : 38, "comment" : "", "homedir" : "/etc/ntp", "shell" : "/sbin/nologin" }
+rs1:PRIMARY> 
 
 
 
