@@ -1,0 +1,252 @@
+##################################################################################
+
+2018年 08月 03日 星期五 11:07:41 CST
+
+存储技术分类：
+SAN（Storage Area Network，简称SAN）:存储区域网络  ------>scsi协议
+NAS（Network Attached Storage）网络附属存储        ------>tcp/ip协议
+DAS：直连式存储(Direct-Attached Storage，简称DAS)
+FC       8Gbps   
+SCSI 小型计算机系统接口
+      
+sas（Serial Attached SCSI），串行连接SCSI接口）     6Gbps
+HBA（Host Bus Adapter，HBA）主机总线适配器
+
+scsi协议-->传输的是块，传输速度快（Small Computer System Interface; 简写：SCSI）小型计算机系统接口
+tcp/ip协议 传输的是数据包
+
+网卡聚合
+SATA（Serial Advanced Technology Attachment，串行高级技术附件）
+ethernet：  iscsi协议
+
+HPC：(High Performance Computing)  高性能计算机群 
+服务器扩展槽：pci-e
+
+#################################################################################
+
+
+target端 ，提供存储端
+192.168.4.51
+
+initiator端，使用存储端
+192.168.4.52  --> mysql1
+192.168.4.52  --> mysql2
+
+virt-manager ————> 启动虚拟系统管理器
+
+[root@host51 ~]# ip a  ls  dev eth0
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000
+    link/ether 52:54:00:80:f4:d8 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.4.51/24 brd 192.168.4.255 scope global eth0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::bddf:1d0e:5c64:33d7/64 scope link 
+       valid_lft forever preferred_lft forever
+
+打开虚拟系统管理器-->host51-->打开-->小灯泡-->添加硬件-->存储-->20.0-->VirtlO-->完成
+
+[root@host51 ~]# lsblk
+NAME          MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+sda             8:0    0   10G  0 disk 
+sr0            11:0    1 1024M  0 rom  
+vda           252:0    0   20G  0 disk 
+├─vda1        252:1    0    1G  0 part /boot
+└─vda2        252:2    0   19G  0 part 
+  ├─rhel-root 253:0    0   17G  0 lvm  /
+  └─rhel-swap 253:1    0    2G  0 lvm  
+vdb           252:16   0   20G  0 disk 
+
+
+1）定义后端存储
+/> targetcli
+/> ls
+o- / ..............................................................2018年 08月 03日 星期五 11:07:41 CST................ [...]
+  o- backstores ................................................................... [...]
+  | o- block ....................................................... [Storage Objects: 0]
+  | o- fileio ...................................................... [Storage Objects: 0]
+  | o- pscsi ....................................................... [Storage Objects: 0]
+  | o- ramdisk ..................................................... [Storage Objects: 0]
+  o- iscsi ................................................................. [Targets: 0]
+  o- loopback .............................................................. [Targets: 0]
+/> backstores/block create hao /dev/vdb
+Created block storage object hao using /dev/vdb.
+
+2) 创建iqn对象
+/> cd  /iscsi 
+/iscsi> ls
+/iscsi> create iqn.2018-08.cn.tedu:sharedisk
+Created target iqn.2018-08.cn.tedu:sharedisk.
+Created TPG 1.
+Global pref auto_add_default_portal=true
+Created default portal listening on all IPs (0.0.0.0), port 3260.
+/iscsi> 
+
+3）授权用户访问
+/iscsi> ls
+o- iscsi ................................................................... [Targets: 1]
+  o- iqn.2018-08.cn.tedu:sharedisk ............................................ [TPGs: 1]
+    o- tpg1 ...................................................... [no-gen-acls, no-auth]
+      o- acls ................................................................. [ACLs: 0]
+      o- luns ................................................................. [LUNs: 0]
+      o- portals ........................................................... [Portals: 1]
+        o- 0.0.0.0:3260 ............................................................ [OK]
+/iscsi>
+/iscsi> /iscsi/iqn.2018-08.cn.tedu:sharedisk/tpg1/acls create iqn.2018-08.cn.tedu:client1
+Created Node ACL for iqn.2018-08.cn.tedu:client1
+/iscsi> ls
+o- iscsi ................................................................... [Targets: 1]
+  o- iqn.2018-08.cn.tedu:sharedisk ............................................ [TPGs: 1]
+    o- tpg1 ...................................................... [no-gen-acls, no-auth]
+      o- acls ................................................................. [ACLs: 1]
+      | o- iqn.2018-08.cn.tedu:client1 ................................. [Mapped LUNs: 0]
+      o- luns ................................................................. [LUNs: 0]
+      o- portals ........................................................... [Portals: 1]
+        o- 0.0.0.0:3260 ............................................................ [OK]
+/iscsi> 
+
+
+4）绑定存储
+/iscsi> /iscsi/iqn.2018-08.cn.tedu:sharedisk/tpg1/luns create /backstores/block/hao 
+Created LUN 0.
+Created LUN 0->0 mapping in node ACL iqn.2018-08.cn.tedu:client1
+/iscsi> 
+/iscsi> ls
+o- iscsi ................................................................... [Targets: 1]
+  o- iqn.2018-08.cn.tedu:sharedisk ............................................ [TPGs: 1]
+    o- tpg1 ...................................................... [no-gen-acls, no-auth]
+      o- acls ................................................................. [ACLs: 1]
+      | o- iqn.2018-08.cn.tedu:client1 ................................. [Mapped LUNs: 1]
+      |   o- mapped_lun0 .......................................... [lun0 block/hao (rw)]
+      o- luns ................................................................. [LUNs: 1]
+      | o- lun0 ............................... [block/hao (/dev/vdb) (default_tg_pt_gp)]
+      o- portals ........................................................... [Portals: 1]
+        o- 0.0.0.0:3260 ............................................................ [OK]
+/iscsi> 
+/iscsi> saveconfig
+Command not found saveconfig
+/iscsi> cd ..
+/> saveconfig                           //必须返回根目录执行saveconfig
+Last 10 configs saved in /etc/target/backup.
+Configuration saved to /etc/target/saveconfig.json
+/> exit
+Global pref auto_save_on_exit=true
+Last 10 configs saved in /etc/target/backup.
+Configuration saved to /etc/target/saveconfig.json
+
+[root@host51 ~]# ss -antulp | grep 3260
+tcp    LISTEN     0      256       *:3260                  *:*    
+
+[root@host51 ~]# systemctl is-enabled  target
+disabled
+
+
+
+1）客户端安装软件
+[root@host52 ~]# yum  -y  install   iscsi-initiator-utils       
+
+
+
+2）设置本机的iqn名称
+[root@host52 iscsi]#vim /etc/iscsi/initiatorname.iscsi 
+
+
+
+3）发现远程target存储
+[root@host52 iscsi]# man iscsiadm
+[root@host52 iscsi]# iscsiadm --mode discoverydb --type sendtargets --portal 192.168.4.51 --discover
+iqn.2018-08.cn.tedu:sharedisk
+[root@host52 iscsi]# 
+
+[root@host52 ~]# systemctl restart iscsi
+Warning: iscsi.service changed on disk. Run 'systemctl daemon-reload' to reload units.
+[root@host52 iscsi]# systemctl daemon-reload
+
+[root@host52 iscsi]# systemctl   is-enabled iscsi
+enabled
+[root@host52 iscsi]# lsblk
+NAME          MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+sda             8:0    0   20G  0 disk                  //
+sr0            11:0    1 1024M  0 rom  
+vda           252:0    0   20G  0 disk 
+├─vda1        252:1    0    1G  0 part /boot
+└─vda2        252:2    0   19G  0 part 
+  ├─rhel-root 253:0    0   17G  0 lvm  /
+  └─rhel-swap 253:1    0    2G  0 lvm  [SWAP]
+
+
+[root@host52 ~]# yum  -y install mariadb-server
+
+
+[root@host52 ~]# ls  /var/lib/mysql -d  -l
+drwxr-x--x. 2 mysql mysql 6 11月 29 2016 /var/lib/mysql
+
+[root@host52 ~]# blkid
+/dev/sda: UUID="4028bd70-a808-4626-8c24-fc718dd8713f" TYPE="ext4" 
+
+[root@host52 ~]# vim  /etc/fstab 
+UUID="4028bd70-a808-4626-8c24-fc718dd8713f"     /var/lib/mysql  ext4  _netdev  0  0 
+[root@host52 ~]# mount  -a
+[root@host52 ~]# df
+文件系统                 1K-块    已用     可用 已用% 挂载点
+/dev/mapper/rhel-root 17811456 8876792  8934664   50% /
+devtmpfs                492200       0   492200    0% /dev
+tmpfs                   508128       0   508128    0% /dev/shm
+tmpfs                   508128    7172   500956    2% /run
+tmpfs                   508128       0   508128    0% /sys/fs/cgroup
+/dev/vda1              1038336  164008   874328   16% /boot
+tmpfs                   101628       0   101628    0% /run/user/0
+/dev/sda              20511312   45080 19401272    1% /var/lib/mysql
+[root@host52 ~]# 
+
+
+
+for  i in  `rpm  -a  | grep mysql`
+do
+rpm  -e   $i --nodeps
+done
+
+
+
+
+1.停止数据库服务      systemctl  stop  mariadb  
+2.卸载/var/lib/mysql  
+3.logout
+
+安装tree 
+
+iscsiadm  -m node  -T  iqn.2018-08.cn.tedu:sharedisk  -p 192.168.4.51  -u 
+
+
+
+
+
+
+修改mariadb数据库密码：
+
+1. vim  /etc/my.cnf
+skip-grant-tables　　　　# 加入这一行
+
+2. systemctl start  mariadb
+
+
+3. ]# mysql
+   > update mysql.user  set password=password('123456')  where user='root';
+   > flush privileges;
+4. vim   /etc/my.cnf
+  # skip-grant-tables
+
+5. systemctl start  mariadb
+
+
+6. mysql  -uroot -p123456
+
+
+
+
+
+
+
+
+
+
+
+
