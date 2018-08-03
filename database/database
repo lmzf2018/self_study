@@ -101,9 +101,11 @@ tel char(11)                 //第四个字段名为tel,最多11个字符
 
 ###############################################################################
 
-设置管理数据库管理员root密码:操作系统管理员有权限修改
+修改密码
 
-修改密码:
+设置管理mysql数据库管理员root密码:操作系统管理员有权限修改
+
+修改配置文件
 vim /etc/my.cnf                       //修改配置文件
 set global validate_password_policy=0 //修改密码策略,只验证密码长度
 set global validate_password_length=6 //修改密码策略,密码长度最短为6
@@ -138,6 +140,26 @@ systemctl start mysqld               //启用mysql
 
 mysql -uroot -p123456                //用新密码登录
 
+----------------------------------------------------------------------------------
+
+修改mariadb数据库密码：
+
+1. vim  /etc/my.cnf
+skip-grant-tables　　　　# 加入这一行
+
+2. systemctl start  mariadb
+
+
+3. ]# mysql
+   > update mysql.user  set password=password('123456')  where user='root';
+   > flush privileges;
+4. vim   /etc/my.cnf
+  # skip-grant-tables
+
+5. systemctl start  mariadb
+
+
+6. mysql  -uroot -p123456
 
 
 
