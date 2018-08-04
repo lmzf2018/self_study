@@ -4,12 +4,12 @@
 
 存储技术分类：
 SAN（Storage Area Network，简称SAN）:存储区域网络  ------>scsi协议
-NAS（Network Attached Storage）网络附属存储        ------>tcp/ip协议
+NAS（Network Attached Storage）:网络附属存储        ------>tcp/ip协议
 DAS：直连式存储(Direct-Attached Storage，简称DAS)
 FC       8Gbps   
 SCSI 小型计算机系统接口
       
-sas（Serial Attached SCSI），串行连接SCSI接口）     6Gbps
+SAS（Serial Attached SCSI），串行连接SCSI接口）     6Gbps
 HBA（Host Bus Adapter，HBA）主机总线适配器
 
 scsi协议-->传输的是块，传输速度快（Small Computer System Interface; 简写：SCSI）小型计算机系统接口
@@ -22,6 +22,8 @@ ethernet：  iscsi协议
 HPC：(High Performance Computing)  高性能计算机群 
 服务器扩展槽：pci-e
 
+ISCSI( Internet Small Computer System Interface 互联网小型计算机系统接口)
+
 #################################################################################
 
 
@@ -30,9 +32,12 @@ target端 ，提供存储端
 
 initiator端，使用存储端
 192.168.4.52  --> mysql1
-192.168.4.52  --> mysql2
+192.168.4.53  --> mysql2
 
 virt-manager ————> 启动虚拟系统管理器
+
+
+#服务端host51
 
 [root@host51 ~]# ip a  ls  dev eth0
 2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000
@@ -54,6 +59,9 @@ vda           252:0    0   20G  0 disk
   ├─rhel-root 253:0    0   17G  0 lvm  /
   └─rhel-swap 253:1    0    2G  0 lvm  
 vdb           252:16   0   20G  0 disk 
+
+
+[root@host51 ~]# yum  -y  install  targetcli
 
 
 1）定义后端存储
@@ -140,6 +148,8 @@ disabled
 
 
 
+#客户端host52
+
 1）客户端安装软件
 [root@host52 ~]# yum  -y  install   iscsi-initiator-utils       
 
@@ -147,7 +157,7 @@ disabled
 
 2）设置本机的iqn名称
 [root@host52 iscsi]#vim /etc/iscsi/initiatorname.iscsi 
-
+InitiatorName=iqn.2018-08.cn.tedu:client1
 
 
 3）发现远程target存储
@@ -164,7 +174,7 @@ Warning: iscsi.service changed on disk. Run 'systemctl daemon-reload' to reload 
 enabled
 [root@host52 iscsi]# lsblk
 NAME          MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
-sda             8:0    0   20G  0 disk                  //
+sda             8:0    0   20G  0 disk                  
 sr0            11:0    1 1024M  0 rom  
 vda           252:0    0   20G  0 disk 
 ├─vda1        252:1    0    1G  0 part /boot
@@ -173,17 +183,25 @@ vda           252:0    0   20G  0 disk
   └─rhel-swap 253:1    0    2G  0 lvm  [SWAP]
 
 
-[root@host52 ~]# yum  -y install mariadb-server
+[root@host52 ~]# yum  -y install mariadb-server   //安装数据库
+
+
+[root@host52 ~]# systemctl restart  mariadb
 
 
 [root@host52 ~]# ls  /var/lib/mysql -d  -l
 drwxr-x--x. 2 mysql mysql 6 11月 29 2016 /var/lib/mysql
 
-[root@host52 ~]# blkid
+
+[root@host52 ~]# mkfs.ext4  /dev/sda
+
+
+[root@host52 ~]# blkid  /dev/sda
 /dev/sda: UUID="4028bd70-a808-4626-8c24-fc718dd8713f" TYPE="ext4" 
 
 [root@host52 ~]# vim  /etc/fstab 
-UUID="4028bd70-a808-4626-8c24-fc718dd8713f"     /var/lib/mysql  ext4  _netdev  0  0 
+ UUID="4028bd70-a808-4626-8c24-fc718dd8713f"     /var/lib/mysql  ext4  _netdev  0  0 
+
 [root@host52 ~]# mount  -a
 [root@host52 ~]# df
 文件系统                 1K-块    已用     可用 已用% 挂载点
@@ -197,15 +215,100 @@ tmpfs                   101628       0   101628    0% /run/user/0
 /dev/sda              20511312   45080 19401272    1% /var/lib/mysql
 [root@host52 ~]# 
 
+[root@host60 mysql]# ls  /var/lib/mysql -d  -l
+drwxr-xr-x. 3 root root 4096 7月  27 21:14 /var/lib/mysql
+[root@host60 mysql]# chown mysql:mysql  /var/lib/mysql/
+[root@host60 mysql]# ls  /var/lib/mysql -d  -l
+drwxr-xr-x. 3 mysql mysql 4096 7月  27 21:14 /var/lib/mysql
+[root@host60 mysql]# systemctl  restart  mariadb
+[root@host60 mysql]# mysql
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MariaDB connection id is 2
+Server version: 5.5.56-MariaDB MariaDB Server
 
+Copyright (c) 2000, 2017, Oracle, MariaDB Corporation Ab and others.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+MariaDB [(none)]> show  databases;
++---------------------+
+| Database            |
++---------------------+
+| information_schema  |
+| #mysql50#lost+found |
+| mysql               |
+| performance_schema  |
+| test                |
++---------------------+
+5 rows in set (0.00 sec)
+
+MariaDB [(none)]> create  database  db;
+Query OK, 1 row affected (0.00 sec)
+
+MariaDB [(none)]> show databases;
++---------------------+
+| Database            |
++---------------------+
+| information_schema  |
+| db                  |
+| #mysql50#lost+found |
+| mysql               |
+| performance_schema  |
+| test                |
++---------------------+
+6 rows in set (0.00 sec)
+
+MariaDB [(none)]> create table  db.user (name char(66),age  int);
+Query OK, 0 rows affected (0.05 sec)
+
+MariaDB [(none)]> insert  into  db.user  values("hhh",56);
+Query OK, 1 row affected (0.04 sec)
+
+MariaDB [(none)]> select  *  from  db.user;
++------+------+
+| name | age  |
++------+------+
+| hhh  |   56 |
++------+------+
+1 row in set (0.00 sec)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+___________________________________________________________________________
 
 for  i in  `rpm  -a  | grep mysql`
-do
+do 
 rpm  -e   $i --nodeps
 done
+___________________________________________________________________________
 
+卸载软件包，但是不卸载依赖包  --nodeps     #卸载前不检查依赖性
 
-
+for  i  in  `yum list installed | grep  mysql `; do rpm  -e   $i --nodeps; done
+---------------------------------------------------------------------------------
 
 1.停止数据库服务      systemctl  stop  mariadb  
 2.卸载/var/lib/mysql  
@@ -216,7 +319,9 @@ done
 iscsiadm  -m node  -T  iqn.2018-08.cn.tedu:sharedisk  -p 192.168.4.51  -u 
 
 
+#rpm查询已经安装的软件包
 
+[root@host61 yum.repos.d]# yum list installed | grep  mysql
 
 
 
@@ -236,8 +341,514 @@ skip-grant-tables　　　　# 加入这一行
 
 5. systemctl start  mariadb
 
+[root@host61 yum.repos.d]# yum list installed | grep  mysql
 
 6. mysql  -uroot -p123456
+
+--------------------------------------------------------------------------------------
+[root@host52 block]# udevadm  info
+udevadm info [OPTIONS] [DEVPATH|FILE]
+
+Query sysfs or the udev database.
+
+  -h --help                   Print this message
+     --version                Print version of the program
+  -q --query=TYPE             Query device information:
+       name                     Name of device node
+       symlink                  Pointing to node
+       path                     sysfs device path
+       property                 The device properties
+       all                      All values
+  -p --path=SYSPATH           sysfs device path used for query or attribute walk
+  -n --name=NAME              Node or symlink name used for query or attribute walk
+  -r --root                   Prepend dev directory to path names
+  -a --attribute-walk         Print all key matches walking along the chain
+                              of parent devices
+  -d --device-id-of-file=FILE Print major:minor of device containing this file
+  -x --export                 Export key/value pairs
+  -P --export-prefix          Export the key name with a prefix
+  -e --export-db              Export the content of the udev database
+  -c --cleanup-db             Clean up the udev database
+------------------------------------------------------------------------------------
+
+udev:动态管理设备
+编写udev规则，给设备改名
+cd /etc/udev/rules.d/
+
+[root@host52 block]# cd /etc/udev/rules.d/
+[root@host52 rules.d]# ls
+70-persistent-ipoib.rules
+
+
+[root@host51 ~]#  udevadm  info -a -p /block/sda
+
+Udevadm info starts with the device specified by the devpath and then
+walks up the chain of parent devices. It prints for every device
+found, all possible attributes in the udev rules key format.
+A rule to match, can be composed by the attributes of the device
+and the attributes from one single parent device.
+
+  looking at device '/devices/pci0000:00/0000:00:0d.0/virtio8/host2/target2:0:0/2:0:0:0/block/sda':
+    KERNEL=="sda"
+    SUBSYSTEM=="block"
+    DRIVER==""
+    ATTR{ro}=="0"
+    ATTR{size}=="20971520"
+    ATTR{stat}=="      45        0     2088        0        0        0        0        0        0        0        0"
+    ATTR{range}=="16"
+    ATTR{discard_alignment}=="0"
+    ATTR{events}==""
+    ATTR{ext_range}=="256"
+    ATTR{events_poll_msecs}=="-1"
+    ATTR{alignment_offset}=="0"
+    ATTR{badblocks}==""
+    ATTR{inflight}=="       0        0"
+    ATTR{removable}=="0"
+    ATTR{capability}=="50"
+    ATTR{events_async}==""
+
+  looking at parent device '/devices/pci0000:00/0000:00:0d.0/virtio8/host2/target2:0:0/2:0:0:0':
+    KERNELS=="2:0:0:0"
+    SUBSYSTEMS=="scsi"
+    DRIVERS=="sd"
+    ATTRS{rev}=="1.5."
+    ATTRS{type}=="0"
+    ATTRS{scsi_level}=="6"
+    ATTRS{model}=="QEMU HARDDISK   "
+    ATTRS{state}=="running"
+    ATTRS{unpriv_sgio}=="0"
+    ATTRS{queue_type}=="none"
+    ATTRS{iodone_cnt}=="0x5b"
+    ATTRS{iorequest_cnt}=="0x5b"
+    ATTRS{device_busy}=="0"
+    ATTRS{evt_capacity_change_reported}=="0"
+    ATTRS{timeout}=="30"
+    ATTRS{evt_media_change}=="0"
+    ATTRS{ioerr_cnt}=="0x3"
+    ATTRS{queue_depth}=="128"
+    ATTRS{vendor}=="QEMU    "
+    ATTRS{evt_soft_threshold_reached}=="0"
+    ATTRS{device_blocked}=="0"
+    ATTRS{evt_mode_parameter_change_reported}=="0"
+    ATTRS{evt_lun_change_reported}=="0"
+    ATTRS{evt_inquiry_change_reported}=="0"
+    ATTRS{dh_state}=="detached"
+    ATTRS{iocounterbits}=="32"
+    ATTRS{inquiry}==""
+    ATTRS{vpd_pg83}==""
+    ATTRS{eh_timeout}=="10"
+
+  looking at parent device '/devices/pci0000:00/0000:00:0d.0/virtio8/host2/target2:0:0':
+    KERNELS=="target2:0:0"
+    SUBSYSTEMS=="scsi"
+    DRIVERS==""
+
+  looking at parent device '/devices/pci0000:00/0000:00:0d.0/virtio8/host2':
+    KERNELS=="host2"
+    SUBSYSTEMS=="scsi"
+    DRIVERS==""
+
+  looking at parent device '/devices/pci0000:00/0000:00:0d.0/virtio8':
+    KERNELS=="virtio8"
+    SUBSYSTEMS=="virtio"
+    DRIVERS=="virtio_scsi"
+    ATTRS{device}=="0x0008"
+    ATTRS{features}=="0110000000000000000000000000110000000000000000000000000000000000"
+    ATTRS{status}=="0x00000007"
+    ATTRS{vendor}=="0x1af4"
+
+  looking at parent device '/devices/pci0000:00/0000:00:0d.0':
+    KERNELS=="0000:00:0d.0"
+    SUBSYSTEMS=="pci"
+    DRIVERS=="virtio-pci"
+    ATTRS{irq}=="10"
+    ATTRS{subsystem_vendor}=="0x1af4"
+    ATTRS{broken_parity_status}=="0"
+    ATTRS{class}=="0x010000"
+    ATTRS{driver_override}=="(null)"
+    ATTRS{consistent_dma_mask_bits}=="64"
+    ATTRS{dma_mask_bits}=="64"
+    ATTRS{local_cpus}=="1"
+    ATTRS{device}=="0x1004"
+    ATTRS{enable}=="1"
+    ATTRS{msi_bus}==""
+    ATTRS{local_cpulist}=="0"
+    ATTRS{vendor}=="0x1af4"
+    ATTRS{subsystem_device}=="0x0008"
+    ATTRS{numa_node}=="-1"
+    ATTRS{d3cold_allowed}=="0"
+
+  looking at parent device '/devices/pci0000:00':
+    KERNELS=="pci0000:00"
+    SUBSYSTEMS==""
+    DRIVERS==""
+
+
+
+[root@host51 rules.d]# vim  100-ipsan.rules
+SUBSYSTEM=="block",ATTR{size}=="20971520",ATTRS{vendor}=="0x1af4",SYMLINK+="ipsan"
+
+[root@host51 rules.d]# systemctl restart systemd-udev-trigger.service 
+
+[root@host51 rules.d]# ls  /dev/ipsan
+/dev/ipsan
+[root@host51 rules.d]# ll  /dev/ipsan
+lrwxrwxrwx. 1 root root 3 8月   3 15:57 /dev/ipsan -> sda
+[root@host51 rules.d]# vim  100-ipsan.rules
+
+program=="/usr/lib/udev/scsi_id  -g  -u  $devnode",
+
+
+/usr/lib/udev/scsi_id  -g -u /dev/sdb    # 查看wwid
+
+
+
+
+
+[root@host52 ~]# iscsiadm  --mode  discoverydb --type sendtargets  --portal 192.168.2.71 --discover
+192.168.2.71:3260,1 iqn.2018-08.cn.tedu:sharedisk
+[root@host52 ~]# systemctl  restart  iscsi 
+[root@host52 ~]# lsblk
+NAME          MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+sda             8:0    0   20G  0 disk /var/lib/mysql
+sdb             8:16   0   20G  0 disk 
+sr0            11:0    1 1024M  0 rom  
+vda           252:0    0   20G  0 disk 
+├─vda1        252:1    0    1G  0 part /boot
+└─vda2        252:2    0   19G  0 part 
+  ├─rhel-root 253:0    0   17G  0 lvm  /
+  └─rhel-swap 253:1    0    2G  0 lvm  [SWAP]
+[root@host52 ~]# 
+
+
+
+
+[root@host52 ~]# cp  /usr/share/doc/device-mapper-multipath-0.4.9/multipath.conf
+[root@host52 ~]# cp  /usr/share/doc/device-mapper-multipath-0.4.9/multipath.conf  /etc/
+[root@host52 ~]# systemctl restart multipathd
+[root@host52 ~]# systemctl status  multipathd
+● multipathd.service - Device-Mapper Multipath Device Controller
+   Loaded: loaded (/usr/lib/systemd/system/multipathd.service; enabled; vendor preset: enabled)
+   Active: active (running) since 五 2018-08-03 17:08:58 CST; 14s ago
+  Process: 2286 ExecStart=/sbin/multipathd (code=exited, status=0/SUCCESS)
+  Process: 2282 ExecStartPre=/sbin/multipath -A (code=exited, status=0/SUCCESS)
+  Process: 2278 ExecStartPre=/sbin/modprobe dm-multipath (code=exited, status=0/SUCCESS)
+ Main PID: 2289 (multipathd)
+   CGroup: /system.slice/multipathd.service
+           └─2289 /sbin/multipathd
+
+8月 03 17:08:58 host52 systemd[1]: Starting Device-Mapper Multipath Device Controller...
+8月 03 17:08:58 host52 systemd[1]: Started Device-Mapper Multipath Device Controller.
+8月 03 17:08:58 host52 multipathd[2289]: mpatha: ignoring map
+8月 03 17:08:58 host52 multipathd[2289]: mpatha: ignoring map
+8月 03 17:08:58 host52 multipathd[2289]: path checkers start up
+8月 03 17:08:58 host52 multipathd[2289]: dm-2: remove map (uevent)
+8月 03 17:08:58 host52 multipathd[2289]: dm-2: remove map (uevent)
+8月 03 17:08:58 host52 multipathd[2289]: dm-2: remove map (uevent)
+8月 03 17:08:58 host52 multipathd[2289]: dm-2: remove map (uevent)
+[root@host52 ~]# /usr/lib/udev/scsi_id  -g -u /dev/sdb
+36001405e9ade7c5988643cc91c991046
+[root@host52 ~]# vim /etc/multipath.conf 
+ ...      
+  multipaths {
+        multipath {
+                wwid                    36001405e9ade7c5988643cc91c991046
+                alias                   yellow
+#               path_grouping_policy    multibus
+#               path_selector           "round-robin 0"
+#               failback                manual
+#               rr_weight               priorities
+#               no_path_retry           5
+#       }
+#       multipath {
+#               wwid                    1DEC_____321816758474
+#               alias                   red
+        }
+}
+ ...
+
+
+
+
+
+[root@host52 ~]# lsblk
+NAME          MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+sda             8:0    0   20G  0 disk /var/lib/mysql
+sdb             8:16   0   20G  0 disk 
+sr0            11:0    1 1024M  0 rom  
+vda           252:0    0   20G  0 disk 
+├─vda1        252:1    0    1G  0 part /bootUUID="8e69e6e6-f7ab-49cb-baf9-5ce839278001"
+└─vda2        252:2    0   19G  0 part 
+  ├─rhel-root 253:0    0   17G  0 lvm  /
+  └─rhel-swap 253:1    0    2G  0 lvm  [SWAP]
+[root@host52 ~]# umount /var/lib/mysql
+umount: /var/lib/mysql：目标忙。
+        (有些情况下通过 lsof(8) 或 fuser(1) 可以
+         找到有关使用该设备的进程的有用信息)
+[root@host52 ~]# systemctl stop mysqld
+[root@host52 ~]# umount /var/lib/mysql
+[root@host52 ~]# lsblk
+NAME          MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+sda             8:0    0   20G  0 disk 
+sdb             8:16   0   20G  0 disk 
+sr0            11:0    1 1024M  0 rom  
+vda           252:0    0   20G  0 disk 
+├─vda1        252:1    0    1G  0 part /boot
+└─vda2        252:2    0   19G  0 part 
+  ├─rhel-root 253:0    0   17G  0 lvm  /
+  └─rhel-swap 253:1    0    2G  0 lvm  [SWAP]
+
+
+multipath  -F        # 删除多路径
+multipath  -ll       # 查看多路径
+multipath  -v2       # 发现多路经
+
+
+
+
+[root@host52 ~]# multipath -ll
+[root@host52 ~]# multipath  -F
+[root@host52 ~]# multipath  -v2
+create: yellow (36001405e9ade7c5988643cc91c991046) undef LIO-ORG ,hao             
+size=20G features='0' hwhandler='0' wp=undef
+|-+- policy='service-time 0' prio=1 status=undef
+| `- 2:0:0:0 sda 8:0  undef ready running
+`-+- policy='service-time 0' prio=1 status=undef
+  `- 3:0:0:0 sdb 8:16 undef ready running
+[root@host52 ~]# lsblk
+NAME          MAJ:MIN RM  SIZE RO TYPE  MOUNTPOINT
+sda             8:0    0   20G  0 disk  
+└─yellow      253:2    0   20G  0 mpath 
+sdb             8:16   0   20G  0 disk  
+└─yellow      253:2    0   20G  0 mpath 
+sr0            11:0    1 1024M  0 rom   
+vda           252:0    0   20G  0 disk  
+├─vda1        252:1    0    1G  0 part  /boot
+└─vda2        252:2    0   19G  0 part  
+  ├─rhel-root 253:0    0   17G  0 lvm   /
+  └─rhel-swap 253:1    0    2G  0 lvm   [SWAP]
+
+[root@host52 ~]# mount  /dev/mapper/yellow  /var/lib/mysql
+[root@host52 ~]# ls /dev/mapper/
+control  rhel-root  rhel-swap  yellow
+
+
+UUID="4028bd70-a808-4626-8c24-fc718dd8713f" /var/lib/mysql  ext4  _netdev  0  0 
+
+
+
+[root@host51 ~]# ss  -antpu | grep 3260
+tcp    LISTEN     0      256       *:3260                  *:*                  
+tcp    ESTAB      0      0      192.168.4.51:3260               192.168.4.52:43106              
+tcp    ESTAB      0      0      192.168.2.71:3260               192.168.2.72:46646   
+
+
+#######################################################################################
+
+
+[root@host60 ~]# systemctl   --help
+
+systemctl [OPTIONS...] {COMMAND} ...
+
+Query or send control commands to the systemd manager.
+
+  -h --help           Show this help
+     --version        Show package version
+     --system         Connect to system manager
+  -H --host=[USER@]HOST
+                      Operate on remote host
+  -M --machine=CONTAINER
+                      Operate on local container
+  -t --type=TYPE      List units of a particular typesystemctl restart  mariadb
+     --state=STATE    List units with particular LOAD or SUB or ACTIVE state
+  -p --property=NAME  Show only properties by this name
+  -a --all            Show all loaded units/properties, including dead/empty
+                      ones. To list all units installed on the system, use
+                      the 'list-unit-files' command instead.
+  -l --full           Don't ellipsize unit names on output
+  -r --recursive      Show unit list of host and local containers
+     --reverse        Show reverse dependencies with 'list-dependencies'
+     --job-mode=MODE  Specify how to deal with already queued jobs, when
+                      queueing a new job
+     --show-types     When showing sockets, explicitly show their type
+  -i --ignore-inhibitors
+                      When shutting down or sleeping, ignore inhibitors
+     --kill-who=WHO   Who to send signal to
+  -s --signal=SIGNAL  Which signal to send
+     --now            Start or stop unit in addition to enabling or disabling it
+  -q --quiet          Suppress output
+     --no-block       Do not wait until operation finished
+     --no-wall        Don't send wall message before halt/power-off/reboot
+     --no-reload      Don't reload daemon after en-/dis-abling unit files
+     --no-legend      Do not print a legend (column headers and hints)
+     --no-pager       Do not pipe output into a pager
+     --no-ask-password
+                      Do not ask for system passwords
+     --global         Enable/disable unit files globally
+     --runtime        Enable unit files only temporarily until next reboot
+  -f --force          When enabling unit files, override existing symlinks
+                      When shutting down, execute action immediately
+     --preset-mode=   Apply only enable, only disable, or all presets
+     --root=PATH      Enable unit files in the specified root directory
+  -n --lines=INTEGER  Number of journal entries to show
+  -o --output=STRING  Change journal output mode (short, short-iso,
+                              short-precise, short-monotonic, verbose,
+                              export, json, json-pretty, json-sse, cat)
+     --plain          Print unit dependencies as a list instead of a tree
+
+Unit Commands:
+  list-units [PATTERN...]         List loaded units
+  list-sockets [PATTERN...]       List loaded sockets ordered by address
+  list-timers [PATTERN...]        List loaded timers ordered by next elapse
+  start NAME...                   Start (activate) one or more units
+  stop NAME...                    Stop (deactivate) one or more units
+  reload NAME...                  Reload one or more units
+  restart NAME...                 Start or restart one or more units
+  try-restart NAME...             Restart one or more units if active
+  reload-or-restart NAME...       Reload one or more units if possible,
+                                  otherwise start or restart
+  reload-or-try-restart NAME...   Reload one or more units if possible,
+                                  otherwise restart if active
+  isolate NAME                    Start one unit and stop all others
+  kill NAME...                    Send signal to processes of a unit
+  is-active PATTERN...            Check whether units are active
+  is-failed PATTERN...            Check whether units are failed
+  status [PATTERN...|PID...]      Show runtime status of one or more units
+  show [PATTERN...|JOB...]        Show properties of one or more
+                                  units/jobs or the manager
+  cat PATTERN...                  Show files and drop-ins of one or more units
+  set-property NAME ASSIGNMENT... Sets one or more properties of a unit
+  help PATTERN...|PID...          Show manual for one or more units
+  reset-failed [PATTERN...]       Reset failed state for all, one, or more
+                                  units
+  list-dependencies [NAME]        Recursively show units which are required
+                                  or wanted by this unit or by which this
+                                  unit is required or wanted
+随机存取存储器（random access memory，RAM）又称作“随机存储器”，是与CPU直接交换数据的内部存储器，也叫主存(内存)
+Unit File Commands:
+  list-unit-files [PATTERN...]    List installed unit files
+  enable NAME...                  Enable one or more unit files
+  disable NAME...                 Disable one or more unit files
+  reenable NAME...                Reenable one or more unit files
+  preset NAME...                  Enable/disable one or more unit files
+                                  based on preset configuration
+  preset-all                      Enable/disable all unit files based on
+                                  preset configuration
+  is-enabled NAME...              Check whether unit files are enabled
+  mask NAME...                    Mask one or more units
+  unmask NAME...                  Unmask one or more units
+  link PATH...                    Link one or more units files into
+                                  the search path
+  add-wants TARGET NAME...        Add 'Wants' dependency for the target
+                                  on specified one or more units
+  add-requires TARGET NAME...     Add 'Requires' dependency for the target
+                                  on specified one or more units
+  edit NAME...                    Edit one or more unit files
+  get-default                     Get the name of the default target
+  set-default NAME                Set the default target
+
+Machine Commands:
+  list-machines [PATTERN...]      List local containers and host
+
+Job Commands:
+  list-jobs [PATTERN...]          List jobs
+  cancel [JOB...]                 Cancel all, one, or more jobs
+
+Snapshot Commands:
+  snapshot [NAME]                 Create a snapshot
+  delete NAME...                  Remove one or more snapshots
+
+Environment Commands:
+  show-environment                Dump environment
+  set-environment NAME=VALUE...   Set one or more environment variables
+  unset-environment NAME...       Unset one or more environment variables
+  import-environment [NAME...]    Import all or some environment variables
+
+Manager Lifecycle Commands:
+  daemon-reload                   Reload systemd manager configuration
+  daemon-reexec                   Reexecute systemd manager
+
+System Commands:
+  is-system-running               Check whether system is fully running
+  default                         Enter system default mode
+  rescue                          Enter system rescue mode
+  emergency                       Enter system emergency mode
+  halt                            Shut down and halt the system
+  poweroff                        Shut down and power-off the system
+  reboot [ARG]                    Shut down and reboot the system
+  kexec                           Shut down and reboot the system with kexec
+  exit                            Request user instance exit
+  switch-root ROOT [INIT]         Change to a different root file system
+  suspend                         Suspend the system
+  hibernate                       Hibernate the system
+  hybrid-sleep                    Hibernate and suspend the system
+lines 111-134/134 (END)
+
+##########################################################################################
+
+
+[root@host60 ~]# journalctl -xe   --help
+
+
+     --verify-key=KEY      Specify FSS verification key
+     --force               Override of the FSS key pair with --setup-keys
+
+Commands:
+  -h --help                Show this help text
+     --version             Show package version
+  -F --field=FIELD         List all values that a specified field takes
+     --new-id128           Generate a new 128-bit ID
+     --disk-usage          Show total disk usage of all journal files
+     --vacuum-size=BYTES   Reduce disk usage below specified size
+     --vacuum-time=TIME    Remove journal files older than specified date
+     --flush               Flush all journal data from /run into /var
+     --header              Show journal header information
+     --list-catalog        Show all message IDs in the catalog
+     --dump-catalog        Show entries in the message catalog
+     --update-catalog      Update the message catalog database
+     --setup-keys          Generate a new FSS key pair
+     --verify              Verify journal file consistency
+lines 39-56/56 (END)
+     --verify-key=KEY      Specify FSS verification key
+     --force               Override of the FSS key pair with --setup-keys
+
+Commands:
+  -h --help                Show this help text
+     --version             Show package version
+  -F --field=FIELD         List all values that a specified field takes
+     --new-id128           Generate a new 128-bit ID
+     --disk-usage          Show total disk usage of all journal files
+     --vacuum-size=BYTES   Reduce disk usage below specified size
+     --vacuum-time=TIME    Remove journal files older than specified date
+     --flush               Flush all journal data from /run into /var
+     --header              Show journal header information
+     --list-catalog        Show all message IDs in the catalog
+     --dump-catalog        Show entries in the message catalog
+     --update-catalog      Update the message catalog database
+     --setup-keys          Generate a new FSS key pair
+     --verify              Verify journal file consistency
+
+######################################################################################
+
+RAM（random access memory，RAM）随机存储器,主存(内存)
+
+ROM（Read-Only Memory）只读存储器
+
+在计算机系统里，RAM一般用作内存，ROM用来存放一些硬件的驱动程序，也就是固件。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
