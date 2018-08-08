@@ -1,0 +1,412 @@
+第一天
+李子岩  cluster
+hpc lb ha 
+top500 cpu+gpu(ibm,nvidia)
+1PB = 1024T  10GBps
+04-11 linux python (14-16)
+vnc: 172.40.50.122  7000
+1 存储：iscsi udev multipath nfs
+2-3 集群：LB  HA 
+4-5 ceph 文件系统
+dell 华为 netapp
+DAS：直连式存储
+NAS:网络附加存储
+nfs 
+cifs 
+tcp/ip ：传输的是数据包
+1Gb 10Gb
+1Mbps
+5MBps
+1B = 8b
+SAN：存储区域网络
+fc 8Gbps HBA 
+sas 6Gbps 
+scsi协议 传输的是块
+ethernet:  iscsi协议
+服务器扩展槽 pci-e
+==========
+查看所有虚拟机：
+virsh list --all
+
+启动虚拟机：
+virsh start rh7_node71
+
+部署iscsi
+1.target端，提供存储端
+192.168.4.71 -- san
+安装软件包：
+[root@san ~]#yum install targetcli
+添加一块硬盘，作为后台存储
+1)定义后台存储：
+/> cd backstores/block
+/backstores/block> create ipasn /dev/vdb
+2）创建iqn
+cd /iscsi
+/iscsi> create iqn.2018-08.cn.tedu:sharedisk
+3)授权用户访问
+/> cd /iscsi/iqn.2018-08.cn.tedu:sharedisk/tpg1/acls
+/iscsi/iqn.20...isk/tpg1/acls> create iqn.2018-08.cn.tedu:client1
+4)绑定存储
+/> cd iscsi/iqn.2018-08.cn.tedu:sharedisk/tpg1/luns
+/iscsi/iqn.20...isk/tpg1/luns> create /backstores/block/ipasn 
+5)保存配置：
+cd /
+saveconfig
+
+6)查看端口是否开启
+netstat -natpu|grep :3260
+7)开机自动运行target
+[root@san ~]# systemctl is-enabled target
+[root@san ~]# systemctl enable target
+
+2.initiator端，使用存储端，运行mysql服务
+192.168.4.72 -- mysql1
+192.168.4.73  -- mysql2
+1)查看软件是否按照：
+rpm -q iscsi-initiator-utils
+2）修改配在文件：
+vim /etc/iscsi/initiatorname.iscsi
+InitiatorName=iqn.2018-08.cn.tedu:client1
+
+3)发现存储：
+ iscsiadm --mode discoverydb --type sendtargets --portal 192.168.4.71 --discover
+
+4）重启iscsi
+systemctl restart iscsi
+lsblk
+
+5)使用存储
+[root@mysql1 iscsi]# mkfs.ext4 /dev/sda
+
+6)安装数据库
+[root@mysql1 iscsi]# yum install mariadb-server
+
+7)自动挂载：vim /etc/fstab
+blkid
+UUID="ab3c61fd-cf10-4bd0-a3fe-bbb9d8868e58"	/var/lib/mysql  ext4	defaults,_netdev 0 0	
+mount -a
+
+8)
+[root@mysql1 iscsi]# chown mysql.mysql /var/lib/mysql/
+
+9)启动mysql服务
+[root@mysql1 iscsi]# systemctl start mariadb
+
+10)创建数据
+MariaDB [(none)]> create database mydb
+MariaDB [(none)]> use mydb
+MariaDB [mydb]> create table t1 (id int , name varchar(30));
+MariaDB [mydb]> insert into t1 values(1,'james'),(2,'jack');
+
+本地文件系统：ext2/3/4 xfs,同时只能单台设备使用
+gfs2
+授权另一个客户端访问存储:
+target端：
+/> iscsi/iqn.2018-08.cn.tedu:sharedisk/tpg1/acls/ create iqn.2018-08.cn.tedu:client2
+initiator端：
+vim /etc/iscsi/initiatorname.iscsi
+InitiatorName=iqn.2018-08.cn.tedu:client2
+
+[root@mysql2 ~]# iscsiadm --mode discoverydb --type sendtargets --portal 192.168.4.71 --discover
+systemctl restart iscsi
+
+[root@mysql2 ~]# yum install mariadb-server
+[root@mysql2 ~]# mount /dev/sda /var/lib/mysql
+[root@mysql2 ~]# systemctl restart mariadb
+
+清理工作：
+1. 停止mysql服务
+[root@mysql2 ~]# systemctl stop mariadb
+2. 卸载/var/lib/mysql
+[root@mysql2 ~]# umount /var/lib/mysql/
+3. logout
+[root@mysql2 ~]# iscsiadm -m node -T iqn.2018-08.cn.tedu:sharedisk -p 192.168.4.71 -u
+
+
+udev：动态管理设备
+编写udev规则，给设备改名
+
+查看设备在内核中的属性：
+[root@mysql1 ~]# udevadm info -a -p /block/sda|less
+cd /etc/udev/rules.d
+vim 100-ipsan.rules
+SUBSYSTEM=="block",ATTR{size}=="41943040", ATTRS{vendor}=="LIO-ORG ",PROGRAM=="/usr/lib/udev/scsi_id -g -u $devnode", RESULT=="3600140590634941443445ba9cc0b8520", SYMLINK+="ipsan1"
+
+$devnode：表示磁盘
+$devpath：表示分区
+重启服务，规则文件生效：
+[root@mysql1 rules.d]# systemctl restart systemd-udev-trigger.service
+
+multipath
+san:
+192.168.4.71
+19.2168.2.71
+
+mysql1:
+192.168.4.72
+192.168.2.72
+
+从192.168.2.71这个链路发现设备
+[root@mysql1 rules.d]# iscsiadm --mode discoverydb --type sendtargets --portal 192.168.2.71 --discover
+[root@mysql1 rules.d]# systemctl restart iscsi
+[root@mysql1 rules.d]# lsblk
+
+安装多路径软件：
+
+产生配置文件：
+[root@mysql1 rules.d]# cp /usr/share/doc/device-mapper-multipath-0.4.9/multipath.conf /etc
+启动服务：
+systemctl start multipathd
+查看多路径设备：
+multipath -ll
+修改配置文件：
+multipaths {
+       multipath {
+               wwid     3600140590634941443445ba9cc0b8520
+               alias 	san1
+	}
+}
+获得设备wwid：
+[root@mysql1 ~]# /usr/lib/udev/scsi_id -g -u /dev/sda
+启动服务：
+[root@mysql1 rules.d]# systemctl restart multipathd.service 
+
+multipath -ll  //查看多路径
+[root@mysql1 ~]# multipath -F  //删除多路径
+multipath -v2   //发现多路径
+
+手工login：
+iscsiadm -m node -T iqn.2018-08.cn.tedu:sharedisk -p 192.168.4.71 -l
+=======
+第二天
+NAS
+1. nfs
+2. cifs
+
+SAN
+fc
+sas
+FC-SAN
+协议：SCSI
+网线：IP-SAN
+iscsi
+
+[root@mysql2 ~]# iscsiadm --mode discoverydb --type sendtargets --portal 192.168.2.71 --discover  
+[root@mysql2 ~]# iscsiadm --mode node -T iqn.2018-08.cn.tedu:sharedisk -p 192.168.2.71 -l
+
+
+
+NAS  -- nfs
+192.168.4.71      /temp  
+--- 192.168.4.0/24(rw,no_root_squash)
+--- 192.168.2.0/24(ro)
+ 
+/etc/exports
+/temp   192.168.4.0/24(rw,no_root_squash) 192.168.2.0/24(ro)
+
+启动rpcbind
+systemctl start rpcbind
+
+启动nfs
+systemctl start nfs-server
+
+查看nfs进程
+ps -e|grep nfs
+
+查看服务器端的共享：
+[root@mysql1 ~]# showmount -e 192.168.2.71
+
+客户端挂载：
+[root@mysql1 mnt]# mount -t nfs 192.168.4.71:/temp /mnt
+
+卸载：
+[root@mysql1 ~]# umount /mnt
+
+实现按需挂载
+rpm -q autofs
+[root@mysql2 ~]# yum install autofs
+
+修改配置文件
+/etc/auto.master：
+/misc   /etc/auto.misc
+
+vim /etc/auto.misc
+nfsdir          -fstype=nfs,rw          192.168.4.71:/temp
+
+启动服务：
+[root@mysql2 ~]# systemctl start autofs
+
+触发挂载：
+ls /misc/nfsdir
+
+=====================
+集群技术：
+服务器资源：CPU，内存，网络，硬盘I/O
+HPC：高性能计算，为了解决计算量
+LB：负载均衡，为了解决并发量
+HA：高可用，为了解决单点故障
+
+LB -- lvs
+linux virtural service
+
+1. nat
+2. dr:直接路由
+3. tun:通道模式
+4. fullnat
+
+================
+NAT:
+4台虚拟机
+1台client
+1台director server
+2台real server
+CIP：201.1.1.200(eth2)client
+VIP:201.1.1.100(eth2)  ds
+DIP:192.168.4.100(eth0)
+RIP:192.168.4.11/12(eth0) rs1 rs2
+real server的GW:
+192.168.4.100
+
+1.配置调度器：ds
+yum install ipvsadm
+[root@ds ~]# yum install ipvsadm
+添加虚拟服务器：
+[root@ds ~]# ipvsadm -A -t 201.1.1.100:80 -s rr
+查看：
+[root@ds ~]# ipvsadm -L -n
+[root@ds ~]# ipvsadm -a -t 201.1.1.100:80 -r 192.168.4.11 -m
+[root@ds ~]# ipvsadm -a -t 201.1.1.100:80 -r 192.168.4.12 -m
+打开ip转发：
+[root@ds ~]# cat /proc/sys/net/ipv4/ip_forward
+[root@ds ~]# vim /etc/sysctl.conf
+net.ipv4.ip_forward = 1
+[root@ds ~]# sysctl -p
+
+2. 配置real server
+安装apache
+[root@rs1 ~]# yum install httpd
+
+[root@rs1 ~]# echo rs1 > /var/www/html/index.html
+[root@rs2 ~]# echo rs2 > /var/www/html/index.html
+[root@rs2 ~]# systemctl restart httpd
+[root@rs1 ~]# systemctl restart httpd
+[root@rs2 ~]# curl http://192.168.4.12
+
+3. 客户端测试：
+curl http://201.1.1.100
+[root@ds ~]# tcpdump -nn port 80
+[root@client ~]# tcpdump -i eth2 -nn port 80
+
+wrr算法：
+[root@ds ~]# ipvsadm -A -t 201.1.1.100:80 -s wrr
+[root@ds ~]# ipvsadm -a -t 201.1.1.100:80 -r 192.168.4.11 -m -w 2
+[root@ds ~]# ipvsadm -a -t 201.1.1.100:80 -r 192.168.4.12 -m -w 1
+[root@ds ~]# ipvsadm -ln
+
+开机自动运行ipvsadm规则：
+[root@ds ~]# ipvsadm-save -n > /etc/sysconfig/ipvsadm
+[root@ds ~]# systemctl enable ipvsadm
+
+lc
+wlc
+
+第三天
+ip命令
+ip addr 
+ip addr ls dev eth0
+添加ip地址：
+[root@rs1 ~]# ip addr add dev eth0 192.168.5.11/24
+删除ip地址：
+[root@rs1 ~]# ip addr del dev eth0 192.168.5.11/24
+查看链路层的信息：
+[root@rs1 ~]# ip link 
+
+添加一个虚拟网络设备：
+[root@rs1 ~]# ip link add veth-a type veth peer veth-b
+给虚拟网卡设置ip地址：
+[root@rs1 ~]# ip a a dev veth-a 192.168.4.101/24
+让eth0网卡不对arp请求做应答：
+[root@rs1 ~]# echo 1 > /proc/sys/net/ipv4/conf/eth0/arp_ignore
+[root@rs1 ~]# echo 2 > /proc/sys/net/ipv4/conf/eth0/arp_announce 
+删除arp缓存表条目：
+[root@ds ~]# arp -d 192.168.4.101
+
+
+环境
+client:201.1.1.200(eth2)
+director: (eth2)
+dip: 201.1.1.100
+vip: 201.1.1.101
+real server:(eth2)
+201.1.1.102
+201.1.1.103
+
+Director的配置
+1. 配置vip
+[root@ds ~]# ip a a dev eth2 201.1.1.101/24
+2. 添加虚拟服务器
+[root@ds ~]# ipvsadm -C
+[root@ds ~]# ipvsadm -A -t 201.1.1.101:80 -s rr
+3. 添加真实服务器
+[root@ds ~]# ipvsadm -a -t 201.1.1.101:80 -r 201.1.1.102 -g
+[root@ds ~]# ipvsadm -a -t 201.1.1.101:80 -r 201.1.1.103 -g
+
+Real Server的配置：
+1.在lo设备上配置vip
+[root@rs1 ~]# ip a a dev lo 201.1.1.101/32
+2. 禁用arp请求
+[root@rs1 ~]# echo 1 > /proc/sys/net/ipv4/conf/all/arp_ignore
+[root@rs1 ~]# echo 2 > /proc/sys/net/ipv4/conf/all/arp_announce 
+
+arp_ignore参数的作用是控制系统在收到外部的arp请求时，是否要返回arp响应。
+0：响应任意网卡上接收到的对本机IP地址的arp请求（包括环回网卡上的地址），而不管该目的IP是否在接收网卡上。
+1：只响应目的IP地址为接收网卡上的本地地址的arp请求。
+
+arp_announce的作用是控制系统在对外发送arp请求时，如何选择arp请求数据包的源IP地址。
+arp_announce参数常用的取值有0，1，2。
+0：允许使用任意网卡上的IP地址作为arp请求的源IP。
+1：尽量避免使用不属于该发送网卡子网的本地地址作为发送arp请求的源IP地址。
+2：忽略IP数据包的源IP地址，选择该发送网卡上最合适的本地地址作为arp请求的源IP地址。
+
+客户端与集群之间有网关
+集群是公有地址，网关的作用是转发：
+client  ---201.1.2.254(router)201.1.1.254 ----  lb
+
+real server修改网关：
+[root@rs2 ~]# nmcli connection modify eth2 ipv4.method manual ipv4.gateway 201.1.1.254 connection.autoconnect yes
+[root@rs2 ~]# nmcli connection modify eth0 ipv4.method manual ipv4.gateway 0.0.0.0 connection.autoconnect yes                //删除网关
+[root@rs2 ~]# nmcli connection up eth2
+[root@rs2 ~]# nmcli connection up eth0
+[root@rs2 ~]# route -n
+
+[root@room9pc01 nsd1804]# iptables -F  FORWARD
+
+如果集群使用私有地址，网关的作用是nat
+删除client网关：
+[root@client ~]# route del default
+在路由器上添加规则：
+[root@room9pc01 ~]# iptables -t nat -F
+[root@room9pc01 ~]# iptables -t nat -A PREROUTING -d 201.1.2.254 -p tcp --dport 80 -j DNAT --to 201.1.1.101 
+[root@room9pc01 ~]# iptables -t nat -A POSTROUTING -s 201.1.1.0/24 -j SNAT --to 201.1.2.254
+[root@client ~]# curl 201.1.2.254
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
