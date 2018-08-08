@@ -3,11 +3,20 @@
 2018年 08月 03日 星期五 11:07:41 CST
 
 存储技术分类：
-SAN（Storage Area Network，简称SAN）:存储区域网络  ------>scsi协议
-NAS（Network Attached Storage）:网络附属存储        ------>tcp/ip协议
+
+SAN（Storage Area Network，简称SAN）:存储区域网络  ------>
+协议：scsi协议  
+网线：ip-san 
+
+NAS（Network Attached Storage）:网络附属存储        ------>tcp/ip协议   cifs / nfs
+
 DAS：直连式存储(Direct-Attached Storage，简称DAS)
+
 FC       8Gbps   
+
 SCSI 小型计算机系统接口
+
+
       
 SAS（Serial Attached SCSI），串行连接SCSI接口）     6Gbps
 HBA（Host Bus Adapter，HBA）主机总线适配器
@@ -505,7 +514,7 @@ program=="/usr/lib/udev/scsi_id  -g  -u  $devnode",
 
 
 
-[root@host52 ~]# iscsiadm  --mode  discoverydb --type sendtargets  --portal 192.168.2.71 --discover
+[root@host52 ~]# iscsiadm  --mode  discoverydb --type sendtargets  --portal 192.168.2.71 --discoveryum info targetcli
 192.168.2.71:3260,1 iqn.2018-08.cn.tedu:sharedisk
 [root@host52 ~]# systemctl  restart  iscsi 
 [root@host52 ~]# lsblk
@@ -530,7 +539,7 @@ vda           252:0    0   20G  0 disk
 ● multipathd.service - Device-Mapper Multipath Device Controller
    Loaded: loaded (/usr/lib/systemd/system/multipathd.service; enabled; vendor preset: enabled)
    Active: active (running) since 五 2018-08-03 17:08:58 CST; 14s ago
-  Process: 2286 ExecStart=/sbin/multipathd (code=exited, status=0/SUCCESS)
+  Process: 2286 ExecStart=/sbin/multipathd (code=exited, status=0/SUCCESS)ipvsadm -a -t 202.114.106.20:80 -r 192.168.0.1 -w 1
   Process: 2282 ExecStartPre=/sbin/multipath -A (code=exited, status=0/SUCCESS)
   Process: 2278 ExecStartPre=/sbin/modprobe dm-multipath (code=exited, status=0/SUCCESS)
  Main PID: 2289 (multipathd)
@@ -652,7 +661,7 @@ systemctl [OPTIONS...] {COMMAND} ...
 
 Query or send control commands to the systemd manager.
 
-  -h --help           Show this help
+  -h --help           Show this helpipvsadm -a -t 202.114.106.20:80 -r 192.168.0.1 -w 1
      --version        Show package version
      --system         Connect to system manager
   -H --host=[USER@]HOST
@@ -708,7 +717,7 @@ Unit Commands:
   reload-or-restart NAME...       Reload one or more units if possible,
                                   otherwise start or restart
   reload-or-try-restart NAME...   Reload one or more units if possible,
-                                  otherwise restart if active
+                                  otherwise restart if activeipvsadm -a -t 202.114.106.20:80 -r 192.168.0.1 -w 1
   isolate NAME                    Start one unit and stop all others
   kill NAME...                    Send signal to processes of a unit
   is-active PATTERN...            Check whether units are active
@@ -837,7 +846,548 @@ ROM（Read-Only Memory）只读存储器
 在计算机系统里，RAM一般用作内存，ROM用来存放一些硬件的驱动程序，也就是固件。
 
 
+#####################################################################################
 
+2018年 08月 06日 星期一 12:01:13 CST
+
+
+
+4台虚拟机
+
+ 
+2 real server
+
+client:
+CIP 201.1.1.200(eth2)
+
+
+director  server:
+VIP 201.1.1.100(eth2)
+DIP 192.168.4.100(eth0)
+
+RIP 192.168.4.11/12
+rs GW:192.168.4.100
+
+
+
+
+
+[root@director_server ~]# ipvsadm   -A  -t  201.1.1.100:80  -s  rr
+[root@director_server ~]# ipvsadm   -L  -n
+IP Virtual Server version 1.2.1 (size=4096)
+Prot LocalAddress:Port Scheduler Flags
+  -> RemoteAddress:Port           Forward Weight ActiveConn InActConn
+TCP  201.1.1.100:80 rr
+
+[root@director_server ~]# ipvsadm  -a  -t  201.1.1.100:80  -r  192.168.4.11  -m 
+[root@director_server ~]# ipvsadm  -a  -t  201.1.1.100:80  -r  192.168.4.12  -m 
+
+[root@director_server ~]# cat   /proc/sys/net/ipv4/ip_forward
+1                               
+// 1表明ip转发功能开启，若不为1，修改配置文件如下
+
+[root@director_server ~]# vim   /etc/sysctl.conf 
+net.ipv4.ip_forward=1
+
+[root@director_server ~]# ipvsadm  -Ln
+IP Virtual Server version 1.2.1 (size=4096)
+Prot LocalAddress:Port Scheduler Flags
+  -> RemoteAddress:Port           Forward Weight ActiveConn InActConn
+TCP  201.1.1.100:80 rr
+  -> 192.168.4.11:80              Masq    1      0          0         
+  -> 192.168.4.12:80              Masq    1      0          0         
+[root@director_server ~]
+
+
+
+抓包分析：# tcpdump
+[root@director_server ~]# tcpdump -nn port 80
+
+
+
+
+
+
+
+
+
+[root@director_server ~]# ipvsadm  -ln
+IP Virtual Server version 1.2.1 (size=4096)
+Prot LocalAddress:Port Scheduler Flags
+  -> RemoteAddress:Port           Forward Weight ActiveConn InActConn
+TCP  201.1.1.100:80 rr
+  -> 192.168.4.11:80              Masq    1      0          0         
+  -> 192.168.4.12:80              Masq    1      0          0         
+[root@director_server ~]# ipvsadm  -C
+[root@director_server ~]# ipvsadm  -ln
+IP Virtual Server version 1.2.1 (size=4096)
+Prot LocalAddress:Port Scheduler Flags
+  -> RemoteAddress:Port           Forward Weight ActiveConn InActConn
+[root@director_server ~]# ipvsadm  -A  -t 201.1.1.100:80 -s wrr 
+[root@director_server ~]# ipvsadm  -a -t 201.1.1.100:80 -r  192.168.4.11 -m  -w 2
+[root@director_server ~]# ipvsadm  -a -t 201.1.1.100:80 -r  192.168.4.12 -m  -w 1
+[root@director_server ~]# ipvsadm  -ln
+IP Virtual Server version 1.2.1 (size=4096)
+Prot LocalAddress:Port Scheduler Flags
+  -> RemoteAddress:Port           Forward Weight ActiveConn InActConn
+TCP  201.1.0.100:80 wrr
+  -> 192.168.4.11:80              Masq    2      0          0         
+  -> 192.168.4.12:80              Masq    1      0          0         
+[root@director_server ~]# 
+
+
+
+
+#######################################################################################
+
+
+2018年 08月 07日 星期二 09:19:42 CST
+
+[root@client ~]# ip  a   ==  ifconfig
+[root@client ~]# ip  a   ls  eth0
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000
+    link/ether 52:54:00:93:d3:fe brd ff:ff:ff:ff:ff:ff
+
+[root@client ~]# ip  a   ls  dev  eth0
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000
+    link/ether 52:54:00:93:d3:fe brd ff:ff:ff:ff:ff:ff
+
+添加ip：
+[root@client ~]# ip  addr  add  dev eth0 192.168.5.11/24 == ip  a  a  dev eth0 192.168.5.11/24 
+
+删除ip：
+[root@client ~]# ip  addr  del  dev eth0 192.168.5.11/24
+
+
+查看链路层的信息：
+[root@client ~]# ip  link
+
+添加一个虚拟的网路设备：
+[root@rs1 ~]# ip link add veth-a  type veth  peer  veth-b
+[root@rs1 ~]# ip  a  a  dev  veth-a  192.168.4.101/24 
+
+让eth0网卡不对arp请求做应答：
+[root@rs1 ~]# echo  1 >/proc/sys/net/ipv4/conf/eth
+eth0/ eth1/ eth2/ eth3/ 
+[root@rs1 ~]# echo  1 >/proc/sys/net/ipv4/conf/eth
+eth0/ eth1/ eth2/ eth3/ 
+[root@rs1 ~]# echo  1 >/proc/sys/net/ipv4/conf/eth0/a
+accept_local         arp_accept           arp_ignore
+accept_redirects     arp_announce         arp_notify
+accept_source_route  arp_filter           
+[root@rs1 ~]# echo  1 >/proc/sys/net/ipv4/conf/eth0/a
+accept_local         arp_accept           arp_ignore
+accept_redirects     arp_announce         arp_notify
+accept_source_route  arp_filter           
+[root@rs1 ~]# echo  1 >/proc/sys/net/ipv4/conf/eth0/arp_ignore 
+[root@rs1 ~]# echo  2 >/proc/sys/net/ipv4/conf/eth0/arp_announce 
+
+删除arp缓存条目：
+[root@rs1 ~]# arp  -d  192.168.4.101 
+
+[root@rs1 ~]# arp
+Address                  HWtype  HWaddress           Flags Mask            Iface
+192.168.4.254            ether   52:54:00:37:78:11   C                     eth0
+
+
+网桥=交换机
+
+
+client:201.1.1.200(eth2)
+director:(eth2)
+dip:201.1.1.100
+vip:201.1.1.200
+
+real server:(eth2)
+
+
+ds:
+ipvsadm  -C
+  103  ipvsadm  -A  -t  201.1.1.101:80  -s  rr
+  104  ipvsadm  -a  -t  201.1.1.101:80  -r 201.1.1.102 -g
+  105  ipvsadm  -a  -t  201.1.1.101:80  -r 201.1.1.103 -g
+
+
+
+rs1:
+45  ip  a   a  dev  eth2  201.1.1.102/24 
+   46  nmcli   connection  modify  eth2  ipv4.method   manual  ipv4.addresses   201.1.1.102/24  connection.autoconnect  yes
+   47  nmcli   connection up eth2
+   48  ip a 
+   49  ip  a  a  dev lo  201.1.1.101/32
+   50  cat /proc/sys/net/ipv4/conf/all/arp_ignore 
+   51  echo 1 >  /proc/sys/net/ipv4/conf/all/arp_ignore
+   52  echo 2 >  /proc/sys/net/ipv4/conf/all/arp_announce 
+
+
+
+rs2:
+28  ip  a  a  201.1.1.103/24  dev  eth2
+   29  nmcli   connection   modify eth2  ipv4.method   manual   ipv4.addresses    201.1.1.103/24  connection.autoconnect  yes
+   30  nmcli   connection up   eth2
+   31  IFCONFIG
+   32  ifconfig 
+   33  ifconfig
+   34  ip  a  a  dev lo  201.1.1.101/32
+   35  echo 1 >  /proc/sys/net/ipv4/conf/all/arp_ignore
+   36  echo 2 >  /proc/sys/net/ipv4/conf/all/arp_announce
+
+
+###################################################################################################
+
+HAproxy
+
+#1.安装haproxy
+[root@director_server ]#yum   -y  install  haproxy
+
+#2.配置
+
+
+vim   /etc/haproxy/haproxy.cfg
+
+ ...
+listen  stats
+  bind 0.0.0.0:1080
+  stats refresh 30s
+  stats uri /mystats
+  stats realm Haproxy manager
+  stats auth admin:admin
+
+listen  webserver  0.0.0.0:80            
+  cookie  SERVERID rewrite
+  balance roundrobin
+  server web1 201.1.1.102:80  cookie app1inst1 check inter 2000 rise 2 fall 5
+  server web1 201.1.1.103:80  cookie app1inst2 check inter 2000 rise 2 fall 5
+ ...
+
+
+[root@director_server ]# cat  -n  /etc/haproxy/haproxy.cfg
+     1	#---------------------------------------------------------------------
+     2	# Example configuration for a possible web application.  See the
+     3	# full configuration options online.
+     4	#
+     5	#   http://haproxy.1wt.eu/download/1.4/doc/configuration.txt
+     6	#
+     7	#---------------------------------------------------------------------
+     8	
+     9	#---------------------------------------------------------------------
+    10	# Global settings
+    11	#---------------------------------------------------------------------
+    12	global
+    13	    # to have these messages end up in /var/log/haproxy.log you will
+    14	    # need to:
+    15	    #
+    16	    # 1) configure syslog to accept network log events.  This is done
+    17	    #    by adding the '-r' option to the SYSLOGD_OPTIONS in
+    18	    #    /etc/sysconfig/syslog
+    19	    #
+    20	    # 2) configure local2 events to go to the /var/log/haproxy.log
+    21	    #   file. A line like the following can be added to
+    22	    #   /etc/sysconfig/syslog
+    23	    #
+    24	    #    local2.*                       /var/log/haproxy.log
+    25	    #
+    26	    log         127.0.0.1 local2
+    27	
+    28	    chroot      /var/lib/haproxy
+    29	    pidfile     /var/run/haproxy.pid
+    30	    maxconn     4000
+    31	    user        haproxy
+    32	    group       haproxy
+    33	    daemon
+    34	
+    35	    # turn on stats unix socket
+    36	    stats socket /var/lib/haproxy/stats
+    37	
+    38	#---------------------------------------------------------------------
+    39	# common defaults that all the 'listen' and 'backend' sections will
+    40	# use if not designated in their block
+    41	#---------------------------------------------------------------------
+    42	defaults
+    43	    mode                    http
+    44	    log                     global
+    45	    option                  httplog
+    46	    option                  dontlognull
+    47	    option http-server-close
+    48	    option forwardfor       except 127.0.0.0/8
+    49	    option                  redispatch
+    50	    retries                 3
+    51	    timeout http-request    10s
+    52	    timeout queue           1m
+    53	    timeout connect         10s
+    54	    timeout client          1m
+    55	    timeout server          1m
+    56	    timeout http-keep-alive 10s
+    57	    timeout check           10s
+    58	    maxconn                 3000
+    59	
+    60	#---------------------------------------------------------------------
+    61	# main frontend which proxys to the backends
+    62	#---------------------------------------------------------------------
+    63	listen  stats
+    64	  bind 0.0.0.0:1080
+    65	  stats refresh 30s
+    66	  stats uri /mystats
+    67	  stats realm Haproxy manager
+    68	  stats auth admin:admin
+    69	
+    70	listen  webserver  0.0.0.0:80
+    71	  cookie  SERVERID rewrite 
+    72	  balance roundrobin 
+    73	  server web1 201.1.1.102:80  cookie app1inst1 check inter 2000 rise 2 fall 5
+    74	  server web1 201.1.1.103:80  cookie app1inst2 check inter 2000 rise 2 fall 5
+    75	  
+
+
+#3.启动服务
+
+[root@director_server haproxy]# systemctl start  haproxy
+[root@director_server haproxy]# ps  -e  |grep  haproxy      
+ 2914 ?        00:00:00 haproxy-systemd
+ 2915 ?        00:00:00 haproxy
+ 2916 ?        00:00:00 haproxy
+
+[root@host59 ~]# ss -antup  | grep  :80
+tcp    LISTEN     0      128       *:80                    *:*                   users:(("haproxy",pid=1843,fd=7))
+
+[root@director_server haproxy]# ss -antup|grep 80       //如果查询不到，http冲突
+tcp    LISTEN     0      128       *:80                    *:*                   users:(("haproxy",pid=2916,fd=7))
+tcp    LISTEN     0      128       *:1080                  *:*                   users:(("haproxy",pid=2916,fd=5))
+
+
+#4.访问
+
+http://201.1.1.100:1080/mystats      //201.1.1.100是director_server的ip地址
+
+
+
+
+#配置haproxy的日志，修改系统日志配置文件
+vim  /etc/rsyslog.conf  
+   ...
+  #去掉注释15、16行
+ 15 $ModLoad imudp
+ 16 $UDPServerRun 514
+   ...
+  #添加一行如下：
+  74 local2.*                   /var/log/haproxy.log
+
+   
+[root@ds ~]# systemctl  restart rsyslog
+[root@ds ~]# systemctl  restart haproxy
+
+	
+vim  /etc/httpd/conf/httpd.conf 
+
+LogFormat "%{X-Forwarded-For}i %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"" combined
+
+#动态查看日志
+tail  -f  /var/log/httpd/access_log 
+或者
+tailf  /var/log/httpd/access_log 
+
+
+###################################################################################
+
+
+Keepalived: 
+
+director:
+ds1:201.1.1.100/24（eth2）
+ds2:201.1.1.99/24 （eth2）	
+
+real  server:
+rs1:201.1.1.102/24（eth2）
+rs2:201.1.1.103/24（eth2）
+
+[root@ds1 ~]# yum  -y  install  keepalived
+[root@ds2 ~]# yum  -y  install  keepalived
+[root@ds1 ~]# vim   /etc/keepalived/keepalived.conf 
+! Configuration File for keepalived
+
+global_defs {
+ router_id ds1
+}
+
+vrrp_instance VI_1 {
+    state MASTER
+    interface eth2
+    virtual_router_id 51
+    priority 100
+    advert_int 1
+    authentication {
+        auth_type PASS
+        auth_pass 1111
+    }
+    virtual_ipaddress {
+    201.1.1.101
+    }
+
+}
+
+virtual_server 201.1.1.101 80  {
+    delay_loop 6
+    lb_algo rr
+    lb_kind DR
+    protocol TCP
+
+    real_server 201.1.1.102 80 {
+        weight 1
+        TCP_CHECK {
+        connect_timeout 3
+        nb_get_retry 3
+        delay_before_retry  3
+     }
+    }
+    real_server 201.1.1.103 80 {
+        weight 1
+        TCP_CHECK {
+        connect_timeout 3
+        nb_get_retry 3
+        delay_before_retry  3
+     }
+   }
+}
+
+
+
+
+[root@ds2 ~]# vim   /etc/keepalived/keepalived.conf
+! Configuration File for keepalived
+
+global_defs {
+ router_id ds2    //此处修改
+}
+
+vrrp_instance VI_1 {
+    state BACKUP  //此处修改
+    interface eth2
+    virtual_router_id 51
+    priority 50    //此处修改
+    advert_int 1
+    authentication {
+        auth_type PASS
+        auth_pass 1111
+    }
+    virtual_ipaddress {
+    201.1.1.101
+    }
+}
+
+virtual_server 201.1.1.101 80  {
+    delay_loop 6
+    lb_algo rr
+    lb_kind DR
+    protocol TCP
+
+    real_server 201.1.1.102 80 {
+        weight 1
+        TCP_CHECK {
+        connect_timeout 3
+        nb_get_retry 3
+        delay_before_retry  3
+     }
+    }
+    real_server 201.1.1.103 80 {
+        weight 1
+        TCP_CHECK {
+        connect_timeout 3
+        nb_get_retry 3
+        delay_before_retry  3
+     }
+   }
+}
+
+
+
+
+[root@ds1 ~]# systemctl  restart keepalived.service
+[root@ds1 ~]# ip a  ls  eth2
+4: eth2: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000
+    link/ether 52:54:00:42:4c:39 brd ff:ff:ff:ff:ff:ff
+    inet 201.1.1.100/24 brd 201.1.1.255 scope global eth2
+       valid_lft forever preferred_lft forever
+    inet 201.1.1.101/32 scope global eth2
+       valid_lft forever preferred_lft forever
+    inet6 fe80::77ab:7d41:c862:55ca/64 scope link 
+       valid_lft forever preferred_lft forever
+
+[root@ds1 ~]# yum  -y  install ipvsadm
+
+[root@ds1 ~]# ipvsadm  -ln
+IP Virtual Server version 1.2.1 (size=4096)
+Prot LocalAddress:Port Scheduler Flags
+  -> RemoteAddress:Port           Forward Weight ActiveConn InActConn
+TCP  201.1.1.101:80 rr
+  -> 201.1.1.102:80               Route   1      0          0         
+  -> 201.1.1.103:80               Route   1      0          0   
+
+
+[root@ds2 ~]# systemctl   restart keepalived.service 
+
+
+
+
+[root@rs1 ~]# ip  a a dev  lo 201.1.1.101/32
+
+[root@rs2 ~]# ip  a a dev  lo 201.1.1.101/32
+
+
+#真机作为客户端访问：
+[root@room9pc01 ~]# curl  201.1.1.101
+hao1
+[root@room9pc01 ~]# curl  201.1.1.101
+hao2
+[root@room9pc01 ~]# curl  201.1.1.101
+hao1
+[root@room9pc01 ~]# curl  201.1.1.101
+hao2
+[root@room9pc01 ~]# curl  201.1.1.101
+
+
+
+#健康检测测试：
+停掉其中一个real server的httpd服务
+HA测试：
+停掉主服务我的keepalived服务
+
+
+#VIP配置成不抢占
+state BACKUP
+nopreempt
+curl  httpd：/201.1.1.101
+
+debug：
+1. ping 201.1.1.101
+2. 在ds服务器，ipvsadm -ln ，如果看不到规则，则：
+  1）检查可keepalived配置文件
+  2）检查real server 的httpd服务是否启动
+3. 检查real server 是否绑定了vip，以及是否调整内核参数
+
+
+##############################################################################
+
+
+keepalived  +  haproxy
+
+2台haproxy实现HA
+2台应用服务器--http
+1台client
+
+haproxy(ds1)--> 201.1.1.100
+haproxy(ds2)--> 201.1.1.99
+vip:201.1.1.101
+rs1:201.1.1.102
+rs2:201.1.1.103
+
+
+通过脚本对haproxy做健康检查：
+vim  check_status_status.sh
+#!/bin/bash
+curl  -I  localhost &> /dev/null
+if [ $? -ne 0 ];then
+  systemctl  stop keepalived
+fi 
 
 
 
