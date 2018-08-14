@@ -15,7 +15,27 @@
     createrepo --update .
 
 2 dns 服务
+  yum install bind bind-chroot
+  编辑配置文件 named.conf
+  listen-on port 53 { 192.168.1.254; };
+  allow-query     { any; };
+  forwarders { 202.106.196.115; };
+  dnssec-enable no;
+  dnssec-validation no;
+  
 3 时间服务器
+  yum install -y chrony 
+  server:配置 /etc/chrony.conf
+  server ntp1.aliyun.com iburst
+  bindacqaddress 0.0.0.0
+  allow 0/0
+  
+  client:配置 /etc/chrony.conf
+  server 192.168.1.254 iburst
+  
+  检查状态
+  chronyc sources -v
+  * 同步成功，+ 备胎 , ? 同步失败
 #------------------------------------------------------------------------#
 初始化虚拟机
 1 修改 /etc/selinux/config
@@ -44,4 +64,86 @@ yum install 包名
 修改 local.repo  gpgcheck=1
 使用 yum install lftp lrzsz 验证
 
-4 2台虚拟机(8G + 6G)
+9 配置网络，禁用空路由
+  配置文件 /etc/sysconfig/network
+  NOZEROCONF="yes"
+  网卡配置文件见范例
+
+10 添加串口终端
+  配置文件 /etc/default/grub
+  修改内容看范例
+  修改完成之后创建引导文件
+  grub2-mkconfig -o /boot/grub2/grub.cfg
+
+11 修改 fstab
+   blkid
+   修改 UUID=xxxxxx 为 /dev/xvda1
+
+12 安装分区扩展软件
+   yum install -y cloud-utils-growpart
+   扩展磁盘分区空间(让 /dev/vda1 变大)
+   /usr/bin/growpart /dev/vda 1
+   扩展文件系统识别空间(让 df -h 可使用空间变大)
+   /usr/sbin/xfs_growfs /
+
+13 关闭虚拟机，清理信息 (真机)
+   设置语言为英文 LANG=en_US.UTF-8
+   virt-sysprep -d 虚拟机名称
+
+14 删除虚拟机定义
+   virsh undefine centos7.0
+
+15 快速创建虚拟机
+   例如创建虚拟机 node1
+   创建磁盘文件
+   cd /var/lib/libvirt/images
+   qemu-img create -b node.img -f qcow2 node1.img 32G
+   创建虚拟机配置文件 
+   sed 's/node/node1/' node.xml >/etc/libvirt/qemu/node1.xml
+   virsh define /etc/libvirt/qemu/node1.xml
+   启动虚拟机
+   virsh start node1
+   连接查看虚拟机
+   virsh console node1
+
+#-----------------------------------------#
+添加网卡
+    <interface type='bridge'>
+      <source bridge='private1'/>
+      <model type='virtio'/>
+    </interface>
+
+添加硬盘
+cd /var/lib/libvirt/images/
+qemu-img create -f qcow2 disk.img 20G
+
+    <disk type='file' device='disk'>
+      <driver name='qemu' type='qcow2'/>
+      <source file='/var/lib/libvirt/images/disk.img'/>
+      <target dev='vdb' bus='virtio'/>
+    </disk>
+
+#-----------------------------------------#
+创建 2 个虚拟机
+要求：
+虚拟机1 
+  8G 内存
+  2块网卡
+     第一块网卡连接虚拟交换机 vbr
+     第二块网卡连接虚拟交换机 private1
+     设置静态 IP，默认网关 192.168.1.254
+
+     2块硬盘
+     其中 / 的 vda1 要求 50G
+     vdb  20G
+
+虚拟机2
+  6G 内存
+  2块网卡
+     第一块网卡连接虚拟交换机 vbr
+     第二块网卡连接虚拟交换机 private1
+     设置静态 IP，默认网关 192.168.1.254
+     要求与第一台虚拟主机的两个 IP 都能 ping 通
+  硬盘
+     / 的 vda1 要求 50G
+
