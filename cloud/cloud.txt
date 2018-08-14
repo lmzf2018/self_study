@@ -1,0 +1,47 @@
+准备环境 (真机)
+禁用 selinux 配置文件 /etc/selinux/config
+     SELINUX=disabled
+禁用 firewalld
+     systemctl stop firewalld
+     systemctl (un)mask firewalld
+
+1 yum 源的安装和配置(网络yum源)
+  光盘作为 yum 源 CentOS7-1708.iso (共9591包)
+    有 repodata 目录的才可以作为 yum 源
+  自定义 yum 源
+    创建一个 repodata 
+    createrepo .
+    更新
+    createrepo --update .
+
+2 dns 服务
+3 时间服务器
+#------------------------------------------------------------------------#
+初始化虚拟机
+1 修改 /etc/selinux/config
+  SELINUX=disabled
+2 配置网卡配置文件 /etc/sysconfig/network-scripts/ifcfg-eth0
+3 停止 firewalld NetworkManager
+  systemctl stop firewalld
+  systemctl stop NetworkManager
+4 卸载 
+  yum remove -y NetworkManager-* firewalld-* python-firewall
+5 重启机器
+6 配置 yum 源
+[local_repo]
+name=CentOS-$releasever - Base
+baseurl="ftp://192.168.1.254/centos7"
+enabled=1
+gpgcheck=0
+
+7 安装软件
+yum provides 命令
+yum install 包名
+
+8 验证数字签名
+下载 RPM-GPG-KEY-CentOS-7
+导入 rpm --import RPM-GPG-KEY-CentOS-7
+修改 local.repo  gpgcheck=1
+使用 yum install lftp lrzsz 验证
+
+4 2台虚拟机(8G + 6G)
