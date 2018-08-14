@@ -1,0 +1,71 @@
+<domain type='kvm'>
+  <name>node</name>    # node虚拟机名字
+  <memory unit='KB'>2097152</memory>   #能使用的最大内存，实际使用内存小于2097152
+  <currentMemory unit='KB'>2097152</currentMemory>  #启动虚拟机时候使用的内存
+  <vcpu placement='static'>2</vcpu>    #系统显示的cpu个数
+  <os>
+    <type arch='x86_64' machine='pc'>hvm</type>  # 64位系统
+    <boot dev='hd'/>          # boot启动顺序
+    <bootmenu enable='yes'/>  
+    <bios useserial='yes'/>
+  </os>             # 6-11
+  <features>       
+    <acpi/>
+    <apic/>
+  </features>    # 12-15  电源管理模块
+  <cpu mode='host-passthrough'>
+    <topology sockets='1' cores='1' threads='2'/>
+  </cpu>    虚拟的虚拟机，与上面一致1（core）*2（thread）=2（cpu个数）
+  <clock offset='localtime'/>   #系统时钟
+  <on_poweroff>destroy</on_poweroff>   #关闭虚拟机
+  <on_reboot>restart</on_reboot>   #重启虚拟机
+  <on_crash>restart</on_crash>    #强制重新启动虚拟机
+  <devices>
+    <emulator>/usr/libexec/qemu-kvm</emulator>
+    <disk type='file' device='disk'>    
+      <driver name='qemu' type='qcow2'/>
+      <source file='/var/lib/libvirt/images/node.img'/>
+      <target dev='vda' bus='virtio'/>
+    </disk>
+
+    <disk type='file' device='disk'>    
+      <driver name='qemu' type='qcow2'/>
+      <source file='/var/lib/libvirt/images/node2.img'/>  #
+      <target dev='vdb' bus='virtio'/>     #
+    </disk>
+
+    <interface type='bridge'>
+      <source bridge='vbr'/>
+      <model type='virtio'/>
+    </interface>
+
+    <interface type='bridge'>
+      <source bridge='private1'/>  #
+      <model type='virtio'/>
+    </interface>
+
+    <channel type='unix'>
+      <target type='virtio' name='org.qemu.guest_agent.0'/>   #管理控制工具
+    </channel>
+
+    <serial type='pty'></serial>
+    <console type='pty'>
+      <target type='serial'/>
+    </console>
+    <memballoon model='virtio'></memballoon>   # 内存驱动
+  </devices>
+</domain>
+    <interface type='bridge'>
+      <source bridge='vbr'/>
+      <model type='virtio'/>
+    </interface>
+    <channel type='unix'>
+      <target type='virtio' name='org.qemu.guest_agent.0'/>
+    </channel>
+    <serial type='pty'></serial>
+    <console type='pty'>
+      <target type='serial'/>
+    </console>
+    <memballoon model='virtio'></memballoon>
+  </devices>
+</domain>
