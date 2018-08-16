@@ -156,7 +156,7 @@ virsh # net-list
  rhce                 活动     是           是
 
 virsh # net-destroy  private1
-网络 private1 被删除
+网络 private1 被删除script  -a  node2.txt
 
 virsh # net-destroy  private22
 错误：获得网络 'private22' 失败
@@ -195,7 +195,7 @@ p8p1: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
         TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
 
 
-
+script  -a  node2.txt
 
 [root@room9pc01 ~]# cd  nsd1804/
 [root@room9pc01 nsd1804]# git pull
@@ -586,10 +586,11 @@ _____________________________________________________________________
 
 _____________________________________________________________________
 
+#位（bit），字节（byte）转换
 
          b, byte  byte      1
-         KB       kilobyte  1,000
-         k, KiB   kibibyte  1,024
+      #  KB       kilobyte  1,000
+      #  k, KiB   kibibyte  1,024
          MB       megabyte  1,000,000
          M, MiB   mebibyte  1,048,576
          GB       gigabyte  1,000,000,000
@@ -602,6 +603,144 @@ _____________________________________________________________________
          E, EiB   exbibyte  1,152,921,504,606,846,976
 
 ________________________________________________________________________
+
+2018年 08月 16日 星期四 10:32:52 CST
+
+[root@node2 ~]# sestatus              #检查 selinux 是否关闭了
+SELinux status:                 disabled
+
+
+[root@node2 ~]# rpm  -qa  | grep -P "firewalld | NetworkManager"
+
+[root@node2 ~]# chronyc  sources -v
+210 Number of sources = 1
+
+  .-- Source mode  '^' = server, '=' = peer, '#' = local clock.
+ / .- Source state '*' = current synced, '+' = combined , '-' = not combined,
+| /   '?' = unreachable, 'x' = time may be in error, '~' = time too variable.
+||                                                 .- xxxx [ yyyy ] +/- zzzz
+||      Reachability register (octal) -.           |  xxxx = adjusted offset,
+||      Log2(Polling interval) --.      |          |  yyyy = measured offset,
+||                                \     |          |  zzzz = estimated error.
+||                                 |    |           \
+MS Name/IP address         Stratum Poll Reach LastRx Last sample               
+===============================================================================
+^* gateway                       3   6   377    42    +33us[  +39us] +/-   15ms
+
+
+[root@node2 ~]# nslookup  www.baidu.com
+bash: nslookup: 未找到命令
+
+[root@node2 ~]# yum  provides nslookup
+已加载插件：fastestmirror
+Loading mirror speeds from cached hostfile
+centos7/filelists_db                           | 6.7 MB     00:00     
+32:bind-utils-9.9.4-50.el7.x86_64 : Utilities for querying DNS name
+                                  : servers
+源    ：centos7
+匹配来源：
+文件名    ：/usr/bin/nslookup
+
+[root@node2 ~]# yum  -y  install  bind-utils
+
+[root@node2 ~]# nslookup  www.baidu.com
+Server:		192.168.1.254
+Address:	192.168.1.254#53
+
+Non-authoritative answer:
+www.baidu.com	canonical name = www.a.shifen.com.
+Name:	www.a.shifen.com
+Address: 115.239.211.112
+Name:	www.a.shifen.com
+Address: 115.239.210.27
+
+
+
+[root@node2 ~]# pvcreate /dev/vdb
+  Physical volume "/dev/vdb" successfully created.
+[root@node2 ~]# vgcreate cinder-volumes  /dev/vdb
+  Volume group "cinder-volumes" successfully created
+[root@node2 ~]# vgs
+  VG             #PV #LV #SN Attr   VSize   VFree  
+  cinder-volumes   1   0   0 wz--n- <20.00g <20.00g
+
+
+[root@node2 ~]# yum install -y qemu-kvm  libvirt-daemon libvirt-client libvirt-daemon-driver-qemu python-setuptools
+
+
+
+[root@node2 ~]# ls
+answer.ini   keystonerc_admin  RPM-GPG-KEY-CentOS-7
+
+[root@node2 ~]# ifconfig 
+br-ex: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 192.168.1.2  netmask 255.255.255.0  broadcast 192.168.1.255
+        inet6 fe80::6825:c1ff:fe48:cb41  prefixlen 64  scopeid 0x20<link>
+        ether 6a:25:c1:48:cb:41  txqueuelen 1000  (Ethernet)
+        RX packets 3847  bytes 18744770 (17.8 MiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 3727  bytes 290228 (283.4 KiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+[root@node2 ~]# vim  /etc/httpd/conf.d/15-horizon_vhost.conf
+
+  ...
+  ServerAlias 192.168.1.2
+  ServerAlias node2.localdomain
+  ServerAlias localhost
+  WSGIDaemonProcess apache group=apache processes=3 threads=10 user=apache
+  WSGIProcessGroup apache
+ #WSGIApplicationGroup %{GLOBAL}     #添加此行
+  WSGIScriptAlias /dashboard "/usr/share/openstack-dashboard/openstack_dashboard/wsgi/django.wsgi"
+</VirtualHost>
+
+[root@node2 ~]# cat  keystonerc_admin 
+unset OS_SERVICE_TOKEN
+    export OS_USERNAME=admin
+    export OS_PASSWORD=86b5b6d12d6a45c8
+    export OS_AUTH_URL=http://192.168.1.2:5000/v2.0
+    export PS1='[\u@\h \W(keystone_admin)]\$ '
+    
+export OS_TENANT_NAME=admin
+export OS_REGION_NAME=RegionOne
+
+真机浏览耐器上输入node2的地址192.168.1.2
+
+____________________________________________________________________________
+
+#自动创建多个yum源
+
+#!/bin/bash
+cd /var/ftp/centos71
+for folder in *
+do
+if [ -d $folder ]; then
+cat << EOF >>/root/hao8.repo
+[$folder]
+name=$folder
+baseurl=ftp://192.168.4.1/osp8/$folder
+enabled=1
+gpgcheck=0
+EOF
+fi
+done
+
+                                                    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
