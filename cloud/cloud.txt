@@ -147,3 +147,128 @@ qemu-img create -f qcow2 disk.img 20G
   硬盘
      / 的 vda1 要求 50G
 
+# 环境检查
+sestatus 检查 selinux 是否关闭了
+rpm -qa |grep -P "firewalld|NetworkManager"  是否卸载了 NetworkManager 和 firewalld
+chronyc sources -v 检查时间服务器是否可用
+nslookup  检查 dns 服务器是否可用
+yum repolist 检查包 9591 个
+free -m 查看内存是否够 8G
+lsblk 查看是否有 20G 的 vdb 设备
+ifconfig 查看是否两块网卡，而且都能 ping 通
+
+# 配置 openstack yum 源 共 12 个 10731 包
+[openstack_extras]
+name=openstack extras
+baseurl="ftp://192.168.1.254/openstack-ext"
+enabled=1
+gpgcheck=0
+
+[rhel-7-server-openstack-10-devtools-rpms]
+name=rhel-7-server-openstack-10-devtools-rpms
+baseurl=ftp://192.168.1.254/openstack/rhel-7-server-openstack-10-devtools-rpms
+enabled=1
+gpgcheck=0
+
+[rhel-7-server-openstack-10-optools-rpms]
+name=rhel-7-server-openstack-10-optools-rpms
+baseurl=ftp://192.168.1.254/openstack/rhel-7-server-openstack-10-optools-rpms
+enabled=1
+gpgcheck=0
+
+[rhel-7-server-openstack-10-rpms]
+name=rhel-7-server-openstack-10-rpms
+baseurl=ftp://192.168.1.254/openstack/rhel-7-server-openstack-10-rpms
+enabled=1
+gpgcheck=0
+
+[rhel-7-server-openstack-10-tools-rpms]
+name=rhel-7-server-openstack-10-tools-rpms
+baseurl=ftp://192.168.1.254/openstack/rhel-7-server-openstack-10-tools-rpms
+enabled=1
+gpgcheck=0
+
+[rhel-7-server-rhceph-2-mon-rpms]
+name=rhel-7-server-rhceph-2-mon-rpms
+baseurl=ftp://192.168.1.254/openstack/rhel-7-server-rhceph-2-mon-rpms
+enabled=1
+gpgcheck=0
+
+[rhel-7-server-rhceph-2-osd-rpms]
+name=rhel-7-server-rhceph-2-osd-rpms
+baseurl=ftp://192.168.1.254/openstack/rhel-7-server-rhceph-2-osd-rpms
+enabled=1
+gpgcheck=0
+
+[rhel-7-server-rhceph-2-tools-rpms]
+name=rhel-7-server-rhceph-2-tools-rpms
+baseurl=ftp://192.168.1.254/openstack/rhel-7-server-rhceph-2-tools-rpms
+enabled=1
+gpgcheck=0
+
+[rhel-7-server-rhscon-2-agent-rpms]
+name=rhel-7-server-rhscon-2-agent-rpms
+baseurl=ftp://192.168.1.254/openstack/rhel-7-server-rhscon-2-agent-rpms
+enabled=1
+gpgcheck=0
+
+[rhel-7-server-rhscon-2-installer-rpms]
+name=rhel-7-server-rhscon-2-installer-rpms
+baseurl=ftp://192.168.1.254/openstack/rhel-7-server-rhscon-2-installer-rpms
+enabled=1
+gpgcheck=0
+
+[rhel-7-server-rhscon-2-main-rpms]
+name=rhel-7-server-rhscon-2-main-rpms
+baseurl=ftp://192.168.1.254/openstack/rhel-7-server-rhscon-2-main-rpms
+enabled=1
+gpgcheck=0
+
+#-----------------------------------------#
+安装 openstack
+1、配置卷组，安装依赖软件包
+yum install -y lvm2
+pvcreate /dev/vdb
+vgcreate cinder-volumes  /dev/vdb
+vgs
+
+yum install -y qemu-kvm \
+libvirt-daemon libvirt-client libvirt-daemon-driver-qemu \
+python-setuptools
+
+2、安装 packstack
+yum install -y openstack-packstack
+
+创建安装 openstack 的应答文件
+packstack --gen-answer-file=answer.ini
+
+编辑应答文件 answer.ini
+配置默认密码
+11:  CONFIG_DEFAULT_PASSWORD=Taren1
+设置禁用 swift (对象存储) 模块
+42:  CONFIG_SWIFT_INSTALL=n
+NTP 服务器地址
+75:  CONFIG_NTP_SERVERS=192.168.1.254
+计算节点IP地址
+98:  CONFIG_COMPUTE_HOSTS=192.168.1.19
+需要配置vxlan网络的 IP 地址
+102: CONFIG_NETWORK_HOSTS=192.168.1.19
+禁用自动创建 cinder-volumns 卷组
+554: CONFIG_CINDER_VOLUMES_CREATE=n
+设置网络支持协议
+840: CONFIG_NEUTRON_ML2_TYPE_DRIVERS=flat,vxlan
+设置组播地址
+876: CONFIG_NEUTRON_ML2_VXLAN_GROUP=239.1.1.5
+设置虚拟交换机
+910: CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS=physnet1:br-ex
+设置虚拟交换机所连接的物理网卡
+921: CONFIG_NEUTRON_OVS_BRIDGE_IFACES=br-ex:eth0
+设置隧道网络使用的网卡
+936: CONFIG_NEUTRON_OVS_TUNNEL_IF=eth1
+禁用测试的DEMO
+1179:CONFIG_PROVISION_DEMO=n
+
+3、安装 openstack
+安装
+packstack --answer-file=answer.ini
+
