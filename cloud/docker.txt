@@ -1,0 +1,98 @@
+1 docker 安装
+#----------------------物理机--------------------------#
+创建一台 4G 内存的虚拟机
+创建虚拟机硬盘
+qemu-img create -b node.qcow2 -f qcow2 node1.img 20G
+创建虚拟机配置文件
+sed 's/demo/node1/' demo.xml >/etc/libvirt/qemu/node1.xml
+定义虚拟机
+virsh define /etc/libvirt/qemu/node1.xml
+编辑虚拟机修改内存
+virsh edit node1
+启动虚拟机
+virsh start node1
+
+创建自定义 yum 源
+拷贝 docker-engine*  /var/ftp/public
+cd /var/ftp/public
+createrepo  .
+
+#--------------------虚拟机--------------------#
+修改主机名和静态 ip 地址
+echo docker01 >/etc/hostname
+配置静态 ip 地址 /etc/sysconfig/network-scripts/ifcfg-eth0 
+BOOTPROTO="static"
+IPADDR="192.168.1.11"
+NETMASK="255.255.255.0"
+GATEWAY="192.168.1.254"
+
+配置 /etc/yum.repos.d/docker.repo
+[local_docker]
+name=CentOS docker
+baseurl="ftp://192.168.1.254/public"
+enabled=1
+gpgcheck=0
+
+安装 docker
+yum install docker-engine
+设置开机自启动
+systemctl enable docker
+重启虚拟机
+reboot
+
+docker 常用命令
+查看版本
+docker version
+查看镜像
+docker images
+搜索镜像
+docker search 关键字
+下载镜像
+docker pull 镜像的名字
+查看命令帮助
+docker help 命令
+导出镜像
+docker save busybox:latest >busybox.tar
+导入镜像
+docker load <busybox.tar
+
+启动容器
+docker run -it  镜像的名字:标签  镜像里面的命令
+查看容器
+docker ps -a [查看所有容器]
+
+删除镜像
+docker rmi 镜像名称:标签
+创建镜像别名
+docker tag 源镜像名称:标签 新名称:新标签
+
+容器命令介绍
+docker run 
+-i 交互式
+-t 终端
+-d 后台进程
+
+启动一个交互式的终端 /bin/bash /usr/bin/python
+docker run -it centos /bin/bash
+docker run -it centos /usr/bin/python
+
+启动一个服务(非交互) nginx 
+docker run -d nginx
+
+启动一个交互式的终端，放在后台运行 /bin/bash &
+docker run -itd centos
+
+查看容器  docker ps
+-a 所有容器
+-q 只显示id
+停止所有正在运行中的容器
+docker stop $(docker ps -q)
+删除所有容器
+docker rm $(docker ps -aq)
+查看容器内进程列表
+docker top 容器id
+查看容器详细信息，查看容器 ip
+docker inspect 容器id
+docker inspect -f "{{.NetworkSettings.IPAddress}}"  容器id
+
+
