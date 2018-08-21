@@ -95,4 +95,100 @@ docker top 容器id
 docker inspect 容器id
 docker inspect -f "{{.NetworkSettings.IPAddress}}"  容器id
 
+进入一个已经运行的容器
+docker exec -it 容器id /bin/bash
+
+连接一个已经运行容器的 pid为1 的进程
+退出后容器会结束，如果不想结束需要把容器放入后台(ctrl + pq)
+docker attach 容器id
+
+#------------------------------------------#
+        redhat              debina
+#------------------------------------------#
+      RHEL,CentOS           debina
+        fedora              ubuntu
+安装      yum               apt-get
+管理      rpm                dpkg
+#------------------------------------------#
+
+编排镜像
+1、创建容器
+docker run -it centos
+2、修改配置、安装软件
+3、创建镜像
+docker ps -a
+docker commit 容器ID  镜像名称:标签
+
+Dockerfile 01
+FROM centos:latest
+RUN  rm -f /etc/yum.repos.d/*
+ADD  local.repo /etc/yum.repos.d/local.repo
+RUN  yum install -y net-tools psmisc vim
+
+Dockerfile 02
+FROM myos:latest
+CMD ["/usr/bin/python"]
+
+Dockerfile 03
+FROM myos
+RUN  yum install -y httpd
+WORKDIR /var/www/html
+RUN  echo "hello nsd1804" >index.html
+ENV  EnvironmentFile=/etc/sysconfig/httpd
+EXPOSE 80
+CMD  ["/usr/sbin/httpd", "-DFOREGROUND"]
+
+创建私有仓库
+配置文件 /etc/docker/daemon.json
+{
+  "insecure-registries" : ["192.168.1.11:5000"]
+}
+
+完成配置以后重启 docker 服务
+systemctl restart docker
+
+启动私有仓库服务
+docker run -d -p 5000:5000 registry
+
+打标记
+docker tag busybox:latest 192.168.1.11:5000/busybox:latest
+docker tag myos:latest 192.168.1.11:5000/myos:latest
+docker tag myos:python 192.168.1.11:5000/myos:python
+docker tag myos:httpd  192.168.1.11:5000/myos:httpd
+
+上传镜像
+docker push 192.168.1.11:5000/busybox:latest
+docker push 192.168.1.11:5000/myos:latest
+docker push 192.168.1.11:5000/myos:python
+docker push 192.168.1.11:5000/myos:httpd
+
+客户机使用私有镜像源
+配置 daemon.json
+重启服务 systemctl restart docker
+启动容器
+docker run -it 192.168.1.11:5000/busybox
+docker run -it 192.168.1.11:5000/myos
+docker run -d 192.168.1.11:5000/myos:httpd
+
+查看私有仓库有什么样的镜像
+curl http://192.168.1.11:5000/v2/_catalog
+查看私有仓库的镜像有什么样的标签
+curl http://192.168.1.11:5000/v2/myos/tags/list
+
+存储卷映射
+docker run -itd -v 物理机文件夹:容器内文件夹 镜像:标签
+
+创建虚拟交换机
+docker network create --driver=bridge --subnet 192.168.100.0/24 docker1
+
+创建一个新的容器，使用新的交换机
+docker run -it --network=docker1 myos
+
+创建容器，使用宿主机的端口 -p 宿主机端口:容器端口
+docker run -d -p 80:80 -v /var/webroot:/var/www/html 192.168.1.11:5000/myos:httpd
+
+
+
+
+
 
