@@ -1,1 +1,181 @@
-architecture
+rsync
+
+192.168.1.144  node1
+192.168.1.101  node2
+192.168.1.183  node3
+192.168.1.193  node4
+192.168.1.171  node5
+192.168.1.116  node6
+
+
+vim  /etc/sysconfig/network-scripts/ifcfg-eth0
+
+TYPE="Ethernet"
+BOOTPROTO="static"
+IPADDR=192.168.1.144
+PREFIX=24
+GATEWAY=192.168.1.254
+DEVICE="eth0"
+ONBOOT="yes"
+
+systemctl  restart  network
+
+#man帮助
+man  5  hosts_access
+
+
+
+
+
+
+
+vim  /etc/ansible/host
+
+## db-[99:101]-node.example.com
+[web]
+web1
+web2
+
+[db]
+db[1:2]
+
+[app:children]
+web
+db
+
+
+[app:vars]
+ansible_ssh_user="root"
+ansible_ssh_pass="1"
+
+[other]
+cache  ansible_ssh_user="root" ansible_ssh_pass="1"
+
+______________________________________________________________________________
+
+vim  /etc/ansible/host
+
+## db-[99:101]-node.example.com
+[web]
+web1
+web2
+
+[db]
+db[1:2]
+
+[app:children]
+web
+db
+
+[other]
+cache 
+
+
+[root@ansible ~]# ansible  all  -m  command  -a  'uptime' -k
+SSH password: 
+db2 | SUCCESS | rc=0 >>
+ 16:02:21 up  4:34,  1 user,  load average: 0.00, 0.01, 0.05
+
+web2 | SUCCESS | rc=0 >>
+ 16:02:21 up  4:34,  1 user,  load average: 0.00, 0.01, 0.05
+
+web1 | SUCCESS | rc=0 >>
+ 16:02:21 up  4:34,  1 user,  load average: 0.00, 0.01, 0.05
+
+db1 | SUCCESS | rc=0 >>
+ 16:02:21 up  4:34,  1 user,  load average: 0.16, 0.05, 0.06
+
+cache | SUCCESS | rc=0 >>
+ 16:02:21 up  4:34,  1 user,  load average: 0.00, 0.01, 0.05
+
+
+
+
+
+[root@ansible ~]# cd  /root/.ssh/
+[root@ansible .ssh]# ls
+authorized_keys  known_hosts
+[root@ansible .ssh]# cat  authorized_keys 
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCv3uPUOnpaaE9/l5jkUEp5K3ZsP3dgrRfkJur5UkmPvgGoz4UGV4vd2Dna1R6En2mmTDEwFyqmpJs59Hgfw8rTF8EbDRepJ7N4+mm3sUYnFy9BJgafJkK84ZdQ1yA/A64LzVg02PwHqmSO5eLnAtWmeToIlDvyowaZou6YJqSdYflJDTu6793PshxhwdTFyK1NqIS4mfHHpWgm/oObXRCmqbvB4EiACuasvXN46JKTpa0COezdjUKDmyVspSMFdN7jpEuWZPMPSnOyv/FDSYjEbqoZpiIQMSRBVDbNsz7E+mViP1yDi5nJ/9nmbIZLgbykEU0gEOAxKSZXvjbDXn2p root@weekend9pc01.tedu.cn
+
+[root@ansible .ssh]# ansible all  -m  authorized_key -a "user=root exclusive=true manage_dir=true  key='$(</root/.ssh/id_rsa.pub)'"   -k
+SSH password: 
+web2 | SUCCESS => {
+    "changed": true, 
+    "comment": null, 
+    "exclusive": true, 
+    "key": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCxaFfwxVAc6WwSVUlzKOZDWzx9QrWudPw5iOrl/TySW2PX/et9i0bQJMw6jS4G96i7lnaSzErZdEhANp8CiRr0RVdIThUmZplN9yzdoXSmDYl/mPg9crQX/yV55nOa3Xv5TpbEEBBU7OMgI2jX83ubLCnotZVkCqE2QlaP056O9UpjoYwqJMW9qOFONv0rPhrY9Vb7Cz3icoFunbQi8yPbbnqHvw330zJpVqekieAALs01cpgiI0EwYkK2KNJ+fTNBWukyv0vWM6i9jScGMGH2i5M/pNcxqQT/QBrwrwIZUJstu1G/CqfUniwhjzoYZ9o6m9s3dYiehG47wpwKOdfB root@ansible", 
+    "key_options": null, 
+    "keyfile": "/root/.ssh/authorized_keys", 
+    "manage_dir": true, 
+    "path": null, 
+    "state": "present", 
+    "unique": false, 
+    "user": "root", 
+    "validate_certs": true
+}
+db2 | SUCCESS => {
+    "changed": true, 
+    "comment": null, 
+    "exclusive": true, 
+    "key": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCxaFfwxVAc6WwSVUlzKOZDWzx9QrWudPw5iOrl/TySW2PX/et9i0bQJMw6jS4G96i7lnaSzErZdEhANp8CiRr0RVdIThUmZplN9yzdoXSmDYl/mPg9crQX/yV55nOa3Xv5TpbEEBBU7OMgI2jX83ubLCnotZVkCqE2QlaP056O9UpjoYwqJMW9qOFONv0rPhrY9Vb7Cz3icoFunbQi8yPbbnqHvw330zJpVqekieAALs01cpgiI0EwYkK2KNJ+fTNBWukyv0vWM6i9jScGMGH2i5M/pNcxqQT/QBrwrwIZUJstu1G/CqfUniwhjzoYZ9o6m9s3dYiehG47wpwKOdfB root@ansible", 
+    "key_options": null, 
+    "keyfile": "/root/.ssh/authorized_keys", 
+    "manage_dir": true, 
+    "path": null, 
+    "state": "present", 
+    "unique": false, 
+    "user": "root", 
+    "validate_certs": true
+}
+web1 | SUCCESS => {
+    "changed": true, 
+    "comment": null, 
+    "exclusive": true, 
+    "key": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCxaFfwxVAc6WwSVUlzKOZDWzx9QrWudPw5iOrl/TySW2PX/et9i0bQJMw6jS4G96i7lnaSzErZdEhANp8CiRr0RVdIThUmZplN9yzdoXSmDYl/mPg9crQX/yV55nOa3Xv5TpbEEBBU7OMgI2jX83ubLCnotZVkCqE2QlaP056O9UpjoYwqJMW9qOFONv0rPhrY9Vb7Cz3icoFunbQi8yPbbnqHvw330zJpVqekieAALs01cpgiI0EwYkK2KNJ+fTNBWukyv0vWM6i9jScGMGH2i5M/pNcxqQT/QBrwrwIZUJstu1G/CqfUniwhjzoYZ9o6m9s3dYiehG47wpwKOdfB root@ansible", 
+    "key_options": null, 
+    "keyfile": "/root/.ssh/authorized_keys", 
+    "manage_dir": true, 
+    "path": null, 
+    "state": "present", 
+    "unique": false, 
+    "user": "root", 
+    "validate_certs": true
+}
+db1 | SUCCESS => {
+    "changed": true, 
+    "comment": null, 
+    "exclusive": true, 
+    "key": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCxaFfwxVAc6WwSVUlzKOZDWzx9QrWudPw5iOrl/TySW2PX/et9i0bQJMw6jS4G96i7lnaSzErZdEhANp8CiRr0RVdIThUmZplN9yzdoXSmDYl/mPg9crQX/yV55nOa3Xv5TpbEEBBU7OMgI2jX83ubLCnotZVkCqE2QlaP056O9UpjoYwqJMW9qOFONv0rPhrY9Vb7Cz3icoFunbQi8yPbbnqHvw330zJpVqekieAALs01cpgiI0EwYkK2KNJ+fTNBWukyv0vWM6i9jScGMGH2i5M/pNcxqQT/QBrwrwIZUJstu1G/CqfUniwhjzoYZ9o6m9s3dYiehG47wpwKOdfB root@ansible", 
+    "key_options": null, 
+    "keyfile": "/root/.ssh/authorized_keys", 
+    "manage_dir": true, 
+    "path": null, 
+    "state": "present", 
+    "unique": false, 
+    "user": "root", 
+    "validate_certs": true
+}
+cache | SUCCESS => {
+    "changed": true, 
+    "comment": null, 
+    "exclusive": true, 
+    "key": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCxaFfwxVAc6WwSVUlzKOZDWzx9QrWudPw5iOrl/TySW2PX/et9i0bQJMw6jS4G96i7lnaSzErZdEhANp8CiRr0RVdIThUmZplN9yzdoXSmDYl/mPg9crQX/yV55nOa3Xv5TpbEEBBU7OMgI2jX83ubLCnotZVkCqE2QlaP056O9UpjoYwqJMW9qOFONv0rPhrY9Vb7Cz3icoFunbQi8yPbbnqHvw330zJpVqekieAALs01cpgiI0EwYkK2KNJ+fTNBWukyv0vWM6i9jScGMGH2i5M/pNcxqQT/QBrwrwIZUJstu1G/CqfUniwhjzoYZ9o6m9s3dYiehG47wpwKOdfB root@ansible", 
+    "key_options": null, 
+    "keyfile": "/root/.ssh/authorized_keys", 
+    "manage_dir": true, 
+    "path": null, 
+    "state": "present", 
+    "unique": false, 
+    "user": "root", 
+    "validate_certs": true
+
+
+
+
+
+
+
+
+
+
