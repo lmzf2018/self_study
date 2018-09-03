@@ -1,0 +1,14 @@
+subnet	192.168.1.0 netmask 255.255.255.0 {
+	option routers 192.168.1.254;
+	option subnet-mask 255.255.255.0;
+	option domain-name-servers 192.168.1.254;
+	option ntp-servers 192.168.1.254;
+	filename "/gpxelinux.0";
+	next-server 192.168.1.254;
+	pool {
+		range dynamic-bootp 192.168.1.10 192.168.1.240;
+		default-lease-time 3600;
+		max-lease-time 72000;
+		allow unknown-clients;
+	}
+}

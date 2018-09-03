@@ -1,0 +1,108 @@
+实验目的：搭建一个高可用，高并发的SNS类网站
+
+虚拟机讲解，演示，一台企业中真实的服务器是什么样子的。
+kickstart 文件解说，配置 PXE 网络装机环境 （kickstart 文件见附件 conf/ks7.ks）
+                                            学生需要使用该配置文件安装虚拟机
+pxe 配置
+    dhcpd    配置详情见附件 （dhcpd/dhcpd.conf，subnet-192.168）
+    vsftp    配置详情见附件 （vsftpd.conf）
+    tftpboot 配置详情见附件 （tftpboot/pxelinux.cfg/default，centos_menu）
+
+    简易配置软件 dnsmasq.conf 简介
+    实验一：
+            修改 ks7.ks 配置文件，配置自己的 pxe 环境，配置 yum 源，安装 guest 操作系统
+	    学生实验在 KVM 中完成
+
+            virt-install 安装 guest os
+	    virt-install \
+            --connect qemu:///system --virt-type kvm \
+            --name demo --memory 2048 --cpu host --vcpus 2 --os-variant centos7.0 \
+            --network bridge=vbr0 \
+            --disk path=/var/lib/libvirt/images/demo.qcow2,bus=scsi \
+            --boot menu=on,useserial=on --nographics --pxe
+
+            virsh xml 配置文件定义，bridge 配置
+	    配置文件详见 demo.xml
+
+
+	    克隆虚拟机
+	    qemu-img create -b background.qcow2 -f qcow2 node.img
+	    sed 's,demo,node,' demo.xml >node.xml
+	    virsh -c qemu:///system define node.xml
+	    virsh -c qemu:///system start --console node
+
+
+    实验二：
+            以新安装的系统为模板，安装 Linux + Nginx + mysql + php (fastcgi)
+	    Nginx 安装编译参数（rpm 详见 spec 文件）
+	    添加 web 用户和组
+	    groupadd -g 1000 web
+	    useradd -u 1000 -g 1000 web -s /sbin/nologin
+	    添加编译依赖库
+	    yum install openssl-devel pcre-devel readhline-devel zlib-devel
+
+	    ./configure --prefix=/usr/local/nginx \  # 安装路径
+	    --with-http_ssl_module \                 # 开启 ssl 模块 支持https
+	    --with-http_v2_module \                  # 支持 http_v2 协议
+	    --with-http_realip_module \              # 获取客户端真实 ip
+	    --with-http_stub_status_module \         # 查看服务器工作状态
+	    --without-mail_pop3_module \             # 禁用 pop3 模块
+	    --without-mail_imap_module \             # 禁用 imap 模块
+	    --without-mail_smtp_module \             # 禁用 smtp 模块
+	    --with-pcre                              # 开启 pcre 正则表达式支持
+
+            配置文件 nginx.conf
+	    user  web web;
+	    worker_processes  auto;
+	    worker_rlimit_nofile 16384;
+
+	    events {
+	        use epoll;
+		worker_connections 8192;
+	    }
+	    pid /var/run/nginx.pid;
+
+            php   安装编译参数（rpm 详见 spec 文件）
+	    ./configure --prefix=/usr/local/php --with-config-file-path=/etc \ # 安装及配置文件路径
+	    --with-fpm-user=web --with-fpm-group=web \                         # 用户和组设置
+	    --enable-fd-setsize=65535 --disable-ipv6 \                         # 禁用 ipv6，和设置 openfile 
+	    --without-sqlite3 --without-pdo-sqlite \                           # 禁用 sqlite
+	    --enable-fpm \                                                     # 打开 fpm 模式支持
+	    --enable-sockets --enable-sysvsem --enable-sysvshm --enable-sysvmsg --enable-shmop --enable-mbstring --enable-zip --enable-bcmath --enable-ftp --enable-soap --with-mhash --with-pcre-regex --with-pcre-dir --with-readline --with-zlib --with-curl --with-openssl --with-iconv --with-gd --with-png-dir --with-jpeg-dir --with-freetype-dir --with-xpm-dir \               # php功能特性
+	    --enable-mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd    # 打开 mysql 支持
+
+	    php-fpm 配置文件
+	    [global]
+	    pid = /var/run/php-fpm.pid
+	    error_log = /var/log/weblog/php-fpm.log
+	    log_level = warning
+	    emergency_restart_threshold = 10
+	    emergency_restart_interval = 1d
+	    process.max = 2048
+	    daemonize = yes
+	    rlimit_files = 65535
+
+            user = web
+	    group = web
+	    listen = /var/run/php-fpm.sock
+	    listen.backlog = 1024
+	    listen.owner = web
+	    listen.group = web
+	    listen.mode = 0660
+	    pm = ondemand
+	    pm.max_children = 2048
+	    pm.process_idle_timeout = 60s;
+	    pm.max_requests = 2048
+	    request_terminate_timeout = 180
+
+	    nginx fastcgi 配置
+	    location ~ ^/(.+\.php)$ {
+                fastcgi_pass   unix:/var/run/php-fpm.sock;
+                fastcgi_index  index.php;
+                include        fastcgi.conf;
+            }
+
+            验证配置 info.php
+	    <?PHP
+	      phpinfo();
+	    ?>

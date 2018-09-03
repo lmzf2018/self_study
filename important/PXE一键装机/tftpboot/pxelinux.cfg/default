@@ -1,0 +1,25 @@
+default menu.c32
+prompt 0
+timeout 60
+ONTIMEOUT local
+
+MENU TITLE Main Menu
+
+LABEL local
+    MENU LABEL Boot local hard drive
+    LOCALBOOT 0
+
+LABEL CentOS Linux
+    MENU LABEL CentOS Linux
+    KERNEL menu.c32
+    APPEND pxelinux.cfg/centos_menu
+
+LABEL Debian Linux
+    MENU LABEL Debian Linux
+    KERNEL menu.c32
+    APPEND pxelinux.cfg/debian_menu
+
+LABEL Window Setup
+    MENU LABEL Window Setup
+    KERNEL menu.c32
+    APPEND pxelinux.cfg/window_menu

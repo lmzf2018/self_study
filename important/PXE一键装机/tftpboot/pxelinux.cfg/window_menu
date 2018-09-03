@@ -1,0 +1,7 @@
+IPAPPEND 2
+MENU TITLE Windows Setup Menu
+
+LABEL Main Menu
+    MENU LABEL Main Menu
+    KERNEL menu.c32
+    APPEND pxelinux.cfg/default

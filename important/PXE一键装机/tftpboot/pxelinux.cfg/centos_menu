@@ -1,0 +1,22 @@
+IPAPPEND 2
+MENU TITLE CentOS Linux Menu
+
+LABEL Main Menu
+    MENU LABEL Main Menu
+    KERNEL menu.c32
+    APPEND pxelinux.cfg/default
+
+LABEL CentOS7
+    MENU LABEL CentOS 7 install
+    KERNEL centos7/vmlinuz
+    APPEND initrd=centos7/initrd.img ks=ftp://192.168.1.200/conf/ks7.cfg ksdevice=bootif console=tty0 console=ttyS0,115200
+
+LABEL CentOS6
+    MENU LABEL CentOS 6 install
+    KERNEL centos6/vmlinuz
+    APPEND initrd=centos6/initrd.img ks=ftp://192.168.1.200/conf/ks6.cfg ksdevice=bootif console=tty0 console=ttyS0,115200
+
+LABEL rescue
+    MENU LABEL CentOS rescue mode
+    KERNEL centos7/vmlinuz
+    APPEND initrd=centos7/initrd.img ks=ftp://192.168.1.200/conf/ks.cfg  ksdevice=bootif console=tty0 console=ttyS0,115200
