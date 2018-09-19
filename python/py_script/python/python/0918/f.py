@@ -1,0 +1,5 @@
+f = open('/tmp/ab.txt','w')
+f.write('hello world\n')
+f.flush()
+f.writelines(['2nd line.\n','3nd line.\n'])
+f.close()
