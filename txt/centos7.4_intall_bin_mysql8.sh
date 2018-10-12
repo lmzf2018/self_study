@@ -62,7 +62,7 @@ a=`echo ${b##*localhost:}`
 echo $a
 #mysql -e　可以直接在命令行执行命令
 #read -p  "请输入你设定的mysql数据库密码："　$1
-/usr/local/mysql8/bin/mysql -uroot -p'${a}'  -e  "ALTER USER 'root'@'localhost'  IDENTIFIED  BY '123qqq...A'"  --connect-expired-password
+/usr/local/mysql8/bin/mysql -uroot -p"${a}"  -e  "ALTER USER 'root'@'localhost'  IDENTIFIED  BY '123qqq...A'"  --connect-expired-password
 echo  "#####mysql8密码修改成功#####"
 
 
