@@ -1,7 +1,7 @@
 #!/bin/bash
 starttime=$(date +%s)
 
-#rpm -e --nodeps  mariadb*
+rpm -e --nodeps  mariadb*
 #安装mysql依赖包
 yum -y install gcc gcc-c++ openssl openssl-devel libaio libaio-devel  ncurses  ncurses-devel  >> /dev/null
 
@@ -61,8 +61,8 @@ b=`grep  'temporary password'   /usr/local/mysql8/log/mysql-err.log`
 a=`echo ${b##*localhost:}`
 echo $a
 #mysql -e　可以直接在命令行执行命令
-#read -p  "请输入你设定的mysql数据库密码："　$1
-/usr/local/mysql8/bin/mysql -uroot -p"${a}"  -e  "ALTER USER 'root'@'localhost'  IDENTIFIED  BY '123qqq...A'"  --connect-expired-password
+read -p  "请输入你设定的mysql数据库密码："　$1
+/usr/local/mysql8/bin/mysql -uroot -p"${a}" -e  "ALTER USER 'root'@'localhost'  IDENTIFIED  BY '$1'"  --connect-expired-password
 echo  "#####mysql8密码修改成功#####"
 
 
