@@ -7,7 +7,7 @@
 #（1）编写脚本irsync.sh ,内容如下：
 SRC_DIR="/root/code/"
 DST_DIR="/mnt/hao"
-DST_IP="120.79.11.52"
+DST_IP="111.11.11.111"
 /usr/bin/inotifywait  -mrq -e modify,move,create,delete,attrib $SRC_DIR \
 | while read files
     do 
