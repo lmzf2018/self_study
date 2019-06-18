@@ -9,32 +9,32 @@ import pymysql
 from sshtunnel import SSHTunnelForwarder
 
 
-number = int(input('''[1]: 海亮-专用数据库-0ld(rm-bp11r7299352hc0ld);
-[2]: 浙大-新零售数据库-9vy(rm-bp1ds482x2qti79vy);
-[3]: 综合-GolivePlus数据库-xkv(m-bp19xx98d53ym3xkv);
-[4]: 物联-门禁微服务数据库-ot7(rm-bp17rjrv2ej8uq0t7);
-[5]: 物联部-智能用电数据库-612(rm-bp191904oddzq9612);
-[6]: 青橄榄-JAVA专用数据库-mxy(rm-bp1g581dfpo4qsmxy);
+number = int(input('''[1]: 海亮-专用数据库-0ld(rm-bpdsadsdsasdald);
+[2]: 浙大-新零售数据库-9vy(rm-sadebp1ds482x2qti79vy);
+[3]: 综合-GolivePlus数据库-xkv(rm-dsdsbp19xx98d53ym3xkv);
+[4]: 物联-门禁微服务数据库-ot7(rm-bpsa17rjrv2ej8uq0t7);
+[5]: 物联部-智能用电数据库-612(rm-bp1sdadsa9612);
+[6]: 青橄榄-JAVA专用数据库-mxy(rm-bp1asDSAdsaqsmxy);
 请输入数字[1|2|3|4|5|6]:'''))
 
 if number == 1:
-    RDS_name = 'rm-bp11r7299352hc0ld1o.mysql.rds.aliyuncs.com'
-    RDS_passwd = 'ft^G716O6liV#e0=wgqr5'
+    RDS_name = 'rm-bdwjdwo1o.mysql.rds.aliyuncs.com'
+    RDS_passwd = '******************'
 elif number == 2:
-    RDS_name = 'rm-bp1ds482x2qti79vyfo.mysql.rds.aliyuncs.com'
-    RDS_passwd = 'qgl@617jsb'
+    RDS_name = 'rm-sdfewojdeowdjew;cql.rds.aliyuncs.com'
+    RDS_passwd = '*************'
 elif number == 3:
-    RDS_name = 'rm-bp19xx98d53ym3xkv2o.mysql.rds.aliyuncs.com'
-    RDS_passwd = 'sF34#gd93'
+    RDS_name = 'rm-dwefdnihjewlcnkejwcnjkwel.rds.aliyuncs.com'
+    RDS_passwd = '***********'
 elif number == 4:
-    RDS_name = 'rm-bp17rjrv2ej8uq0t7ao.mysql.rds.aliyuncs.com'
-    RDS_passwd = 'doorCtl#2019%gDn617'
+    RDS_name = 'rm-wdqwhiudhkjwdjhwkqndkw.rds.aliyuncs.com'
+    RDS_passwd = '**************'
 elif number == 5:
-    RDS_name = 'rm-bp191904oddzq9612to.mysql.rds.aliyuncs.com'
-    RDS_passwd = 'ZnyD#617_gOliVejt298'
+    RDS_name = 'rm-dwsdnkjwqjkdkwqlejl.rds.aliyuncs.com'
+    RDS_passwd = '******************'
 elif number == 6:
-    RDS_name = 'rm-bp1g581dfpo4qsmxy9o.mysql.rds.aliyuncs.com'
-    RDS_passwd = 'UdeUUe&qMaVOvR8g@2019_617'
+    RDS_name = 'rm-dwqdjoiwqjoijqwqjkdw.qe.aliyuncs.com'
+    RDS_passwd = '*****************'
 print()
 
 
