@@ -62,7 +62,7 @@ with SSHTunnelForwarder(
     cursor.execute("show databases")
     print("数据库：",cursor.fetchall())
     print()
-    conn.close()
+   
 
     database_grant = input('''all:所有权限;
 select：查看权限；
