@@ -46,7 +46,7 @@ def adduser(username, password):
         'echo %s | passwd --stdin %s' % (password, username),
         shell=True
     )
-
+#添加sudo权限，sed -i 根据具体情况书写
 def add_sudoer(username):
     subprocess.call('sed  -i  "/^root/a\%s    ALL=(ALL)       ALL" /etc/sudoers' % username,  shell=True)
 
